@@ -7,7 +7,7 @@
    v3 (09/11/2026): escada nova. index.html = Controle do Studio (front enxuto),
    divulga.html = Agenda e clienti, precificacao.html = Magazzino prodotti. */
 /* v3: logo Guadagno in Mano + nome do produto. */
-const CACHE = 'lucrostudioit-v14';
+const CACHE = 'lucrostudioit-v15';
 const ARQS = [
   'hub.html', 'index.html', 'precificacao.html', 'listino.html', 'divulga.html', 'diagnostico.html', 'ativacao.js',
   /* 08/11/2026: a regra unica do que esta liberado (menu, Controle, Agenda e clienti, Magazzino prodotti) */

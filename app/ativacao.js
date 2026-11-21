@@ -43,7 +43,7 @@
   var OFERTA = {
     prefixo: 'lucrostudioit_',
     cache: 'lucrostudioit-ativacao',
-    painel: 'o=2026-11-studio-it',
+    painel: 'k=87e31ddf7f36a3098e38fde1d7ba4b5e',
     comprar: 'https://pay.cakto.com.br/stud2no',
     marca: 'Guadagno in Mano',
     suporte: 'canarimtech@gmail.com'

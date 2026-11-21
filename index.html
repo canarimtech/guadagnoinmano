@@ -8,10 +8,11 @@
 <meta name="theme-color" content="#18161B">
 <meta name="robots" content="noindex">
 <link rel="preload" href="font/outfit-700-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" as="image" type="image/avif" href="img/foto-hero-800.avif" imagesrcset="img/foto-hero-480.avif 480w, img/foto-hero-800.avif 800w, img/foto-hero-1440.avif 1440w" imagesizes="100vw" fetchpriority="high">
+<link rel="preload" as="image" type="image/avif" href="img/foto-hero-600.avif" imagesrcset="img/foto-hero-480.avif 480w, img/foto-hero-600.avif 600w, img/foto-hero-1440.avif 1440w" imagesizes="(max-width: 959px) 300px, 100vw" fetchpriority="high">
 <!-- LP v2 · 20/11/2026 · Designer de LP. Copy: studio-it/copy-lp-v2.md (SHA-256 cacb906a…). Briefing: lp-v2/briefing-redesign.md (9554bc14…).
-     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 13: prints Il mio studio e LCP (hero AVIF/WebP responsivo, lazy abaixo da dobra). Rodada 12: 3º bump Agenda e clienti. Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
+     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 14: LCP (hero AVIF 600w, CSS abaixo da dobra, JS defer, duo/story depois do hero). Rodada 13: prints Il mio studio e LCP (hero AVIF/WebP responsivo, lazy abaixo da dobra). Rodada 12: 3º bump Agenda e clienti. Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
 <style>
+
 [hidden]{display:none!important}
 @font-face{font-family:'Outfit';font-weight:700;font-style:normal;font-display:swap;src:url(font/outfit-700-latin.woff2) format('woff2')}
 :root{--grafite:#3F3A45;--escuro:#2B2730;--profundo:#18161B;--suave:#ECE9EF;--verde:#1E7D4F;--verde-esc:#17653F;--verde-bg:#E8F3ED;--tinta:#18161B;--cinza:#5E5866;--linha:rgba(63,58,69,.12);
@@ -97,120 +98,6 @@ section{padding:32px 0}
 .st-btn{position:absolute;inset:0;z-index:7;background:none;border:0;cursor:pointer}
 .st-btn:focus-visible{outline:3px solid #8fd4af;outline-offset:4px;border-radius:40px}
 
-/* DOR */
-.cards{display:grid;gap:12px}
-.card{background:#fff;border:1px solid var(--linha);border-radius:var(--r-md);padding:18px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 10px 24px -20px rgba(24,22,27,.4)}
-.card .bolla{width:44px;height:44px;border-radius:12px;background:var(--suave);color:var(--grafite);display:grid;place-items:center;flex:0 0 44px}
-.card p{font-size:15.5px;line-height:1.42}
-.alt .card .bolla{background:#f6f4f8}
-
-/* CUSTO ESCONDIDO */
-.costo{display:grid;gap:22px;align-items:center}
-.foto-r{position:relative;border-radius:var(--r-lg);overflow:hidden;aspect-ratio:4/3.4;background:#ccc}
-.foto-r img{width:100%;height:100%;object-fit:cover}
-.ricevuta{position:absolute;right:14px;bottom:14px;left:14px;max-width:290px;margin-left:auto;background:#fff;border-radius:16px;padding:16px 18px;box-shadow:0 24px 40px -20px rgba(24,22,27,.7);font-size:15px}
-.ricevuta .t{font:700 15px var(--tit);margin-bottom:10px;display:flex;justify-content:space-between}
-.ricevuta .t small{font:500 11px var(--sans);color:var(--cinza);align-self:center}
-.riga{display:flex;justify-content:space-between;padding:6px 0;border-top:1px dashed var(--linha);color:var(--cinza)}
-.riga.tot{color:var(--verde);font-weight:800;font-size:17px;border-top:2px solid var(--tinta)}
-.tre{display:grid;gap:4px;font-size:17px;line-height:1.35}
-.tre b{font-family:var(--tit);font-weight:700}
-
-/* CARROSSEL (trilho reaproveitado) */
-.trilho{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:none;scroll-padding:0 20px;padding:10px 20px 16px;margin:18px -20px 0;scrollbar-width:none;outline:none}
-.trilho::-webkit-scrollbar{display:none}
-.trilho:focus-visible{box-shadow:inset 0 0 0 3px var(--verde)}
-.slide{flex:0 0 66%;max-width:270px;margin:0}
-.slide .cel{width:100%}
-.slide figcaption{padding:14px 2px 0;font-size:14.5px;line-height:1.4;color:var(--cinza)}
-.slide figcaption b{display:block;font:700 17px/1.25 var(--tit);color:var(--tinta);margin-bottom:3px}
-.slide .num{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--verde-bg);color:var(--verde);font:800 12px var(--sans);margin-right:6px;vertical-align:2px}
-.pontos{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:6px}
-.pontos i{width:8px;height:8px;border-radius:50%;background:#cfc9d5;transition:.2s;cursor:pointer}
-.pontos i.on{width:22px;border-radius:4px;background:var(--grafite)}
-.pontos button{width:44px;height:44px;flex:0 0 44px;margin:0 8px;border-radius:50%;border:1px solid var(--linha);background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 14px -10px rgba(24,22,27,.5)}
-.pontos button svg{width:18px;height:18px;fill:none;stroke:var(--grafite);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-.pontos button:disabled{opacity:.35;cursor:default}
-.sigilli{display:grid;grid-template-columns:1fr;gap:8px;margin-top:26px}
-.sig{display:flex;gap:10px;align-items:center;font-size:14.5px;font-weight:600;color:var(--grafite)}
-.sig .ic{color:var(--verde)}
-
-/* DA SOLA */
-.dasola{position:relative;color:#fff;padding:0;overflow:hidden;background:var(--profundo)}
-.dasola img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 30%}
-.dasola:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,22,27,.15) 0%,rgba(24,22,27,.55) 45%,rgba(24,22,27,.94) 100%)}
-.dasola .w{position:relative;z-index:1;min-height:440px;display:flex;flex-direction:column;justify-content:flex-end;padding-top:60px;padding-bottom:44px}
-.dasola p{font-size:17px;color:#e7e2ea;max-width:34ch}
-
-/* BUMPS (cards com print, padrão reaproveitado) */
-.bumps{display:grid;gap:14px;margin-top:8px}
-.bump{display:grid;grid-template-columns:104px 1fr;gap:16px;align-items:center;background:#fff;border:1px solid var(--linha);border-radius:var(--r-md);padding:14px;box-shadow:0 12px 26px -22px rgba(24,22,27,.5)}
-.bump .cel{width:100%}
-.tag{display:inline-block;font:800 11px/1 var(--sans);letter-spacing:.06em;background:var(--suave);color:var(--grafite);border-radius:99px;padding:6px 10px;margin:0}
-.bump-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-.bump-prezzo{font:700 18px/1 var(--tit);letter-spacing:-.02em;color:var(--tinta);white-space:nowrap}
-.bump h3{font-size:19px;margin-bottom:4px}
-.bump p{font-size:14.5px;color:var(--cinza);line-height:1.4}
-.bump-testo{grid-template-columns:1fr}
-@media (max-width:959px){section:has(.bumps){padding:10px 0}.bumps{gap:8px;margin-top:4px}.bump{padding:10px;grid-template-columns:76px 1fr;gap:12px}}
-.nota{font-size:14px;color:var(--cinza);margin-top:14px;display:flex;gap:8px;align-items:center}
-.nota .ic{width:18px;height:18px;color:var(--verde)}
-
-/* COMPARAÇÃO */
-.comp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.col{border-radius:var(--r-md);padding:18px 14px;border:1px solid var(--linha);background:#fff}
-.col.loro{background:#f6f4f8}
-.col.noi{border:2px solid var(--verde);box-shadow:0 18px 34px -24px rgba(30,125,79,.6);position:relative}
-.col h3{font-size:15.5px;margin-bottom:12px;min-height:38px}
-.col.noi h3{color:var(--verde)}
-.col dl{display:grid;gap:12px}
-.col dt{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--cinza)}
-.col dd{display:flex;gap:7px;align-items:flex-start;font-size:14.5px;font-weight:600;line-height:1.3}
-.col dd .ic{width:18px;height:18px;margin-top:1px}
-.loro dd .ic{color:#b4423a}.noi dd .ic{color:var(--verde)}
-
-/* OFERTA */
-.offerta{max-width:560px;margin:0 auto;border:2px solid var(--grafite);border-radius:var(--r-lg);background:#fff;padding:22px 20px;box-shadow:0 30px 60px -36px rgba(24,22,27,.6);text-align:center}
-.offerta h2{margin-bottom:18px}
-.inclusi{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;margin-bottom:22px}
-.inc{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;font-weight:600;line-height:1.3;background:var(--suave);border-radius:12px;padding:11px 10px}
-.inc .ic{width:19px;height:19px;color:var(--verde)}
-.descr-off{display:block;font:600 15px/1.3 var(--sans);color:var(--cinza);margin-top:4px;letter-spacing:0}
-.descr-off .punto{display:none}
-.big{font:700 clamp(46px,12vw,56px)/1 var(--tit);letter-spacing:-.03em;color:var(--tinta)}
-.sotto{font-size:14px;color:var(--cinza);margin:6px 0 14px}
-.offerta .micro{color:var(--cinza)}
-
-.pagam{display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap}.pg{display:inline-flex;gap:6px;align-items:center;font-size:12.5px;font-weight:600;color:var(--cinza);border:1px solid var(--linha);border-radius:8px;padding:6px 10px}.pg .ic{width:16px;height:16px}
-#comprar.escuro-of{background:linear-gradient(180deg,#2B2730,#18161B)}
-#comprar .offerta{border-color:transparent}
-#comprar .garanzia{color:var(--tinta)}
-/* garantia (escondida até decisão do Vini) */
-.garanzia{display:flex;gap:12px;align-items:center;max-width:560px;margin:10px auto 0;background:var(--verde-bg);border-radius:var(--r-md);padding:12px 14px}
-.garanzia h3{margin:0 0 4px;font-size:18px;line-height:1.25}
-.garanzia p{margin:0;font-size:14.5px;line-height:1.4}
-.garanzia .ic{width:32px;height:32px}
-
-/* FAQ */
-.faq{max-width:720px;margin:0 auto}
-details{border-bottom:1px solid var(--linha)}
-summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 2px;font-weight:700;font-size:16px;min-height:44px}
-summary::-webkit-details-marker{display:none}
-summary:after{content:"";width:9px;height:9px;border-right:2px solid var(--grafite);border-bottom:2px solid var(--grafite);transform:rotate(45deg);transition:.2s;flex:0 0 auto;margin-top:-4px}
-details[open] summary:after{transform:rotate(-135deg);margin-top:4px}
-details p{padding:0 2px 18px;color:var(--cinza);font-size:15px;line-height:1.55}
-
-/* CTA FINAL */
-.fine{position:relative;color:#fff;text-align:center;overflow:hidden;background:var(--profundo);padding:80px 0}
-.fine img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.fine:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,22,27,.68),rgba(24,22,27,.9))}
-.fine .w{position:relative;z-index:1}
-.fine h2{max-width:20ch;margin:0 auto 14px}
-.fine .prezzo{margin-bottom:12px}
-
-footer{background:var(--profundo);color:#a9a2b0;font-size:13px;text-align:center;padding:26px 20px 100px}
-footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;padding:13px 0;min-height:44px}
-
 /* barra fixa */
 .barra{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--linha);padding:10px 14px calc(10px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .3s}
 .barra.on{transform:none}
@@ -226,11 +113,9 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
 .rivela.visto{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}.rivela{opacity:1;transform:none}}
 
-/* DESKTOP */
-@media (min-width:600px){.cards{grid-template-columns:1fr 1fr}.sigilli{grid-template-columns:repeat(3,auto);justify-content:center;gap:28px}.slide{flex-basis:42%}}
+
+/* DESKTOP (hero) */
 @media (min-width:960px){
-  .bumps{grid-template-columns:repeat(3,1fr);gap:16px}
-  section{padding:88px 0}
   .hero{padding:28px 0 80px}
   .hero .w{grid-template-columns:1.1fr .9fr;column-gap:56px;align-items:center}
   .hero .testo{grid-column:1;grid-row:1}
@@ -241,16 +126,30 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
   .hero-bg img{object-position:30% 40%}
   .hero-bg{height:100%}.hero-bg:after{background:linear-gradient(90deg,rgba(24,22,27,.62) 0%,rgba(24,22,27,.38) 34%,rgba(24,22,27,.16) 52%,rgba(24,22,27,.18) 100%)}
   .hero .testo{align-self:end}
-  .costo{grid-template-columns:1fr 1fr;gap:56px}
-  .slide{flex:0 0 calc((100% - 32px)/3);max-width:none}
-  .trilho{margin:22px 0 0;padding:10px 0 16px;scroll-padding:0}
-  .slide .cel{width:78%;margin:0 auto}
-  .comp{max-width:760px;gap:16px}.col{padding:24px 22px}
-  .dasola .w{min-height:520px}
   .barra{display:none}
-  footer{padding-bottom:30px}
 }
 </style>
+<link rel="stylesheet" href="lp-below.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="lp-below.css"></noscript>
+<script>
+var PIXEL_ID = '1183172951038807'; /* Pixel da Guadagno, liberado pelo Boss. Snippet base + PageView. Purchase não entra. */
+var PAINEL_K = '87e31ddf7f36a3098e38fde1d7ba4b5e'; /* Chave k= da Guadagno, liberada pelo Boss. */
+/* Rastreio: pixel base (init + PageView) e script do painel. Purchase não entra nesta página: vai só pela CAPI. */
+(function(){
+  if (PIXEL_ID) {
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', PIXEL_ID);
+    fbq('track', 'PageView');
+  }
+  if (PAINEL_K) {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://painel.labofertas.com/api/lp/script?k=' + encodeURIComponent(PAINEL_K);
+    document.head.appendChild(s);
+  }
+})();
+</script>
+<script defer src="lp.js"></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -282,8 +181,8 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
 <!-- B1 · HERO -->
 <header class="hero">
   <div class="hero-bg"><picture>
-<source type="image/avif" srcset="img/foto-hero-480.avif 480w, img/foto-hero-800.avif 800w, img/foto-hero-1440.avif 1440w" sizes="100vw">
-<img src="img/foto-hero-800.webp" srcset="img/foto-hero-480.webp 480w, img/foto-hero-800.webp 800w, img/foto-hero-1440.webp 1440w" sizes="100vw" width="800" height="874" alt="A sinistra una manicure con la lampada UV, a destra un trattamento viso in cabina." fetchpriority="high">
+<source type="image/avif" srcset="img/foto-hero-480.avif 480w, img/foto-hero-600.avif 600w, img/foto-hero-1440.avif 1440w" sizes="(max-width: 959px) 300px, 100vw">
+<img src="img/foto-hero-600.webp" srcset="img/foto-hero-480.webp 480w, img/foto-hero-600.webp 600w, img/foto-hero-1440.webp 1440w" sizes="(max-width: 959px) 300px, 100vw" width="600" height="656" alt="A sinistra una manicure con la lampada UV, a destra un trattamento viso in cabina." fetchpriority="high">
 </picture></div>
   <div class="w">
     <div class="testo">
@@ -299,9 +198,33 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
         <span class="chip"><svg class="ic"><use href="#i-check"/></svg>Paghi una volta</span>
       </div>
       <div class="hero-duo" aria-hidden="true">
-        <img src="img/foto-hero-unha-400.webp" srcset="img/foto-hero-unha-400.webp 400w, img/foto-hero-unha-800.webp 800w, img/foto-hero-unha-1200.webp 1200w" sizes="(min-width:960px) 230px, 46vw" width="800" height="500" alt="" decoding="async" fetchpriority="low">
-        <img src="img/foto-hero-viso-400.webp" srcset="img/foto-hero-viso-400.webp 400w, img/foto-hero-viso-800.webp 800w, img/foto-hero-viso-1200.webp 1200w" sizes="(min-width:960px) 230px, 46vw" width="800" height="500" alt="" decoding="async" fetchpriority="low">
+        <img data-after-hero="img/foto-hero-unha-400.webp" data-after-hero-srcset="img/foto-hero-unha-400.webp 400w, img/foto-hero-unha-800.webp 800w, img/foto-hero-unha-1200.webp 1200w" sizes="(min-width:960px) 230px, 46vw" width="800" height="500" alt="" decoding="async" fetchpriority="low">
+        <img data-after-hero="img/foto-hero-viso-400.webp" data-after-hero-srcset="img/foto-hero-viso-400.webp 400w, img/foto-hero-viso-800.webp 800w, img/foto-hero-viso-1200.webp 1200w" sizes="(min-width:960px) 230px, 46vw" width="800" height="500" alt="" decoding="async" fetchpriority="low">
       </div>
+<script>
+(function(){
+  function fill(){
+    document.querySelectorAll('img[data-after-hero]').forEach(function(img){
+      if (img.getAttribute('src')) return;
+      var set = img.getAttribute('data-after-hero-srcset');
+      if (set) img.setAttribute('srcset', set);
+      img.src = img.getAttribute('data-after-hero');
+    });
+  }
+  function go(){
+    if (!window.gimHeroReady) {
+      window.gimHeroReady = true;
+      document.dispatchEvent(new Event('gim-hero-ready'));
+    }
+    fill();
+  }
+  var hero = document.querySelector('.hero-bg img');
+  if (!hero) go();
+  else if (hero.complete && hero.naturalWidth) go();
+  else { hero.addEventListener('load', go); hero.addEventListener('error', go); }
+  window.gimFillAfterHero = fill;
+})();
+</script>
     </div>
 
     <div class="palco">
@@ -514,280 +437,5 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
 <!-- Barra fixa (celular) [COPY v2 §11] -->
 <div class="barra" id="barra"><a class="cta" data-cta href="#comprar"><span data-riga-prezzo><span data-prezzo></span> una volta · </span>Voglio l'app</a></div>
 
-<script>
-/* ?dev=1 mostra pendências escondidas */
-if (/[?&]dev=1/.test(location.search)) document.documentElement.classList.add('dev');
-
-/* Preço num lugar só: troque aqui quando o Vini fechar o valor (câmbio Cakto). Vale para topo, oferta, CTA final e barra. */
-var PREZZO = '24,90 €'; /* Cakto IT (Boss 20/11 21:17, checkout relido). Sem dólar e sem riscado. Conferir de novo antes de publicar. */
-var PREZZO_MAGAZZINO = '9,90 €';
-var PREZZO_LISTINO = '14,90 €';
-  var PREZZO_AGENDA = '9,90 €';
-(function(){
-  var dev = document.documentElement.classList.contains('dev'), v = PREZZO || (dev ? '[PREZZO]' : '');
-  document.querySelectorAll('[data-prezzo]').forEach(function(e){ e.textContent = v; });
-  if (!v) document.querySelectorAll('[data-riga-prezzo]').forEach(function(e){ e.hidden = true; });
-  var bumps = { magazzino: PREZZO_MAGAZZINO, listino: PREZZO_LISTINO, agenda: PREZZO_AGENDA };
-  document.querySelectorAll('[data-prezzo-bump]').forEach(function(e){
-    var k = e.getAttribute('data-prezzo-bump'), val = bumps[k] || (dev ? '['+k+']' : '');
-    e.textContent = val; if (!val) e.hidden = true;
-  });
-})();
-
-/* Botão de compra (componente §1 da lp-designer): repassa UTMs e ids de clique. PENDENTE CHECKOUT: link Cakto. Repassa a query inteira da página */
-var CHECKOUT_URL = 'https://pay.cakto.com.br/stud2no'; /* Cakto stud2no, só localhost até o OK do Vini */
-/* GARANZIA (dias) e SUPPORTO (e-mail): confirmado pelo Vini 20/11 20:47 (14 dias).
-   Vazio = os trechos somem para o comprador; com ?dev=1 aparecem [GARANZIA] / [SUPPORTO]. */
-var GARANZIA = '14';
-var SUPPORTO = 'canarimtech@gmail.com';
-var PIXEL_ID = '1183172951038807'; /* Pixel da Guadagno, liberado pelo Boss. Snippet base + PageView. Purchase não entra. */
-var PAINEL_K = '87e31ddf7f36a3098e38fde1d7ba4b5e'; /* Chave k= da Guadagno, liberada pelo Boss. */
-(function(){
-  var dev = document.documentElement.classList.contains('dev');
-  var g = GARANZIA ? GARANZIA + ' giorni' : (dev ? '[GARANZIA]' : ''), m = SUPPORTO || (dev ? '[SUPPORTO]' : '');
-  document.querySelectorAll('[data-g]').forEach(function(e){ e.textContent = g; });
-  document.querySelectorAll('a[data-mail]').forEach(function(a){ a.textContent = m; if (SUPPORTO) a.href = 'mailto:' + SUPPORTO; });
-  if (!g) document.querySelectorAll('[data-riga-garanzia]').forEach(function(e){ e.hidden = true; });
-  if (!m) document.querySelectorAll('[data-riga-mail]').forEach(function(e){ e.hidden = true; });
-})();
-(function(){
-  var INTERNI = /^(dev|prints)$/i; /* parâmetros internos da LP: nunca vão para o checkout */
-  var QS_KEY = 'gim_qs';
-  function guardar(){
-    var q = new URLSearchParams(location.search), keep = new URLSearchParams();
-    q.forEach(function(v, k){ if (!INTERNI.test(k)) keep.append(k, v); });
-    if (keep.toString()) {
-      try { sessionStorage.setItem(QS_KEY, keep.toString()); } catch (e) {}
-    }
-  }
-  function misturar(alvo){
-    var q = new URLSearchParams(location.search), st = '';
-    try { st = sessionStorage.getItem(QS_KEY) || ''; } catch (e) {}
-    new URLSearchParams(st).forEach(function(v, k){ if (!INTERNI.test(k) && !q.has(k)) q.append(k, v); });
-    q.forEach(function(v, k){ if (!INTERNI.test(k) && !alvo.searchParams.has(k)) alvo.searchParams.append(k, v); });
-  }
-  guardar();
-  function destino(base){
-    var u = new URL(base, location.href);
-    misturar(u); /* query da página + sessionStorage (Cakto descarta UTM/fbclid no redirect) */
-    return u.toString();
-  }
-  document.querySelectorAll('a[data-cta]').forEach(function(a){
-    var base = a.getAttribute('data-checkout') || CHECKOUT_URL;
-    if (!base) return;
-    a.href = destino(base); a.rel = 'noopener';
-  });
-})();
-
-/* Rastreio: pixel base (init + PageView) e script do painel. Purchase não entra nesta página: vai só pela CAPI. */
-(function(){
-  if (PIXEL_ID) {
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', PIXEL_ID);
-    fbq('track', 'PageView');
-  }
-  if (PAINEL_K) {
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://painel.labofertas.com/api/lp/script?k=' + encodeURIComponent(PAINEL_K);
-    document.head.appendChild(s);
-  }
-})();
-
-/* Trava dos prints do app: liberados pelo Boss em 20/11 21:09 (SHA do box = SHA do PC, nenhum prefixo antigo com português).
-   8 webp em italiano, bump-listino refeito (SHA 5750c7cf, sem «finito in magazzino»). */
-var PRINTS_OK = true;
-(function(){
-  var q = new URLSearchParams(location.search), ver = PRINTS_OK || (q.get('dev') === '1' && q.get('prints') === '1');
-  var prints = [].slice.call(document.querySelectorAll('img[data-print]'));
-  function assignPrint(i){
-    var src = i.getAttribute('data-print');
-    if (!src || i.getAttribute('src') === src) return;
-    i.src = src;
-  }
-  function makeIo(root, margin){
-    if (!('IntersectionObserver' in window)) return null;
-    return new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if (!en.isIntersecting) return;
-        assignPrint(en.target);
-        en.target._gimIo && en.target._gimIo.unobserve(en.target);
-      });
-    }, { root: root || null, rootMargin: margin || '120px 0px' });
-  }
-  var ioPrints = makeIo(null, '120px 0px');
-  var ioStory = {};
-  window.gimObservePrint = function(img){
-    if (!img || !ver) return;
-    img.decoding = 'async';
-    var first = img.closest('.st-parte.on');
-    if (first && !first.previousElementSibling) { assignPrint(img); return; }
-    var palco = img.closest('.st-palco');
-    if (palco) {
-      if (!ioStory.current || ioStory.root !== palco) { ioStory.current = makeIo(palco, '0px 40px'); ioStory.root = palco; }
-      img._gimIo = ioStory.current;
-      if (ioStory.current) { ioStory.current.observe(img); return; }
-    }
-    if (ioPrints) { img._gimIo = ioPrints; ioPrints.observe(img); }
-    else { img.loading = 'lazy'; assignPrint(img); }
-  };
-  prints.forEach(function(i){
-    if (!ver) { var t = i.closest('.tela'); if (t) t.classList.add('vuoto'); i.style.display = 'none'; return; }
-    window.gimObservePrint(i);
-  });
-})();
-
-/* Slots de print: se o arquivo do Construtor ainda não existe, mostra o slot (nunca UI redesenhada) */
-document.querySelectorAll('.tela').forEach(function(t){
-  var img = t.querySelector('img'); if (!img) return;
-  function vazio(){ t.classList.add('vuoto'); img.style.display = 'none'; }
-  img.addEventListener('error', vazio);
-  if (img.complete && img.getAttribute('src') && img.naturalWidth === 0) vazio();
-});
-
-/* Story e trilho: esteira contínua em loop (regra fixa, Vini 21:05).
-   Anda sozinha, devagar, sem pulo. Sem setas; só bolinhas. Pausa no hover/toque.
-   Respeita prefers-reduced-motion. Swipe manual continua. */
-(function(){
-  var reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var SPEED = 42; /* px/s, esteira lenta */
-
-  function esteiraScroll(t, pts, nOrig){
-    var paused = reduz, hover = false, drag = false, vis = true, setW = 0, last = performance.now();
-    function medida(){ setW = (t.children[nOrig] ? t.children[nOrig].offsetLeft - t.children[0].offsetLeft : 0); }
-    function wrap(){
-      if (setW <= 0) return;
-      if (t.scrollLeft >= setW - 0.5) t.scrollLeft -= setW;
-      else if (t.scrollLeft < 0) t.scrollLeft += setW;
-    }
-    function passo(){ return setW > 0 ? setW / nOrig : 1; }
-    function indice(){ var p = passo(); return ((Math.round(t.scrollLeft / p) % nOrig) + nOrig) % nOrig; }
-    function marca(){ var k = indice(); [].forEach.call(pts.querySelectorAll('i'), function(p, j){ p.classList.toggle('on', j === k); }); }
-    function ir(j){
-      medida();
-      var p = passo(), cur = t.scrollLeft, base = cur >= setW ? setW : 0;
-      t.scrollTo({ left: base + j * p, behavior: reduz ? 'auto' : 'smooth' });
-    }
-    function tick(now){
-      var dt = Math.min(0.05, (now - last) / 1000); last = now;
-      if (!paused && !hover && !drag && vis && setW > 0) { t.scrollLeft += SPEED * dt; wrap(); }
-      marca();
-      if (!reduz) requestAnimationFrame(tick);
-    }
-    t.addEventListener('pointerenter', function(){ hover = true; });
-    t.addEventListener('pointerleave', function(){ hover = false; });
-    t.addEventListener('pointerdown', function(){ drag = true; });
-    addEventListener('pointerup', function(){ if (!drag) return; drag = false; wrap(); });
-    t.addEventListener('scroll', function(){ wrap(); marca(); }, { passive: true });
-    t.addEventListener('keydown', function(e){
-      if (e.key === 'ArrowRight') { e.preventDefault(); ir((indice() + 1) % nOrig); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); ir((indice() + nOrig - 1) % nOrig); }
-    });
-    addEventListener('resize', function(){ medida(); wrap(); marca(); });
-    if ('IntersectionObserver' in window) new IntersectionObserver(function(e){ vis = e[0].isIntersecting; }).observe(t);
-    medida(); marca();
-    if (!reduz) requestAnimationFrame(tick);
-    return { ir: ir, medida: medida };
-  }
-
-  /* Story do hero: filmstrip contínuo dentro do mockup, bolinhas fora */
-  (function(){
-    var s = document.querySelector('[data-story]'); if (!s) return;
-    var trilha = s.querySelector('.st-trilha'), rot = s.querySelector('.st-rot'), pts = s.querySelector('[data-st-pontos]');
-    if (!trilha) return;
-    var partes = [].slice.call(trilha.querySelectorAll('.st-parte'));
-    var n = partes.length; if (!n) return;
-    partes.forEach(function(p){ trilha.appendChild(p.cloneNode(true)); });
-    trilha.querySelectorAll('img[data-print]').forEach(function(img){
-      if (window.gimObservePrint) window.gimObservePrint(img);
-    });
-    if (pts) {
-      for (var i = 0; i < n; i++) { var d = document.createElement('i'); d.setAttribute('aria-hidden','true'); pts.appendChild(d); }
-    }
-    var pos = 0, setW = 0, hover = false, drag = false, vis = true, last = performance.now(), x0 = 0, p0 = 0;
-    function w(){ return s.querySelector('.st-palco').clientWidth || 0; }
-    function medida(){ setW = w() * n; }
-    function wrap(){ if (setW <= 0) return; if (pos >= setW) pos -= setW; if (pos < 0) pos += setW; }
-    function aplica(){ trilha.style.transform = 'translateX(' + (-pos) + 'px)'; }
-    function indice(){ var L = w(); return L ? ((Math.round(pos / L) % n) + n) % n : 0; }
-    function marca(){
-      var k = indice();
-      if (rot) rot.textContent = partes[k].dataset.rot || '';
-      if (pts) [].forEach.call(pts.querySelectorAll('i'), function(p, j){ p.classList.toggle('on', j === k); });
-    }
-    function ir(j){ medida(); pos = j * w(); wrap(); aplica(); marca(); }
-    if (pts) [].forEach.call(pts.querySelectorAll('i'), function(p, j){ p.addEventListener('click', function(){ ir(j); }); });
-    var btn = s.querySelector('.st-btn');
-    function alvo(){ return btn || s; }
-    alvo().addEventListener('pointerdown', function(e){
-      drag = true; hover = true; x0 = e.clientX; p0 = pos;
-      try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
-    });
-    alvo().addEventListener('pointermove', function(e){
-      if (!drag) return;
-      pos = p0 - (e.clientX - x0); wrap(); aplica(); marca();
-    });
-    function solta(){ if (!drag) return; drag = false; hover = false; wrap(); aplica(); }
-    alvo().addEventListener('pointerup', solta);
-    alvo().addEventListener('pointercancel', solta);
-    s.addEventListener('pointerenter', function(){ hover = true; });
-    s.addEventListener('pointerleave', function(){ if (!drag) hover = false; });
-    if ('IntersectionObserver' in window) new IntersectionObserver(function(e){ vis = e[0].isIntersecting; }).observe(s);
-    addEventListener('resize', function(){ var k = indice(); medida(); ir(k); });
-    function tick(now){
-      var dt = Math.min(0.05, (now - last) / 1000); last = now;
-      if (!reduz && !hover && !drag && vis && setW > 0) { pos += SPEED * dt; wrap(); aplica(); marca(); }
-      if (!reduz) requestAnimationFrame(tick);
-    }
-    medida(); aplica(); marca();
-    if (reduz) s.classList.add('parado');
-    else requestAnimationFrame(tick);
-  })();
-
-  /* Trilho das funcionalidades: clones + scroll contínuo, só bolinhas */
-  document.querySelectorAll('[data-trilho]').forEach(function(t){
-    var pts = t.nextElementSibling, cards = [].slice.call(t.children);
-    if (!pts || !pts.hasAttribute('data-pontos') || !cards.length) return;
-    var n = cards.length;
-    var api;
-    for (var i = 0; i < n; i++) {
-      var d = document.createElement('i'); d.setAttribute('aria-hidden','true');
-      (function(j){ d.addEventListener('click', function(){ api.ir(j); }); })(i);
-      pts.appendChild(d);
-    }
-    cards.forEach(function(c){ t.appendChild(c.cloneNode(true)); });
-    t.querySelectorAll('img[data-print]').forEach(function(img){
-      if (window.gimObservePrint) window.gimObservePrint(img);
-    });
-    api = esteiraScroll(t, pts, n);
-    var x0 = 0, s0 = 0, mov = false;
-    t.addEventListener('pointerdown', function(e){
-      if (e.pointerType !== 'mouse') return;
-      x0 = e.clientX; s0 = t.scrollLeft; mov = true;
-    });
-    addEventListener('pointermove', function(e){ if (mov) t.scrollLeft = s0 - (e.clientX - x0); });
-    addEventListener('pointerup', function(){ mov = false; });
-  });
-})();
-
-/* entrada suave */
-(function(){
-  var els = document.querySelectorAll('.rivela');
-  if (!('IntersectionObserver' in window)) { els.forEach(function(e){ e.classList.add('visto'); }); return; }
-  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('visto'); io.unobserve(e.target); } }); }, {rootMargin:'0px 0px -8% 0px'});
-  els.forEach(function(e){ io.observe(e); });
-})();
-
-/* barra fixa: aparece depois do hero, some sobre a oferta */
-(function(){
-  var b = document.getElementById('barra'), hero = document.querySelector('.hero'), of = document.getElementById('comprar'), fim = document.querySelector('.fine');
-  var depoisHero = false, sobreOferta = false, sobreFim = false;
-  function upd(){ b.classList.toggle('on', depoisHero && !sobreOferta && !sobreFim); }
-  if (!('IntersectionObserver' in window)) return;
-  new IntersectionObserver(function(e){ depoisHero = !e[0].isIntersecting; upd(); }).observe(hero);
-  new IntersectionObserver(function(e){ sobreOferta = e[0].isIntersecting; upd(); }).observe(of);
-  new IntersectionObserver(function(e){ sobreFim = e[0].isIntersecting; upd(); }).observe(fim);
-})();
-</script>
 </body>
 </html>

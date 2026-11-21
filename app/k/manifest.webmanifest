@@ -1,0 +1,37 @@
+{
+  "name": "Guadagno in Mano per estetiste e onicotecniche",
+  "short_name": "Guadagno in Mano",
+  "lang": "it",
+  "description": "Guadagno in Mano per estetiste e onicotecniche",
+  "start_url": "./",
+  "scope": "../",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f5f9",
+  "theme_color": "#3f3a45",
+  "icons": [
+    {
+      "src": "../favicon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "../icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../icone-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

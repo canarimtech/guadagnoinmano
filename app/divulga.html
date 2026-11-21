@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#3f3a45">
+  <meta name="apple-mobile-web-app-title" content="Guadagno in Mano">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Agenda e clienti · Guadagno in Mano</title>
+<!-- AGENDA CHEIA (bump, R$ 67, nivel `divulga`). Escada de 09/11/2026: clientes e agenda
+     juntos, lendo os trattamenti do Controle do Studio (lucrostudioit_v1, so leitura).
+     Clientes: ficha com WhatsApp e anotacoes, historico de trattamenti (data, servico,
+     valor), quanto gastou, quantas vezes veio, ranking e sumidas com a mensagem pronta.
+     Agenda: marcar, remarcar e desmarcar, visao do dia e da semana, lembrete da vespera
+     em 1 toque (abre o wa.me com a mensagem, nada e enviado sozinho), aviso do dia da
+     manutencao pelo ciclo de cada servico (padrao 21 dias, editavel), e o horario vira
+     trattamento no Controle em 1 toque. Tudo no aparelho, sem servidor.
+     Mora no arquivo divulga.html pra nao mudar pastas e niveis (era o Cobrar na Mao da
+     revendedora). -->
+<!-- ativacao pelo e-mail da compra: roda ANTES de tudo (ver ativacao.js) -->
+<script>/* rede de seguranca da ativacao: decide "legado" ou "pendente" ANTES de a pagina gravar o tema,
+   mesmo que o ativacao.js nao carregue (sem isto, a primeira abertura com rede ruim virava legado) */
+try{var K='lucrostudioit_ativacao';if(!localStorage.getItem(K)){var u=0;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('lucrostudioit_')===0){u=1;break}}localStorage.setItem(K,JSON.stringify(u?{estado:'legado',desde:Date.now()}:{estado:'pendente'}))}}catch(e){}</script>
+<script src="ativacao.js"></script>
+<!-- o que esta liberado: a mesma regra do menu (03/11/2026) -->
+<script src="liberado.js"></script>
+<style>
+:root{
+  --vinho:#8e2757; --vinho-escuro:#6d1d43; --rose:#f6e7ee; --rose-2:#fdf4f8;
+  --tinta:#2b2230; --cinza:#675c6d; --linha:#eadfe6; --branco:#fff;
+  --verde:#1e7d4f; --verde-bg:#e6f4ec; --ambar:#a05e03; --ambar-bg:#fdf2df;
+  --verm:#b3261e; --verm-bg:#fbeae9; --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--rose-2);color:var(--tinta);
+  font-size:16px;padding-bottom:76px;min-height:100vh}
+header{background:var(--vinho);color:#fff;padding:12px 14px;position:sticky;top:0;z-index:20;
+  display:flex;justify-content:space-between;align-items:center;gap:10px}
+header h1{font-size:16.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .loja{font-size:12px;opacity:.85;font-weight:400}
+main{padding:14px;max-width:560px;margin:0 auto}
+.card{background:var(--branco);border:1px solid var(--linha);border-radius:var(--radius);
+  padding:14px;margin-bottom:12px}
+.card h2{font-size:14px;color:var(--cinza);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--rose);border-radius:12px;padding:12px}
+.kpi .v{font-size:22px;font-weight:800;color:var(--vinho);white-space:nowrap;letter-spacing:-.3px}
+.kpi .v.grande{font-size:18px}
+.kpi .v.pos{color:var(--verde)} .kpi .v.neg{color:var(--verm)}
+.kpi .l{font-size:12px;color:var(--cinza);margin-top:2px}
+button{font-family:inherit;border:0;cursor:pointer;border-radius:12px;font-size:16px}
+.btn{background:var(--vinho);color:#fff;width:100%;padding:15px;font-weight:700;margin-top:8px}
+.btn:active{background:var(--vinho-escuro)}
+.btn.sec{background:var(--rose);color:var(--vinho)}
+.btn.mini{width:auto;padding:8px 14px;font-size:14px;margin:0}
+.btn.perigo{background:var(--verm-bg);color:var(--verm)}
+input,select{width:100%;padding:13px;border:1.5px solid #8f8496;border-radius:12px;
+  font-size:16px;font-family:inherit;background:#fff;margin-top:4px}
+input:focus,select:focus{outline:none;border-color:var(--vinho)}
+label{font-size:13px;color:var(--cinza);font-weight:600;display:block;margin-top:12px}
+.linha2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--linha);
+  display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;padding:9px 2px 7px;font-size:11px;color:var(--cinza);
+  display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:0}
+nav button.on{color:var(--vinho);font-weight:700}
+nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.lista-item{display:flex;justify-content:space-between;align-items:center;padding:12px 2px;
+  border-bottom:1px solid var(--linha);gap:8px}
+.lista-item:last-child{border-bottom:0}
+.lista-item .info{flex:1;min-width:0}
+.lista-item .t{font-weight:600;font-size:15px}
+.lista-item .s{font-size:12.5px;color:var(--cinza);margin-top:1px}
+.badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.badge.ok{background:var(--verde-bg);color:var(--verde)}
+.badge.baixo{background:var(--ambar-bg);color:var(--ambar)}
+.badge.zero{background:var(--verm-bg);color:var(--verm)}
+.badge.fiado{background:var(--ambar-bg);color:var(--ambar)}
+/* O fundo do modal segue a AREA VISIVEL (visualViewport), nao a tela inteira: top e height vem do
+   script "MODAL ACIMA DO TECLADO". Bug real, 19/10/2026: o teclado do celular cobre o fundo da tela
+   sem encolher a pagina; a busca do "Registrar venda" filtrava a lista, o modal (preso no fundo)
+   encolhia e ia inteiro para tras do teclado. */
+.modal-fundo{position:fixed;left:0;right:0;top:0;height:100%;background:rgba(43,34,48,.5);z-index:40;display:none;
+  align-items:flex-end;justify-content:center}
+.modal-fundo.aberto{display:flex}
+.modal{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;
+  max-height:88%;overflow-y:auto;padding:18px 16px 24px}
+/* teclado aberto: o modal ocupa a area visivel inteira, entao o campo fica parado no topo
+   enquanto a lista encolhe embaixo dele */
+.modal-fundo.teclado .modal{height:100%;max-height:none;border-radius:0}
+.modal h3{font-size:17px;margin-bottom:4px}
+.modal .sub{font-size:13px;color:var(--cinza);margin-bottom:10px}
+.aviso{border-radius:12px;padding:11px 12px;font-size:13.5px;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start}
+.aviso.backup{background:var(--ambar-bg);color:var(--ambar)}
+.aviso.verde{background:var(--verde-bg);color:var(--verde)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;background:var(--tinta);
+  color:#fff;padding:12px 18px;border-radius:12px;font-size:14.5px;z-index:60;opacity:0;
+  transition:opacity .25s;max-width:92vw;text-align:center;pointer-events:none}
+.toast.mostra{opacity:1}
+.toast.guadagno{background:var(--verde);font-weight:700}
+.vazio{text-align:center;color:var(--cinza);font-size:14px;padding:26px 10px;line-height:1.5}
+.passo{font-size:12px;color:var(--cinza);text-align:center;margin-bottom:10px;font-weight:600}
+.escolha-prod{display:flex;justify-content:space-between;align-items:center;width:100%;
+  background:var(--rose);text-align:left;padding:13px;margin-bottom:8px;border-radius:12px}
+.escolha-prod .n{font-weight:700} .escolha-prod .p{color:var(--vinho);font-weight:700}
+.qtd-row{display:flex;align-items:center;gap:14px;justify-content:center;margin:10px 0}
+.qtd-row button{width:52px;height:52px;font-size:26px;background:var(--rose);color:var(--vinho);font-weight:800}
+.qtd-row .n{font-size:30px;font-weight:800;min-width:52px;text-align:center}
+/* carrinho de venda (varios produtos numa venda) */
+.cart-item{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  background:var(--rose-2);border:1px solid var(--rose);padding:11px 12px;margin-bottom:8px;border-radius:12px}
+.cart-item .n{font-weight:700;font-size:15px;line-height:1.3}
+.cart-item .s{font-size:12.5px;color:var(--cinza);margin-top:2px}
+.cart-item .v{font-weight:800;white-space:nowrap}
+.cart-item .x{width:34px;height:34px;flex-shrink:0;padding:0;font-size:19px;font-weight:800;
+  background:#fff;color:var(--cinza);border:1px solid var(--linha)}
+.cart-tot{display:flex;justify-content:space-between;align-items:baseline;
+  border-top:2px solid var(--vinho);margin-top:4px;padding-top:10px}
+.cart-tot .l{font-weight:700;font-size:15px} .cart-tot .v{font-weight:800;font-size:22px;color:var(--vinho)}
+.cart-guadagno{text-align:right;font-size:13px;color:var(--verde);font-weight:700;margin-top:2px}
+/* recebimento de Da incassare (total ou parcial) */
+.fi-linhas{background:var(--rose-2);border-radius:12px;padding:12px;margin:4px 0 14px}
+.fi-linha{display:flex;justify-content:space-between;font-size:14.5px;padding:3px 0}
+.fi-linha.falta{border-top:1px solid var(--rose);margin-top:5px;padding-top:7px;font-weight:800;font-size:16px}
+.fi-linha.falta .v{color:var(--vinho)}
+/* ===== O NUMERO QUE IMPORTA E GRANDE (21/09/2026) =====
+   Regra do dono: "as clientes tem MUITA dificuldade com app, tem que ser facil e
+   visualmente simples". Antes, "ainda falta" era mais uma linha do mesmo tamanho
+   entre outras duas, e o resultado do que ela digitava vinha como frase corrida.
+   Agora o que ela precisa conferir de relance (quanto deve agora, quanto fica
+   depois) e numero grande, e a frase vira so o rotulo em cima dele. */
+.fi-falta{border-top:1px solid var(--rose);margin-top:8px;padding-top:9px;text-align:center}
+.fi-falta .rot{font-size:12.5px;color:var(--cinza);font-weight:600;text-transform:lowercase}
+.fi-falta .big{font-size:29px;font-weight:800;color:var(--vinho);line-height:1.15;margin-top:2px}
+.fi-previa .rot{font-size:12.5px;color:var(--cinza);font-weight:600;line-height:1.35}
+.fi-previa .big{font-size:25px;font-weight:800;color:var(--vinho);line-height:1.15;margin-top:3px}
+.fi-previa.quita .rot{color:var(--verde)}
+.fi-previa.quita .big{color:var(--verde)}
+.fi-hist{font-size:12.5px;color:var(--cinza);margin-top:8px;line-height:1.6}
+/* parcelas combinadas, dentro do quadro de valores do Da incassare */
+.fi-parc{border-top:1px solid var(--rose);margin-top:8px;padding-top:8px;
+  font-size:13.5px;color:var(--cinza);text-align:center}
+.fi-parc b{color:var(--vinho)}
+/* atalhos que SO preenchem o campo: visual de link, nunca de botao de acao */
+.fi-atalhos{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.fi-atalhos button{flex:1;min-width:120px;padding:10px 8px;background:#fff;
+  border:1.5px solid var(--linha);color:var(--vinho);font-size:13.5px;font-weight:700}
+.fi-atalhos button:active{background:var(--rose)}
+/* a previa: diz o que o botao vai fazer, antes de ela tocar */
+.fi-previa{margin-top:12px;background:var(--rose-2);border-radius:11px;padding:11px 12px;
+  font-size:14px;text-align:center;color:var(--tinta);line-height:1.45}
+.fi-previa b{color:var(--vinho)}
+.fi-previa.quita{background:var(--verde-bg);color:var(--verde)}
+.fi-previa.quita b{color:var(--verde)}
+.fi-previa.aviso-erro{background:var(--verm-bg);color:var(--verm)}
+.fi-previa.aviso-erro b{color:var(--verm)}
+.fi-previa.aviso-vazio{background:var(--rose-2);color:var(--cinza)}
+.btn:disabled{opacity:.45}
+/* data da despesa: hoje/ontem resolvem o caso comum sem abrir o calendario */
+.dt-atalhos{display:flex;gap:7px;margin:6px 0 8px}
+.dt-atalhos button{flex:1;padding:12px 8px;background:#fff;border:1.5px solid var(--linha);
+  color:var(--vinho);font-size:14.5px;font-weight:700;border-radius:11px}
+.dt-atalhos button.on{background:var(--vinho);color:#fff;border-color:var(--vinho)}
+.dt-atalhos button:active{opacity:.75}
+.dt-previa{margin-top:9px;background:var(--rose-2);border-radius:11px;padding:10px 12px;
+  font-size:13.5px;text-align:center;color:var(--tinta);line-height:1.45}
+.dt-previa b{color:var(--vinho)}
+.dt-previa.erro{background:var(--verm-bg);color:var(--verm)}
+.dt-previa.erro b{color:var(--verm)}
+/* cancelar embaixo de um botao de acao nao pode ter o mesmo peso dele */
+.btn.discreto{background:none;color:var(--cinza);font-weight:600;padding:12px;font-size:14.5px}
+.btn.discreto:active{background:var(--rose-2)}
+/* historico recolhido: ocupa uma linha ate ela querer ver */
+.fi-det{margin-top:14px;border-top:1px solid var(--linha);padding-top:10px}
+.fi-det summary{font-size:13.5px;color:var(--cinza);font-weight:600;cursor:pointer;
+  list-style:none;padding:8px 2px;display:flex;align-items:center;gap:7px}
+.fi-det summary::-webkit-details-marker{display:none}
+.fi-det summary::before{content:'\203a';font-weight:800;color:var(--vinho);font-size:17px;
+  line-height:1;display:inline-block;width:10px;text-align:center}
+.fi-det[open] summary::before{content:'\2039'}
+.fi-hl{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:7px 0;font-size:13.5px;border-bottom:1px solid var(--linha)}
+.fi-hl:last-child{border-bottom:0}
+.fi-hl button{font-size:11.5px;padding:4px 9px}
+.pgto-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.pgto-grid button{padding:13px;background:var(--rose);color:var(--tinta);font-weight:600;font-size:15px}
+.pgto-grid button.on{background:var(--vinho);color:#fff}
+/* parcelas: grade de botoes grandes, do mesmo tamanho, faceis de acertar com o dedo */
+/* ===== A VENDA E UM BLOCO DE DUAS FAIXAS (14/09/2026) =====
+   Informacao em cima, botoes embaixo na largura inteira. Antes disso os botoes
+   moravam numa coluna estreita a direita e espremiam o texto ate quebrar letra a
+   letra no celular. */
+.venda-bloco{border-bottom:1px solid var(--linha);padding:13px 2px 12px}
+.venda-bloco:last-child{border-bottom:0}
+.venda-topo{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.venda-topo .info{flex:1;min-width:0}
+.venda-topo .t{font-weight:600;font-size:15px;line-height:1.3}
+.venda-topo .s{font-size:12.5px;color:var(--cinza);margin-top:3px;line-height:1.45}
+.venda-valor{text-align:right;flex-shrink:0}
+.venda-valor .vv{font-weight:800;font-size:16px;white-space:nowrap}
+.venda-valor .badge{display:inline-block;margin-top:4px}
+.venda-acoes{display:flex;gap:5px;margin-top:10px}
+.venda-acoes .va{flex:1 1 0;min-width:0;white-space:nowrap;padding:9px 3px;font-size:12.5px;font-weight:700;
+  background:var(--rose);color:var(--vinho);border-radius:10px}
+.venda-acoes .va.principal{background:var(--vinho);color:#fff}
+.venda-acoes .va.perigo{background:var(--verm-bg);color:var(--verm)}
+.venda-acoes .va:active{opacity:.75}
+/* atalho pro Da incassare: linha clicavel, nao mais um aviso morto */
+.kpi-link{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  margin-top:10px;background:var(--ambar-bg);color:var(--ambar);border:0;border-radius:12px;
+  padding:12px 14px;font-size:14px;font-family:inherit;text-align:left;font-weight:600}
+.kpi-link b{font-size:16px;font-weight:800}
+.kpi-link .seta{font-size:22px;font-weight:800;line-height:1;opacity:.7}
+.nota-caixa{font-size:12.5px;color:var(--cinza);line-height:1.45;margin-top:10px;text-align:center}
+.parc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:6px}
+.parc-grid button{padding:12px 4px;background:var(--rose);color:var(--tinta);font-weight:700;font-size:14.5px}
+.parc-grid button.on{background:var(--vinho);color:#fff}
+.parc-info{margin-top:9px;background:var(--rose-2);border:1px solid var(--rose);border-radius:11px;
+  padding:10px 12px;font-size:14.5px;color:var(--tinta);text-align:center}
+.parc-info b{color:var(--vinho);font-size:16px}
+/* resumo da venda com desconto (30/09/2026): subtotal, desconto e total, como no caixa */
+.resumo{margin:12px 0 4px;border:1px solid var(--linha);border-radius:14px;padding:4px 14px}
+.resumo .rl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;font-size:14.5px}
+.resumo .rl + .rl{border-top:1px solid var(--linha)}
+.resumo .rl .v{font-weight:700;white-space:nowrap}
+.resumo .rl.menos .v{color:var(--verm)}
+.resumo .rl.tot{font-weight:800;font-size:16px;border-top:1px solid var(--linha)}
+.resumo .rl.tot .v{font-size:20px;color:var(--vinho);font-weight:800}
+.desc-ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.desc-tipo{display:flex;background:var(--rose);border-radius:9px;padding:3px}
+.desc-tipo button{padding:6px 11px;background:transparent;color:var(--cinza);font-weight:800;font-size:13.5px;border-radius:7px}
+.desc-tipo button.on{background:#fff;color:var(--vinho);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.resumo input#descImporto{width:108px;margin:0;padding:9px 10px;text-align:right;font-size:16px;font-weight:700}
+.desc-info{font-size:12.5px;color:var(--cinza);text-align:right;margin:-4px 0 10px;line-height:1.4}
+.desc-info .ruim{color:var(--verm);font-weight:700}
+.edit-aviso{margin:10px 0 4px;background:var(--ambar-bg);color:var(--ambar);border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.55}
+.edit-aviso.oculto{display:none}
+.opcional{font-weight:600;color:var(--cinza);text-transform:none;letter-spacing:0}
+.opcional.obrig{color:var(--vinho)}
+.mes-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.mes-nav .m{font-weight:800;font-size:16px;text-transform:capitalize}
+.mes-nav button{background:var(--rose);color:var(--vinho);width:38px;height:38px;font-size:18px;font-weight:800}
+.oculto{display:none!important}
+.filtros{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto}
+.filtros button{padding:7px 13px;background:#fff;border:1.5px solid var(--linha);color:var(--cinza);font-size:13.5px;font-weight:600;white-space:nowrap}
+.filtros button.on{background:var(--vinho);color:#fff;border-color:var(--vinho)}
+.wizard-logo{text-align:center;padding:26px 0 10px}
+.wizard-logo .m1{font-size:26px;font-weight:800;color:var(--vinho)}
+.wizard-logo .m2{font-size:14px;color:var(--cinza);margin-top:4px}
+
+.cfg-fundo{position:fixed;inset:0;background:rgba(43,34,48,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.cfg-fundo.aberto{display:flex}
+.cfg-box{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:18px 16px 26px}
+.cfg-box h3{font-size:17px;margin-bottom:2px}
+.cfg-box .cfg-sub{font-size:13px;color:var(--cinza);margin-bottom:14px}
+.cfg-box h4{font-size:12.5px;color:var(--cinza);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px}
+.cfg-cores{display:flex;gap:12px}
+.cfg-cores button{width:42px;height:42px;border-radius:50%;border:3px solid transparent;outline:2px solid var(--linha);cursor:pointer}
+.cfg-cores button.on{border-color:var(--tinta)}
+.cfg-btn{background:var(--vinho);color:#fff;width:100%;padding:14px;font-weight:700;border:0;border-radius:12px;font-size:15.5px;cursor:pointer;margin-top:8px;font-family:inherit}
+.cfg-btn.sec{background:var(--rose);color:var(--vinho)}
+.btn-cfg{background:none;border:0;color:#fff;display:flex;align-items:center;cursor:pointer;padding:4px}
+.btn-cfg svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:360px){
+  header h1{font-size:15px}
+  header .loja{font-size:11px}
+  #btnBkpTopo{padding:7px 9px!important;font-size:12px!important}
+  .kpi .v{font-size:19px}
+  .kpi .v.grande{font-size:16px}
+  nav button{font-size:10px}
+}
+.pag{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;flex-wrap:wrap}
+.pag button{min-width:38px;height:38px;padding:0 10px;background:#fff;border:1.5px solid var(--linha);
+  color:var(--tinta);font-size:14.5px;font-weight:700;border-radius:10px}
+.pag button.on{background:var(--vinho);color:#fff;border-color:var(--vinho)}
+.pag button:disabled{opacity:.35}
+.pag .info{width:100%;text-align:center;font-size:12.5px;color:var(--cinza);margin-top:2px}
+/* faixa de instalacao: o caminho VISIVEL pra virar app na tela inicial */
+.faixa-inst{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--linha);
+  border-left:4px solid var(--vinho);border-radius:14px;padding:12px 12px 12px 13px;margin:0 auto 14px;max-width:560px}
+.faixa-inst .fi-ico{width:40px;height:40px;border-radius:11px;background:var(--rose);display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
+.faixa-inst .fi-ico svg{width:21px;height:21px;fill:none;stroke:var(--vinho);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.faixa-inst .fi-txt{flex:1;min-width:0}
+.faixa-inst .fi-txt b{display:block;font-size:14.5px;line-height:1.25}
+.faixa-inst .fi-txt span{display:block;font-size:12.5px;color:var(--cinza);line-height:1.35;margin-top:2px}
+.faixa-inst .fi-btn{background:var(--vinho);color:#fff;border:0;border-radius:11px;padding:11px 15px;
+  font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap}
+.faixa-inst .fi-x{background:none;border:0;color:var(--cinza);font-size:20px;line-height:1;padding:2px 4px;
+  cursor:pointer;flex-shrink:0;font-family:inherit}
+@media(max-width:400px){
+  .faixa-inst{flex-wrap:wrap}
+  .faixa-inst .fi-btn{width:100%;order:9}
+}
+/* passo a passo de instalacao (iPhone, e Android que nao ofereceu o prompt) */
+.ps-fundo{position:fixed;inset:0;background:rgba(43,34,48,.55);z-index:60;display:none;align-items:flex-end;justify-content:center}
+.ps-fundo.aberto{display:flex}
+.ps-box{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:20px 18px 26px}
+.ps-box h3{font-size:18px;margin-bottom:3px}
+.ps-box .ps-sub{font-size:13.5px;color:var(--cinza);line-height:1.45;margin-bottom:15px}
+.ps-box ol{list-style:none;counter-reset:ps;margin:0;padding:0}
+.ps-box ol li{counter-increment:ps;position:relative;padding:0 0 15px 40px;font-size:14.5px;line-height:1.5}
+.ps-box ol li::before{content:counter(ps);position:absolute;left:0;top:-1px;width:27px;height:27px;
+  border-radius:50%;background:var(--vinho);color:#fff;font-weight:800;font-size:13.5px;
+  display:flex;align-items:center;justify-content:center}
+.ps-box .ps-ico{width:18px;height:18px;vertical-align:-4px;fill:none;stroke:var(--vinho);
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin:0 1px}
+.ps-box .ps-btn{background:var(--vinho);color:#fff;width:100%;padding:14px;font-weight:700;border:0;
+  border-radius:12px;font-size:15.5px;cursor:pointer;font-family:inherit;margin-top:4px}
+.ps-box .ps-nota{display:block;font-size:12.5px;line-height:1.4;color:var(--ambar);
+  background:var(--ambar-bg);border-radius:9px;padding:7px 10px;margin-top:6px}
+.ps-aviso{display:flex;gap:9px;background:var(--rose);border-radius:11px;padding:11px 12px;
+  margin-bottom:14px;font-size:13px;line-height:1.45;color:var(--tinta)}
+.ps-aviso svg{width:17px;height:17px;flex-shrink:0;margin-top:1px;fill:none;stroke:var(--vinho);
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ps-aviso b{font-weight:800}
+/* ===== AGENDA CHEIA ===== */
+.opcional{font-weight:400;color:var(--cinza)}
+.h2-modal{font-size:13px;color:var(--cinza);font-weight:600;margin:16px 0 4px;text-transform:uppercase;letter-spacing:.4px}
+.seg{display:flex;background:#fff;border:1.5px solid var(--linha);border-radius:12px;padding:3px;margin-bottom:12px}
+.seg button{flex:1;background:none;padding:10px;font-size:15px;font-weight:700;color:var(--cinza);border-radius:9px;min-height:44px}
+.seg button.on{background:var(--vinho);color:#fff}
+.filtros button.on{background:var(--vinho);border-color:var(--vinho);color:#fff}
+.hr{display:flex;gap:12px;padding:12px 2px;border-bottom:1px solid var(--linha)}
+.hr:last-child{border-bottom:0}
+.hr-h{font-size:18px;font-weight:800;color:var(--vinho);min-width:54px}
+.hr-i{flex:1;min-width:0}
+.hr-i .t{font-weight:700;font-size:15.5px;overflow-wrap:anywhere}
+.hr-i .s{font-size:13px;color:var(--cinza);margin-top:1px;overflow-wrap:anywhere}
+.hr.feito .hr-h{color:var(--verde)}
+.hr-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.hr-tags:empty{display:none}
+.hr-acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.hr-acoes:empty{display:none}
+.hr-acoes button{background:var(--rose);color:var(--vinho);font-size:13.5px;font-weight:700;padding:9px 11px;min-height:40px}
+.hr-acoes button.forte{background:var(--vinho);color:#fff}
+.sem-dia{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:none;border-bottom:1px solid var(--linha);border-radius:0;padding:11px 2px;color:var(--tinta)}
+.sem-dia:last-child{border-bottom:0}
+.sem-dia.hoje .sd-d{background:var(--vinho);color:#fff}
+.sd-d{display:flex;flex-direction:column;align-items:center;min-width:48px;background:var(--rose);color:var(--vinho);border-radius:10px;padding:5px 4px;font-size:12px;font-weight:700}
+.sd-d b{font-size:18px}
+.sd-l{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:4px 10px;font-size:14px;padding-top:4px}
+.sd-l span{white-space:nowrap}
+.sd-l i{color:var(--cinza)}
+.col-btn{display:flex;flex-direction:column;gap:6px}
+.col-btn .btn.mini{min-height:38px}
+.ciclo{display:flex;align-items:center;gap:6px}
+.ciclo input{width:68px;text-align:center;margin:0;padding:9px}
+.ciclo span{font-size:13px;color:var(--cinza)}
+.sem-ficha{font-size:11px;font-weight:700;color:var(--cinza);background:var(--rose);border-radius:99px;padding:2px 7px;margin-left:4px;white-space:nowrap}
+.nav-n{position:absolute;top:4px;left:calc(50% + 6px);background:var(--verm);color:#fff;font-size:10.5px;font-weight:800;border-radius:99px;min-width:17px;height:17px;line-height:17px;padding:0 4px}
+nav button{position:relative}
+.cli-sug{margin-top:6px}
+.cli-op{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;
+  background:var(--rose);color:var(--tinta);padding:13px 14px;margin-top:6px;font-size:16px;font-weight:700;border-radius:12px}
+.cli-op small{font-size:12.5px;color:var(--cinza);font-weight:600}
+.lista-item .t,.lista-item .s{overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:center;gap:11px;min-width:0">
+    <a href="./" id="voltarMenu" aria-label="Torna al menu" style="color:#fff;display:flex;flex-shrink:0">
+      <svg style="width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    </a>
+    <div style="min-width:0"><h1>Agenda e clienti</h1><div class="loja" id="hdrLoja" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div></div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<nav id="navBar">
+  <button data-tela="agenda" class="on"><svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>Agenda</button>
+  <button data-tela="avisos"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 003.4 0"/></svg>Avvisi<span class="nav-n oculto" id="navAvisosN"></span></button>
+  <button data-tela="clientes"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0M16 4.5a3.5 3.5 0 010 7M18 14a6 6 0 013.5 6"/></svg>Clienti</button>
+</nav>
+
+<div class="modal-fundo" id="modalFundo" onclick="if(event.target===this)Modal.fechar()">
+  <div class="modal" id="modalCorpo" role="dialog" aria-modal="true" tabindex="-1"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== O DIA E O DO CELULAR DELA (16/10/2026) =====
+   Antes era new Date().toISOString(), que da o dia em Londres (UTC). No horario de
+   Brasilia, das 21h a meia-noite a venda nascia com a data de AMANHA, sumia da tela
+   Oggi e, no ultimo dia do mes, caia no mes seguinte. Agora e o dia do fuso do
+   aparelho, que no Brasil e o da cidade dela (Brasilia, Manaus, Acre, Noronha). */
+function hoje(){ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+function agora(){ return new Date().toISOString(); }
+function dataBR(iso){ return String(iso).split('-').reverse().join('/'); }
+/* n dias antes de um dia ISO, sem o fuso mexer no resultado */
+function diaAntes(iso, n){ const d=new Date(iso+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()-n); return d.toISOString().slice(0,10); }
+/* o espaco aqui e NAO-SEPARAVEL (\u00a0): sem ele "4x de R$ 35,00" quebrava entre
+   o "R$" e o numero no fim da linha, e a lojista tinha que remontar o valor */
+function rs(n){ return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(Number(Math.round(n*100)/100)); }
+function num(v){ const s=String(v).replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'); const n=parseFloat(s); return isNaN(n)?0:n; }
+function fmtMoeda(n){ return (n||n===0) ? rs(n) : ''; }
+const PGTO_LABEL={contanti:'Contanti',carta:'Carta',bonifico:'Bonifico',satispay:'Satispay',da_incassare:'Da incassare',pix:'Contanti',Contanti:'Contanti','Carta':'Carta',cartao:'Carta','Da incassare':'Da incassare'};
+function rotuloPgto(f){ return PGTO_LABEL[f]||f; }
+function ehIncasso(x){ const k=(x&&typeof x==='object')?x.pgto:x; return k==='da_incassare'||k==='Da incassare'; }
+const TEMAS={
+  vinho:   {a:'#8e2757',b:'#6d1d43',c:'#f6e7ee',d:'#fdf4f8',nome:'Bordeaux'},
+  violeta: {a:'#6b3fa0',b:'#532e80',c:'#efe8f7',d:'#f9f5fd',nome:'Viola'},
+  esmeralda:{a:'#176b50',b:'#145c45',c:'#e4f2ec',d:'#f3faf7',nome:'Smeraldo'},
+  petroleo:{a:'#22677a',b:'#194f5e',c:'#e3eff3',d:'#f2f8fa',nome:'Petrolio'},
+  grafite: {a:'#3f3a45',b:'#2b2730',c:'#ece9ef',d:'#f7f5f9',nome:'Grafite'}
+};
+function aplicarTema(n){ const t=TEMAS[n]||TEMAS.vinho; const r=document.documentElement.style;
+  r.setProperty('--vinho',t.a); r.setProperty('--vinho-escuro',t.b);
+  r.setProperty('--rose',t.c); r.setProperty('--rose-2',t.d);
+  const m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute('content',t.a); }
+aplicarTema((function(){ try{ return localStorage.getItem('lucrostudioit_tema'); }catch(e){ return null; } })()||'grafite');
+
+/* ===== A AGENDA CHEIA CONFERE O DIREITO AO ABRIR (mesma regra do menu, liberado.js) =====
+   Sem direito aparece a vitrine do card travado. Se o liberado.js nao carregou,
+   recarrega UMA vez e, se ainda faltar, abre: quem pagou nunca fica trancado por
+   falha de rede. */
+const TRAVADA=(function(){
+  if(window.Liberado) return Liberado.travar('divulga');
+  try{ if(!sessionStorage.getItem('lucrostudioit_recarregou')){ sessionStorage.setItem('lucrostudioit_recarregou','1'); location.reload(); } }catch(e){}
+  return false;
+})();
+
+/* ============ DEFESA 1: armazenamento persistente ============ */
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+
+/* ===== TEXTO DA USUARIA NO HTML: UMA FUNCAO SO (igual ao Controle) =====
+   Nome de cliente, servico, anotacao e WhatsApp vao pra HTML e pra value="...": escapa
+   as 5 (& < > " '). id que vai pra dentro de onclick="...(id)": so numero inteiro.
+   Nome de cliente NUNCA vai dentro de onclick: vai um numero (Ref). */
+const escA = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc = escA;
+const idn = x => { const n=Number(x); return Number.isInteger(n) ? n : -1; };
+
+/* ============ TOAST ============ */
+let toastTimer=null;
+function toast(msg, guadagno){ const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast mostra'+(guadagno?' guadagno':'');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className='toast',4500); }
+
+/* ============ MODAL ============ */
+const Modal = {
+  /* ===== O MODAL E UM DIALOGO (acessibilidade, 26/10/2026) =====
+     O leitor de tela nao sabia que o modal tinha aberto e seguia lendo a tela de
+     tras. Agora: o titulo da nome ao dialogo, o resto da pagina fica inerte, o
+     foco entra no modal (se nenhum campo dele ja pegou), Esc fecha, e ao fechar o
+     foco volta pra onde estava. O toast e a tela de ativacao nunca ficam inertes. */
+  _volta:null,
+  abrir(html){ const c=document.getElementById('modalCorpo'), f=document.getElementById('modalFundo');
+    if(!f.classList.contains('aberto')) this._volta=document.activeElement;
+    c.innerHTML=html; f.classList.add('aberto'); this.ajustarArea();
+    const tit=c.querySelector('h3, .passo, .wizard-logo .m1');
+    if(tit){ tit.id='modalTit'; c.setAttribute('aria-labelledby','modalTit'); } else c.removeAttribute('aria-labelledby');
+    Array.prototype.forEach.call(document.body.children, el=>{
+      if(el===f || el.id==='toast' || el.id==='ativ' || el.hasAttribute('inert')) return;
+      el.setAttribute('inert',''); el.setAttribute('data-modal-inert',''); });
+    setTimeout(()=>{ if(f.classList.contains('aberto') && !c.contains(document.activeElement)) c.focus({preventScroll:true}); },60); },
+  fechar(){ document.getElementById('modalFundo').classList.remove('aberto');
+    document.querySelectorAll('[data-modal-inert]').forEach(el=>{ el.removeAttribute('inert'); el.removeAttribute('data-modal-inert'); });
+    const v=this._volta; this._volta=null;
+    if(v && document.body.contains(v) && v.focus) v.focus({preventScroll:true}); },
+  /* ===== MODAL ACIMA DO TECLADO (19/10/2026) =====
+     O teclado do celular (iPhone e Chrome do Android) encolhe so a area VISIVEL, nao a pagina,
+     entao um position:fixed preso no fundo fica atras dele. Aqui o fundo do modal copia o
+     tamanho e a posicao da area visivel a cada mudanca. */
+  ajustarArea(){ const vv=window.visualViewport, f=document.getElementById('modalFundo'); if(!vv||!f) return;
+    f.style.top=vv.offsetTop+'px'; f.style.height=vv.height+'px';
+    f.classList.toggle('teclado', document.documentElement.clientHeight - vv.height > 120 && vv.scale < 1.05); }
+};
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape' && document.getElementById('modalFundo').classList.contains('aberto')) Modal.fechar(); });
+if(window.visualViewport){
+  visualViewport.addEventListener('resize', ()=>Modal.ajustarArea());
+  visualViewport.addEventListener('scroll', ()=>Modal.ajustarArea());
+}
+
+
+/* ============ AGENDA CHEIA: DADOS ============
+   Tres chaves, como o Clientes na Mao da lojinha:
+     lucrostudioit_v1       = o Controle (trattamenti e servicos). Aqui so LE, NUNCA grava.
+     lucrostudioit_clientes = {v, seq, lista:[{id, nome, whats, obs, criadoEm, nomesAntigos}]}
+     lucrostudioit_agenda   = {v, seq, horarios:[{id, data, hora, clienteId, nome, servicoId,
+                             servico, obs, lembradoEm}], ciclos:{servicoId: dias},
+                             avisos:{chaveDaCliente: dia em que ela foi chamada}}
+   O backup do Controle leva as duas chaves novas (#CLIENTES, #AGENDA, #CICLOS, #AVISOS).
+   A cliente de um trattamento: pelo clienteId quando ele existe; senao pelo NOME
+   normalizado (sem acento, minusculo, espacos colapsados). Quem so tem o nome nos
+   trattamenti aparece aqui do mesmo jeito, sem cadastrar de novo. */
+const K_V1='lucrostudioit_v1', K_CLI='lucrostudioit_clientes', K_AG='lucrostudioit_agenda', K_ATENDER='lucrostudioit_atender';
+
+/* ---------- regras (mudar aqui) ---------- */
+const REGRAS = {
+  CICLO_PADRAO: 21,   /* dias ate a manutencao, quando o servico nao tem ciclo proprio */
+  ANTES: 2,           /* o aviso da manutencao aparece 2 dias antes do dia */
+  JANELA: 8,          /* e fica ate 8 dias depois; passou disso, a cliente vira "sumida" */
+  SUMIU_DIAS: 30      /* sumida: 30 dias ou mais sem trattamento (e fora da janela da manutencao) */
+};
+
+function ler(k){ try{ return JSON.parse(localStorage.getItem(k)||'null'); }catch(e){ return null; } }
+function gravarK(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }
+  catch(e){ toast('Non riesco a salvare: il telefono non ha più spazio. Fai il backup in Guadagno in Mano e libera spazio sul telefono.'); return false; } }
+function norm(t){ return String(t==null?'':t).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim(); }
+function r2(n){ return Math.round(n*100)/100; }
+function dias(a,b){ const x=Date.parse(String(a).slice(0,10)+'T12:00:00Z'), y=Date.parse(String(b||hoje()).slice(0,10)+'T12:00:00Z');
+  return (isNaN(x)||isNaN(y)) ? 0 : Math.round((y-x)/864e5); }
+function somaDias(iso,n){ const d=new Date(iso+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); }
+function diaSem(iso){
+  const s=new Intl.DateTimeFormat('it-IT',{weekday:'short'}).format(new Date(iso+'T12:00:00'));
+  return s.replace(/\.$/,'').toLowerCase();
+}
+function dataCurta(iso){ return diaSem(iso)+', '+String(iso).slice(8,10)+'/'+String(iso).slice(5,7); }
+function primeiroNome(n){ return String(n||'').trim().split(/\s+/)[0]||''; }
+/* numero brasileiro: so digitos; com DDD (10 ou 11) ganha o 55 na frente */
+function foneWa(s){ const d=String(s||'').replace(/\D/g,'');
+  if(d.length===10||d.length===11) return '55'+d;
+  if((d.length===12||d.length===13) && d.indexOf('55')===0) return d;
+  return ''; }
+function linkWhats(fone, texto){ return 'https://wa.me/'+foneWa(fone)+'?text='+encodeURIComponent(texto||''); }
+function abrirWhats(fone, texto){ window.open(linkWhats(fone, texto), '_blank', 'noopener,noreferrer'); }
+
+/* espelho do Venda.jaPago / Venda.saldo do Controle (index.html): mudou la, mude aqui */
+function jaPago(v){ if(Array.isArray(v.pagamentos)) return v.pagamentos.reduce((s,x)=>s+(Number(x.valor)||0),0); return v.pago ? v.total : 0; }
+function saldo(v){ return Math.max(0, r2((Number(v.total)||0) - jaPago(v))); }
+
+const Dados = {
+  v1:null, cli:null, ag:null,
+  carregar(){
+    const v=ler(K_V1);
+    this.v1=(v&&typeof v==='object')?v:{};
+    if(!Array.isArray(this.v1.vendas)) this.v1.vendas=[];
+    if(!Array.isArray(this.v1.produtos)) this.v1.produtos=[];
+    if(!this.v1.config||typeof this.v1.config!=='object') this.v1.config={};
+    let c=ler(K_CLI);
+    if(!c || typeof c!=='object' || !Array.isArray(c.lista)){
+      c={v:1, seq:1, lista:[]};
+      /* clientes que moravam no Controle (30/10 a 09/11/2026): o Controle passa pra ca ao
+         abrir; se a Agenda abrir antes, ela le de la (sem apagar nada no Controle) */
+      if(Array.isArray(this.v1.clientes)) c.lista=this.v1.clientes.map(x=>x&&({id:x.id, nome:String(x.nome||'').trim(),
+        whats:String(x.whats||''), obs:String(x.obs||''), criadoEm:String(x.criadoEm||'')}));
+    }
+    c.lista=c.lista.filter(x=>x&&typeof x==='object'&&Number.isInteger(x.id)&&x.id>0&&String(x.nome||'').trim());
+    c.seq=Math.max(Number(c.seq)||1, 1, ...c.lista.map(x=>x.id+1));
+    this.cli=c;
+    let a=ler(K_AG); if(!a||typeof a!=='object') a={};
+    a.v=1;
+    if(!Array.isArray(a.horarios)) a.horarios=[];
+    a.horarios=a.horarios.filter(h=>h&&typeof h==='object'&&Number.isInteger(h.id)&&/^\d{4}-\d{2}-\d{2}$/.test(h.data)&&/^\d{2}:\d{2}$/.test(h.hora));
+    if(!a.ciclos||typeof a.ciclos!=='object') a.ciclos={};
+    if(!a.avisos||typeof a.avisos!=='object') a.avisos={};
+    a.seq=Math.max(Number(a.seq)||1, 1, ...a.horarios.map(h=>h.id+1));
+    this.ag=a;
+  },
+  salvarCli(){ return gravarK(K_CLI, this.cli); },
+  salvarAg(){ return gravarK(K_AG, this.ag); },
+  produtos(){ return this.v1.produtos.filter(p=>p&&Number.isInteger(p.id)).sort((a,b)=>String(a.nome).localeCompare(String(b.nome))); },
+  produto(id){ return this.v1.produtos.find(p=>p&&p.id===id)||null; },
+  loja(){ return String(this.v1.config.loja||''); },
+  vendas(){ return this.v1.vendas.filter(v=>v&&typeof v==='object'&&/^\d{4}-\d{2}-\d{2}$/.test(String(v.data))); },
+  ciclo(servicoId){ const d=Number(this.ag.ciclos[servicoId]); return (Number.isInteger(d)&&d>0) ? d : REGRAS.CICLO_PADRAO; }
+};
+
+/* ============ CLIENTES ============ */
+const Cli = {
+  nomesDe(c){ return [norm(c.nome)].concat((c.nomesAntigos||[]).map(norm)); },
+  /* nome normalizado -> cliente cadastrada (so quando UMA cliente tem esse nome) */
+  indice(){ const idx=Object.create(null), dup=Object.create(null);
+    Dados.cli.lista.forEach(c=>this.nomesDe(c).forEach(n=>{ if(!n) return; if(idx[n]&&idx[n]!==c) dup[n]=1; else idx[n]=c; }));
+    Object.keys(dup).forEach(n=>{ delete idx[n]; });
+    return idx; },
+  porId(id){ return Dados.cli.lista.find(c=>c.id===id)||null; },
+  chaveVenda(v, idx){ let c=null;
+    if(v.clienteId!=null) c=this.porId(Number(v.clienteId));
+    if(!c && v.cliente) c=idx[norm(v.cliente)]||null;
+    if(c) return 'c:'+c.id;
+    const n=norm(v.cliente); return n ? 'n:'+n : null; },
+  chaveHorario(h, idx){ const c=h.clienteId!=null ? this.porId(h.clienteId) : (idx[norm(h.nome)]||null);
+    if(c) return 'c:'+c.id; const n=norm(h.nome); return n ? 'n:'+n : null; },
+  /* a mesma cliente escrita de jeitos diferentes: fica a grafia mais usada */
+  melhorNome(vs){ const cont=Object.create(null), ordem=[];
+    vs.forEach(v=>{ const n=String(v.cliente||'').trim().replace(/\s+/g,' '); if(!n) return;
+      if(!cont[n]){ cont[n]=0; ordem.push(n); } cont[n]++; });
+    const mai=n=>/^[A-ZÀ-Ý]/.test(n)?1:0;
+    return ordem.slice().sort((a,b)=>(cont[b]-cont[a])||(mai(b)-mai(a))||(ordem.indexOf(a)-ordem.indexOf(b)))[0]||''; },
+  /* todas as clientes: as da ficha e as que so tem o nome nos trattamenti */
+  todas(){
+    const idx=this.indice(), g=Object.create(null), h=hoje();
+    Dados.cli.lista.forEach(c=>{ g['c:'+c.id]={chave:'c:'+c.id, c, nome:c.nome, vendas:[]}; });
+    Dados.vendas().forEach(v=>{ const k=this.chaveVenda(v, idx); if(!k) return;
+      if(!g[k]) g[k]={chave:k, c:null, nome:'', vendas:[]}; g[k].vendas.push(v); });
+    const futuros=Object.create(null);
+    Dados.ag.horarios.forEach(x=>{ if(x.data<h) return; const k=this.chaveHorario(x, idx); if(!k) return;
+      if(!futuros[k] || (x.data+x.hora)<(futuros[k].data+futuros[k].hora)) futuros[k]=x; });
+    return Object.keys(g).map(k=>{ const x=g[k];
+      x.vendas.sort((a,b)=>String(b.data).localeCompare(String(a.data)) || (Number(b.id)||0)-(Number(a.id)||0));
+      if(!x.c) x.nome=this.melhorNome(x.vendas);
+      x.n=x.vendas.length;
+      x.gasto=r2(x.vendas.reduce((s,v)=>s+(Number(v.total)||0),0));
+      x.ultima=x.n?x.vendas[0].data:null;
+      x.dias=x.ultima?Math.max(0,dias(x.ultima,h)):null;
+      x.whats=x.c?String(x.c.whats||''):'';
+      x.fiado=r2(x.vendas.filter(v=>ehIncasso(v)).reduce((s,v)=>s+saldo(v),0));
+      x.proximo=futuros[k]||null;
+      return x; }).filter(x=>x.nome); },
+  doGrupo(chave){ return this.todas().find(x=>x.chave===chave)||null; },
+  /* servicos que ela mais faz */
+  favoritos(x){ const q=Object.create(null);
+    x.vendas.forEach(v=>(v.itens||[]).forEach(i=>{ const n=String(i.nome||'').trim(); if(n) q[n]=(q[n]||0)+(Number(i.qtd)||1); }));
+    return Object.keys(q).sort((a,b)=>q[b]-q[a]).slice(0,2); },
+  /* sumida: muito tempo sem vir, fora da janela da manutencao e sem horario marcado */
+  sumida(x){ if(x.dias===null || x.proximo) return false;
+    const m=Manut.de(x); const lim=Math.max(REGRAS.SUMIU_DIAS, (m?m.ciclo:REGRAS.CICLO_PADRAO)+REGRAS.JANELA+1);
+    return x.dias>=lim; },
+  ranking(modo){
+    let ls=this.todas();
+    if(modo==='sumidas') return ls.filter(x=>this.sumida(x)).sort((a,b)=>b.dias-a.dias);
+    const com=ls.filter(x=>x.n>0), sem=ls.filter(x=>x.n===0).sort((a,b)=>a.nome.localeCompare(b.nome));
+    com.sort(modo==='vezes' ? (a,b)=>b.n-a.n||b.gasto-a.gasto : (a,b)=>b.gasto-a.gasto||b.n-a.n);
+    return com.concat(sem); },
+  msgSumida(x){ return `Ciao ${primeiroNome(x.nome)}! È da un po' che non ci vediamo. Ti va di prenotare questa settimana?`; },
+  /* cria a ficha de quem so tinha o nome nos trattamenti (ou de uma cliente nova) */
+  criar(campos){ const c={id:Dados.cli.seq++, nome:String(campos.nome||'').trim(), whats:String(campos.whats||'').trim(),
+      obs:String(campos.obs||'').trim(), criadoEm:agora()};
+    Dados.cli.lista.push(c);
+    if(!Dados.salvarCli()){ Dados.carregar(); return null; }
+    return c; }
+};
+
+/* ============ MANUTENCAO ============
+   Cada servico tem um ciclo de retorno (padrao 21 dias, editavel em Avisos). Pelo
+   ULTIMO trattamento da cliente, o dia da manutencao e a data dele mais o menor ciclo
+   dos servicos feitos. O aviso aparece de 2 dias antes ate 8 dias depois, se ela nao
+   tem horario marcado. "Chamar" grava o dia em que ela foi chamada (avisos), e o aviso
+   desce pro fim da lista ate o proximo trattamento ou horario. */
+const Manut = {
+  de(x){ if(!x.n) return null; const v=x.vendas[0];
+    const its=(v.itens||[]).filter(i=>i&&i.nome);
+    if(!its.length) return null;
+    let melhor=null;
+    its.forEach(i=>{ const c=Dados.ciclo(Number(i.produtoId)); if(!melhor||c<melhor.ciclo) melhor={ciclo:c, servico:String(i.nome)}; });
+    const dia=somaDias(v.data, melhor.ciclo);
+    return {ciclo:melhor.ciclo, servico:melhor.servico, ultima:v.data, dia, falta:dias(hoje(), dia)}; },
+  lista(){ const h=hoje();
+    return Cli.todas().map(x=>{ const m=this.de(x); if(!m || x.proximo) return null;
+        if(m.falta>REGRAS.ANTES || m.falta< -REGRAS.JANELA) return null;
+        const ch=Dados.ag.avisos[x.chave];
+        return {x, m, chamadaEm:(ch && ch>=m.ultima) ? ch : null}; }).filter(Boolean)
+      .sort((a,b)=>(a.chamadaEm?1:0)-(b.chamadaEm?1:0) || a.m.falta-b.m.falta); },
+  quando(m){ const n=Math.abs(m.falta), g=n===1?'giorno':'giorni';
+    return m.falta>0 ? 'Giorno del ritorno: tra '+n+' '+g
+    : m.falta===0 ? 'Oggi è il giorno del ritorno' : 'È passato '+n+' '+g+' dal giorno del ritorno'; },
+  msg(x,m){ const pn=primeiroNome(x.nome), d=dias(m.ultima);
+    return m.falta>0
+      ? `Ciao ${pn}! Si avvicina il momento di rifare ${m.servico} (${dataCurta(m.dia)}). Vuoi che ti tenga già un posto?`
+      : `Ciao ${pn}! Sono passati ${d} ${d===1?'giorno':'giorni'} dall'ultima volta (${m.servico}): è il momento di rifarlo. Ti fisso un appuntamento questa settimana?`; },
+  chamar(i){ const it=(this._ultima||[])[i]; if(!it) return;
+    abrirWhats(it.x.whats, this.msg(it.x, it.m));
+    Dados.ag.avisos[it.x.chave]=hoje();
+    if(!Dados.salvarAg()){ Dados.carregar(); }
+    Tela.render(); }
+};
+
+/* ============ AGENDA ============ */
+const Ag = {
+  doDia(d){ return Dados.ag.horarios.filter(h=>h.data===d).sort((a,b)=>a.hora.localeCompare(b.hora)); },
+  porId(id){ return Dados.ag.horarios.find(h=>h.id===id)||null; },
+  /* o horario virou trattamento: tem trattamento no Controle no mesmo dia com a mesma cliente */
+  feito(h, idx){ const k=Cli.chaveHorario(h, idx); if(!k) return false;
+    return Dados.vendas().some(v=>v.data===h.data && Cli.chaveVenda(v, idx)===k); },
+  whatsDe(h){ const c=h.clienteId!=null?Cli.porId(h.clienteId):(Cli.indice()[norm(h.nome)]||null); return c?String(c.whats||''):''; },
+  msgLembrete(h){ const pn=primeiroNome(h.nome), am=somaDias(hoje(),1);
+    const quando=((h.data===am?'domani, ':h.data===hoje()?'oggi, ':'')+dataCurta(h.data)).replace(/,\s*$/,'').replace(/,\s*,/g,', ');
+    return `Ciao ${pn}! Ti ricordo l'appuntamento ${quando} alle ${h.hora}${h.servico?', per '+h.servico:''}. Ti aspetto!`; },
+  lembrar(id){ const h=this.porId(id); if(!h) return;
+    abrirWhats(this.whatsDe(h), this.msgLembrete(h));
+    h.lembradoEm=agora();
+    if(!Dados.salvarAg()){ Dados.carregar(); }
+    Tela.render(); },
+  /* ===== MARCAR E REMARCAR (o mesmo formulario) ===== */
+  form(id, dataSug, chaveCli){
+    const h=id?this.porId(id):null;
+    let nome=h?h.nome:'', cid=h?h.clienteId:null, whats='';
+    if(!h && chaveCli){ const x=Cli.doGrupo(chaveCli); if(x){ nome=x.nome; cid=x.c?x.c.id:null; whats=x.whats; } }
+    if(h){ whats=this.whatsDe(h); }
+    this._f={id:h?h.id:0, clienteId:cid};
+    const ps=Dados.produtos();
+    const sid=h?h.servicoId:null;
+    Modal.abrir(`<h3>${h?'Sposta appuntamento':'Nuovo appuntamento'}</h3>
+      <label for="fNome">cliente</label>
+      <input id="fNome" value="${escA(nome)}" placeholder="Nome della cliente" autocomplete="off" autocapitalize="words" ${h?'readonly':''}>
+      <div class="cli-sug" id="fSug"></div>
+      <label for="fWhats">WhatsApp <span class="opcional">(per il promemoria)</span></label>
+      <input id="fWhats" inputmode="tel" value="${escA(whats)}" placeholder="333 1234567" autocomplete="off">
+      <label for="fServ">Trattamento</label>
+      ${ps.length?`<select id="fServ"><option value="">Scegli il trattamento</option>${ps.map(p=>`<option value="${idn(p.id)}" ${sid===p.id?'selected':''}>${escA(p.nome)}</option>`).join('')}</select>`
+        :`<input id="fServTxt" value="${escA(h?h.servico:'')}" placeholder="es. Semipermanente mani">`}
+      <div class="linha2">
+        <div><label for="fData">giorno</label><input id="fData" type="date" value="${escA(h?h.data:(dataSug||hoje()))}"></div>
+        <div><label for="fHora">hora</label><input id="fHora" type="time" step="300" value="${escA(h?h.hora:'')}"></div>
+      </div>
+      <label for="fObs">Nota <span class="opcional">(facoltativa)</span></label>
+      <input id="fObs" value="${escA(h?h.obs:'')}" placeholder="es. viene con la figlia" autocomplete="off">
+      <div id="fAviso" class="aviso backup oculto" style="margin-top:12px"></div>
+      <button class="btn" onclick="Ag.salvar()">${h?'Salva il nuovo orario':'Nuovo appuntamento'}</button>
+      <button class="btn discreto" onclick="Modal.fechar()">Annulla</button>`);
+    if(!h){ const i=document.getElementById('fNome');
+      i.addEventListener('input',()=>{ this._f.clienteId=null; this.sugPintar(); });
+      this.sugPintar(); }
+  },
+  sugPintar(){ const box=document.getElementById('fSug'), i=document.getElementById('fNome'); if(!box||!i) return;
+    const n=norm(i.value);
+    if(!n || this._f.clienteId!=null){ box.innerHTML=''; this._sug=[]; return; }
+    const ops=Cli.todas().filter(x=>norm(x.nome).includes(n) && norm(x.nome)!==n)
+      .sort((a,b)=>(norm(b.nome).startsWith(n)?1:0)-(norm(a.nome).startsWith(n)?1:0) || a.nome.localeCompare(b.nome)).slice(0,5);
+    this._sug=ops;
+    box.innerHTML=ops.map((x,k)=>`<button type="button" class="cli-op" onclick="Ag.sugEscolher(${k})"><span>${esc(x.nome)}</span>${x.whats?`<small>${esc(x.whats)}</small>`:''}</button>`).join(''); },
+  sugEscolher(k){ const x=(this._sug||[])[k]; if(!x) return;
+    document.getElementById('fNome').value=x.nome;
+    if(x.whats) document.getElementById('fWhats').value=x.whats;
+    this._f.clienteId=x.c?x.c.id:null; this.sugPintar(); },
+  salvar(){
+    const f=this._f||{}, nome=document.getElementById('fNome').value.trim().replace(/\s+/g,' ');
+    const whats=document.getElementById('fWhats').value.trim(), data=document.getElementById('fData').value, hora=document.getElementById('fHora').value;
+    const obs=document.getElementById('fObs').value.trim();
+    const sel=document.getElementById('fServ'), txt=document.getElementById('fServTxt');
+    const sid=sel&&sel.value?Number(sel.value):null, p=sid?Dados.produto(sid):null;
+    const servico=p?String(p.nome):(txt?txt.value.trim():'');
+    if(!nome){ toast('Scrivi il nome della cliente'); return; }
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(data)){ toast('Scegli il giorno'); return; }
+    if(!/^\d{2}:\d{2}$/.test(hora)){ toast('Scegli l\'ora'); return; }
+    if(sel && !p){ toast('Scegli il trattamento'); return; }
+    /* a cliente: a escolhida, a unica com esse nome, ou uma ficha nova se veio o WhatsApp */
+    let c=f.clienteId!=null?Cli.porId(f.clienteId):null;
+    if(!c) c=Cli.indice()[norm(nome)]||null;
+    if(c && whats && whats!==String(c.whats||'')){ c.whats=whats; if(!Dados.salvarCli()){ Dados.carregar(); return; } }
+    if(!c && whats){ c=Cli.criar({nome, whats}); if(!c) return; }
+    const outro=Dados.ag.horarios.find(x=>x.data===data && x.hora===hora && x.id!==f.id);
+    let h;
+    if(f.id){ h=this.porId(f.id); if(!h) return;
+      if(h.data!==data || h.hora!==hora) h.lembradoEm=null;
+      Object.assign(h,{data, hora, servicoId:p?p.id:null, servico, obs, clienteId:c?c.id:h.clienteId}); }
+    else { h={id:Dados.ag.seq++, data, hora, clienteId:c?c.id:null, nome:c?c.nome:nome, servicoId:p?p.id:null, servico, obs, lembradoEm:null};
+      Dados.ag.horarios.push(h); }
+    if(!Dados.salvarAg()){ Dados.carregar(); Tela.render(); return; }
+    Modal.fechar(); Tela.dia=data; Tela.modoAgenda='dia'; Tela.ir('agenda');
+    toast((f.id?'Spostato: ':'Fissato: ')+dataCurta(data)+' alle '+hora+(outro?' · Attenzione: a quest\'ora hai già un appuntamento':''));
+  },
+  desmarcar(id){ const h=this.porId(id); if(!h) return;
+    Modal.abrir(`<h3>Annullare questo appuntamento?</h3>
+      <p class="sub"><b>${esc(h.nome)}</b> · ${esc(dataCurta(h.data))} alle ${esc(h.hora)}${h.servico?' · '+esc(h.servico):''}</p>
+      <button class="btn perigo" onclick="Ag.confirmaDesmarcar(${idn(h.id)})">Sì, annulla</button>
+      <button class="btn sec" onclick="Modal.fechar()">No, tienilo</button>`); },
+  confirmaDesmarcar(id){ Dados.ag.horarios=Dados.ag.horarios.filter(h=>h.id!==id);
+    if(!Dados.salvarAg()){ Dados.carregar(); }
+    Modal.fechar(); Tela.render(); toast('Appuntamento annullato'); },
+  /* ===== O HORARIO VIRA ATENDIMENTO NO CONTROLE (1 toque) =====
+     A Agenda nao escreve no Controle: deixa o pedido em lucrostudioit_atender e abre o
+     Controle, que ja abre o trattamento com o servico e o nome. Ela so diz como pagou. */
+  registrar(id){ const h=this.porId(id); if(!h) return;
+    try{ localStorage.setItem(K_ATENDER, JSON.stringify({servicoId:h.servicoId, nome:h.nome, clienteId:h.clienteId, em:Date.now()})); }
+    catch(e){ toast('Non riesco ad aprire Guadagno in Mano adesso'); return; }
+    const naPasta=/\/(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)\/[^\/]*$/.test(location.pathname);
+    const m=(location.hash||'').match(/de=(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)(?:&|$)/);
+    location.href=(naPasta?'controle.html':'index.html')+(m?'#de='+m[1]:''); }
+};
+
+/* ============ FICHA DA CLIENTE ============ */
+const Ficha = {
+  chave:null, todos:false,
+  abrir(i){ const k=Ref.get(i); if(!k) return; this.chave=k; this.todos=false; this.pintar(); },
+  pintar(){ const x=Cli.doGrupo(this.chave); if(!x){ Modal.fechar(); return; }
+    const fav=Cli.favoritos(x), sumida=Cli.sumida(x);
+    const msg=sumida?Cli.msgSumida(x):`Ciao ${primeiroNome(x.nome)}! Tutto bene?`;
+    const vs=this.todos?x.vendas:x.vendas.slice(0,10);
+    Modal.abrir(`<h3>${esc(x.nome)}</h3>
+      ${x.c&&x.c.obs?`<p class="sub">${esc(x.c.obs)}</p>`:''}
+      ${x.c&&x.c.whats?`<p class="sub">WhatsApp: ${esc(x.c.whats)}</p>`:''}
+      <div class="kpis" style="margin-top:10px">
+        <div class="kpi"><div class="v">${x.n}</div><div class="l">${x.n===1?'volta':'volte'}</div></div>
+        <div class="kpi"><div class="v pos grande">${rs(x.gasto)}</div><div class="l">Ha speso da te</div></div>
+      </div>
+      <p class="sub" style="margin-top:10px">${x.ultima?`Ultima volta: <b>${esc(dataBR(x.ultima))}</b>${x.dias>0?` (${x.dias} ${x.dias===1?'giorno fa':'giorni fa'})`:' (oggi)'}`:'Non ha ancora trattamenti registrati.'}
+        ${fav.length?`<br>Fa più spesso: <b>${fav.map(esc).join(', ')}</b>`:''}
+        ${x.fiado>0?`<br>Da incassare: <b>${rs(x.fiado)}</b>`:''}
+        ${x.proximo?`<br>Prossimo appuntamento: <b>${esc(dataCurta(x.proximo.data))} alle ${esc(x.proximo.hora)}</b>`:''}</p>
+      <button class="btn" onclick="Ficha.chamar()">Scrivile su WhatsApp</button>
+      <button class="btn sec" onclick="Ficha.marcar()">Nuovo appuntamento</button>
+      ${x.vendas.length?`<h2 class="h2-modal">histórico de trattamenti</h2>`+vs.map(v=>`<div class="lista-item"><div class="info">
+        <div class="t">${esc((v.itens||[]).map(i=>i.nome+(i.qtd>1?' x'+i.qtd:'')).join(', '))}</div>
+        <div class="s">${esc(dataBR(v.data))} · ${esc(v.pgto||'')}</div></div><b>${rs(Number(v.total)||0)}</b></div>`).join('')
+        +(!this.todos&&x.vendas.length>10?`<button class="btn discreto" onclick="Ficha.todos=true;Ficha.pintar()">ver os ${x.vendas.length} trattamenti</button>`:''):''}
+      <button class="btn sec" style="margin-top:12px" onclick="Ficha.editar()">${x.c?'Modifica scheda':'Completa la scheda (WhatsApp e note)'}</button>
+      ${x.c?`<button class="btn perigo" onclick="Ficha.excluir()">Elimina scheda</button>`:''}
+      <button class="btn discreto" onclick="Modal.fechar()">Chiudi</button>`); },
+  chamar(){ const x=Cli.doGrupo(this.chave); if(!x) return;
+    abrirWhats(x.whats, Cli.sumida(x)?Cli.msgSumida(x):`Ciao ${primeiroNome(x.nome)}! Tutto bene?`); },
+  marcar(){ Ag.form(0, null, this.chave); },
+  editar(){ const x=this.chave?Cli.doGrupo(this.chave):null; const c=x&&x.c;
+    Modal.abrir(`<h3>${x?(c?'Modifica scheda':'Completa la scheda'):'Nuova cliente'}</h3>
+      <label for="cNome">nome</label><input id="cNome" value="${escA(x?x.nome:'')}" placeholder="es. Giulia" autocomplete="off" autocapitalize="words">
+      <label for="cWhats">WhatsApp</label><input id="cWhats" inputmode="tel" value="${escA(c?c.whats||'':'')}" placeholder="333 1234567" autocomplete="off">
+      <label for="cObs">Note</label><input id="cObs" value="${escA(c?c.obs||'':'')}" placeholder="es. allergica all'acetone, ama il nude" autocomplete="off">
+      <button class="btn" onclick="Ficha.salvar()">Salva</button>
+      <button class="btn discreto" onclick="${x?'Ficha.pintar()':'Modal.fechar()'}">Annulla</button>`); },
+  nova(){ this.chave=null; this.editar(); },
+  salvar(){
+    const nome=document.getElementById('cNome').value.trim().replace(/\s+/g,' '), whats=document.getElementById('cWhats').value.trim(), obs=document.getElementById('cObs').value.trim();
+    if(!nome){ toast('Scrivi il nome della cliente'); return; }
+    const x=this.chave?Cli.doGrupo(this.chave):null;
+    if(x&&x.c){ const c=x.c;
+      /* trocou o nome: o antigo continua ligando os trattamenti que so tem o nome */
+      if(norm(c.nome)!==norm(nome)){ c.nomesAntigos=(c.nomesAntigos||[]); if(c.nomesAntigos.map(norm).indexOf(norm(c.nome))<0) c.nomesAntigos.push(c.nome); }
+      Object.assign(c,{nome,whats,obs});
+      if(!Dados.salvarCli()){ Dados.carregar(); return; }
+    } else {
+      /* completar a ficha de quem so tinha o nome: se o nome mudou, o de antes fica ligado */
+      const ant=x&&norm(x.nome)!==norm(nome)?[x.nome]:[];
+      if(!x && Cli.indice()[norm(nome)]){ toast('C\'è già una cliente con questo nome'); return; }
+      const c=Cli.criar({nome, whats, obs}); if(!c) return;
+      if(ant.length){ c.nomesAntigos=ant; Dados.salvarCli(); }
+      this.chave='c:'+c.id;
+    }
+    toast('Scheda salvata ✓'); Tela.render(); this.pintar(); },
+  excluir(){ const x=Cli.doGrupo(this.chave); if(!x||!x.c) return;
+    Modal.abrir(`<h3>Eliminare questa scheda?</h3><p class="sub"><b>${esc(x.nome)}</b> perde o WhatsApp e as Note. Os trattamenti dela continuam no Controle.</p>
+      <button class="btn perigo" onclick="Ficha.confirmaExcluir()">Sì, elimina</button>
+      <button class="btn sec" onclick="Ficha.pintar()">Annulla</button>`); },
+  confirmaExcluir(){ const x=Cli.doGrupo(this.chave); if(!x||!x.c) return;
+    const id=x.c.id;
+    Dados.cli.lista=Dados.cli.lista.filter(c=>c.id!==id);
+    if(!Dados.salvarCli()){ Dados.carregar(); return; }
+    /* os horarios dela ficam pelo nome */
+    let mexeu=false; Dados.ag.horarios.forEach(h=>{ if(h.clienteId===id){ h.clienteId=null; mexeu=true; } });
+    if(mexeu) Dados.salvarAg();
+    Modal.fechar(); Tela.render(); toast('Scheda eliminata'); }
+};
+
+/* referencias numericas pro onclick (nome de cliente nunca vai dentro de onclick) */
+const Ref = { l:[], add(k){ this.l.push(k); return this.l.length-1; }, get(i){ return this.l[i]; } };
+
+/* ============ TELAS ============ */
+const Tela = {
+  atual:'agenda', modoAgenda:'dia', dia:hoje(), modoClientes:'gasto', busca:'',
+  ir(t){ this.atual=t; document.querySelectorAll('#navBar button').forEach(b=>b.classList.toggle('on',b.dataset.tela===t)); this.render(); window.scrollTo({top:0}); },
+  render(){
+    document.getElementById('hdrLoja').textContent=Dados.loja();
+    Ref.l=[];
+    const app=document.getElementById('app');
+    if(this.atual==='agenda') app.innerHTML=this.agenda();
+    if(this.atual==='avisos') app.innerHTML=this.avisos();
+    if(this.atual==='clientes') app.innerHTML=this.clientes();
+    this.pintarNav();
+  },
+  /* bolinha com quantos avisos ha (lembrete de amanha ainda nao mandado + manutencao) */
+  pintarNav(){ const n=this.contaAvisos(), b=document.getElementById('navAvisosN'); if(!b) return;
+    b.textContent=n; b.classList.toggle('oculto', !n); },
+  contaAvisos(){ const am=somaDias(hoje(),1);
+    return Ag.doDia(am).filter(h=>!h.lembradoEm).length + Manut.lista().filter(i=>!i.chamadaEm).length; },
+  vaiDia(n){ this.dia=somaDias(this.dia, n); this.render(); },
+  agenda(){
+    const seg=`<div class="seg"><button class="${this.modoAgenda==='dia'?'on':''}" onclick="Tela.modoAgenda='dia';Tela.render()">Giorno</button><button class="${this.modoAgenda==='semana'?'on':''}" onclick="Tela.modoAgenda='semana';Tela.render()">Settimana</button></div>`;
+    return seg+(this.modoAgenda==='semana'?this.semana():this.diaHTML());
+  },
+  rotDia(d){ const h=hoje(); return d===h?'Oggi · '+dataCurta(d):d===somaDias(h,1)?'Domani · '+dataCurta(d):d===somaDias(h,-1)?'Ieri · '+dataCurta(d):dataCurta(d); },
+  diaHTML(){
+    const d=this.dia, hs=Ag.doDia(d), idx=Cli.indice(), h0=hoje();
+    return `<div class="mes-nav"><button onclick="Tela.vaiDia(-1)" aria-label="Giorno prima">‹</button>
+        <span class="m" style="text-transform:none">${esc(this.rotDia(d))}</span>
+        <button onclick="Tela.vaiDia(1)" aria-label="Giorno dopo">›</button></div>
+      ${d!==h0?`<button class="btn discreto" style="margin:-6px 0 6px" onclick="Tela.dia=hoje();Tela.render()">Torna a oggi</button>`:''}
+      <button class="btn" onclick="Ag.form(0,'${escA(d)}')">+ Nuovo appuntamento</button>
+      <div class="card" style="margin-top:12px">
+      ${hs.length?hs.map(h=>{ const feito=Ag.feito(h, idx), passou=d<h0;
+        return `<div class="hr${feito?' feito':''}"><div class="hr-h">${esc(h.hora)}</div><div class="hr-i">
+          <div class="t">${esc(h.nome)}</div>
+          <div class="s">${esc(h.servico||'Nessun trattamento')}${h.obs?' · '+esc(h.obs):''}</div>
+          <div class="hr-tags">${feito?'<span class="badge ok">fatto</span>':''}${h.lembradoEm?'<span class="badge ok">Promemoria aperto</span>':''}</div>
+          <div class="hr-acoes">
+            ${!feito&&d>=h0?`<button onclick="Ag.lembrar(${idn(h.id)})">${h.lembradoEm?'Ricorda di nuovo':'Promemoria'}</button>`:''}
+            ${!feito&&d<=h0?`<button class="forte" onclick="Ag.registrar(${idn(h.id)})">Registra trattamento</button>`:''}
+            ${!feito?`<button onclick="Ag.form(${idn(h.id)})">Sposta</button><button onclick="Ag.desmarcar(${idn(h.id)})">Annulla</button>`:''}
+          </div></div></div>`; }).join('')
+      :`<div class="vazio">Nessun appuntamento ${d===h0?'oggi':'in questo giorno'}.<br>Tocca Nuovo appuntamento per fissarne uno.</div>`}
+      </div>`;
+  },
+  semana(){
+    /* a semana de segunda a domingo que contem o dia escolhido */
+    const wd=(new Date(this.dia+'T12:00:00Z').getUTCDay()+6)%7, ini=somaDias(this.dia,-wd), h0=hoje();
+    const ds=[0,1,2,3,4,5,6].map(i=>somaDias(ini,i));
+    const tot=ds.reduce((s,d)=>s+Ag.doDia(d).length,0);
+    return `<div class="mes-nav"><button onclick="Tela.vaiDia(-7)" aria-label="Settimana prima">‹</button>
+        <span class="m" style="text-transform:none">${esc(ds[0].slice(8,10)+'/'+ds[0].slice(5,7))} a ${esc(ds[6].slice(8,10)+'/'+ds[6].slice(5,7))}</span>
+        <button onclick="Tela.vaiDia(7)" aria-label="Settimana dopo">›</button></div>
+      <p class="sub" style="margin:-4px 0 10px;text-align:center">${tot} ${tot===1?'appuntamento':'appuntamenti'} nella settimana</p>
+      <div class="card">${ds.map(d=>{ const hs=Ag.doDia(d);
+        return `<button class="sem-dia${d===h0?' hoje':''}" onclick="Tela.dia='${escA(d)}';Tela.modoAgenda='dia';Tela.render()">
+          <span class="sd-d">${esc(diaSem(d))}<b>${esc(d.slice(8,10))}</b></span>
+          <span class="sd-l">${hs.length?hs.map(h=>`<span>${esc(h.hora)} ${esc(primeiroNome(h.nome))}</span>`).join(''):'<i>libero</i>'}</span></button>`; }).join('')}</div>`;
+  },
+  avisos(){
+    const am=somaDias(hoje(),1), amanha=Ag.doDia(am), man=Manut.lista();
+    Manut._ultima=man;
+    return `<div class="card"><h2>Promemoria di domani</h2>
+        ${amanha.length?amanha.map(h=>`<div class="lista-item"><div class="info"><div class="t">${esc(h.hora)} · ${esc(h.nome)}</div>
+          <div class="s">${esc(h.servico||'')}${h.lembradoEm?' · Promemoria aperto':''}</div></div>
+          <button class="btn mini ${h.lembradoEm?'sec':''}" onclick="Ag.lembrar(${idn(h.id)})">${h.lembradoEm?'de novo':'lembrar'}</button></div>`).join('')
+        :'<div class="vazio">Nessun appuntamento domani.</div>'}</div>
+      <div class="card"><h2>Giorno del ritorno</h2>
+        ${man.length?man.map((it,i)=>`<div class="lista-item"><div class="info" onclick="Ficha.abrir(${Ref.add(it.x.chave)})" style="cursor:pointer"><div class="t">${esc(it.x.nome)}</div>
+          <div class="s">${esc(it.m.servico)} em ${esc(dataBR(it.m.ultima))} · <b>${esc(Manut.quando(it.m))}</b></div>
+          ${it.chamadaEm?`<div class="s">L'hai contattata il ${esc(dataBR(it.chamadaEm))}</div>`:''}</div>
+          <div class="col-btn"><button class="btn mini ${it.chamadaEm?'sec':''}" onclick="Manut.chamar(${i})">chamar</button>
+          <button class="btn mini sec" onclick="Tela.marcarDe(${Ref.add(it.x.chave)})">marcar</button></div></div>`).join('')
+        :'<div class="vazio">Per ora nessuna da richiamare. Quando arriva il giorno in cui una cliente dovrebbe tornare, compare qui con il messaggio pronto.</div>'}</div>
+      <div class="card"><h2>Ogni quanto torna la cliente, per trattamento</h2>
+        <p class="sub" style="margin-bottom:6px">Dopo quanti giorni la cliente torna per rifarlo. Se non lo cambi, resta ${REGRAS.CICLO_PADRAO} ${REGRAS.CICLO_PADRAO===1?'giorno':'giorni'}.</p>
+        ${Dados.produtos().length?Dados.produtos().map(p=>`<div class="lista-item"><div class="info"><div class="t">${esc(p.nome)}</div></div>
+          <div class="ciclo"><input inputmode="numeric" aria-label="dias de ${escA(p.nome)}" value="${escA(Dados.ciclo(p.id))}" onchange="Tela.mudaCiclo(${idn(p.id)},this.value)"><span>dias</span></div></div>`).join('')
+        :'<div class="vazio">Aggiungi i tuoi trattamenti in Guadagno in Mano e compaiono qui.</div>'}</div>`;
+  },
+  mudaCiclo(id, v){ const d=Math.round(Number(String(v).replace(/\D/g,'')));
+    if(!(d>=1&&d<=365)){ toast('Scrivi un numero da 1 a 365'); this.render(); return; }
+    if(d===REGRAS.CICLO_PADRAO) delete Dados.ag.ciclos[id]; else Dados.ag.ciclos[id]=d;
+    if(!Dados.salvarAg()){ Dados.carregar(); }
+    toast('Salvato ✓'); this.render(); },
+  clientes(){
+    const ym=hoje().slice(0,7), todas=Cli.todas();
+    const noMes=todas.filter(x=>x.vendas.some(v=>String(v.data).slice(0,7)===ym)).length;
+    const sumidas=todas.filter(x=>Cli.sumida(x)).length;
+    const f=(m,l)=>`<button class="${this.modoClientes===m?'on':''}" onclick="Tela.modoClientes='${m}';Tela.render()">${l}</button>`;
+    return `<div class="card"><div class="kpis">
+        <div class="kpi"><div class="v">${todas.length}</div><div class="l">cliente${todas.length===1?'':'s'}</div></div>
+        <div class="kpi"><div class="v">${noMes}</div><div class="l">${noMes===1?'cliente':'clienti'} questo mese</div></div>
+      </div></div>
+      <button class="btn" onclick="Ficha.nova()">+ Nuova cliente</button>
+      ${todas.length>8?`<input id="buscaCli" enterkeyhint="search" placeholder="Cerca cliente…" aria-label="buscar cliente" value="${escA(this.busca)}" autocomplete="off" oninput="Tela.buscar(this.value)" style="margin-top:12px">`:''}
+      <div class="filtros" style="margin-top:12px">${f('gasto','Spendono di più')}${f('vezes','Vengono più spesso')}${f('sumidas','Assenti da tempo'+(sumidas?' ('+sumidas+')':''))}</div>
+      <div id="cliLista">${this.clientesLista()}</div>`;
+  },
+  buscar(v){ this.busca=v; const el=document.getElementById('cliLista'); if(el) el.innerHTML=this.clientesLista(); },
+  clientesLista(){
+    let rk=Cli.ranking(this.modoClientes);
+    if(this.busca) rk=rk.filter(x=>norm(x.nome).includes(norm(this.busca)));
+    const su=this.modoClientes==='sumidas';
+    this._sum=rk;
+    return `<div class="card">${rk.length?rk.map((x,i)=>`<div class="lista-item"><div class="info" onclick="Ficha.abrir(${Ref.add(x.chave)})" style="cursor:pointer">
+        <div class="t">${x.n&&!su?(i+1)+'º ':''}${esc(x.nome)}${x.c?'':' <span class="sem-ficha">Senza scheda</span>'}</div>
+        <div class="s">${x.n?x.n+(x.n===1?' volta':' volte'):'ancora senza trattamento'}${x.dias!==null?' · '+(x.dias>0?(x.dias+' '+(x.dias===1?'giorno fa':'giorni fa')):'oggi'):''}</div></div>
+        ${su?`<button class="btn mini" onclick="Tela.chamarSumida(${i})">chamar</button>`:`<b style="color:var(--verde)">${rs(x.gasto)}</b>`}</div>`).join('')
+      :`<div class="vazio">${this.busca?'Nessuna cliente trovata.':su?'Nessuna cliente assente da tanto. Chi non torna da molto compare qui, con il messaggio pronto per richiamarla.':'Registra i trattamenti in Guadagno in Mano con il Nome della cliente: comparirà qui con tutto quello che ha già fatto.'}</div>`}</div>`;
+  },
+  marcarDe(i){ const k=Ref.get(i); if(k) Ag.form(0, null, k); },
+  chamarSumida(i){ const x=(this._sum||[])[i]; if(!x) return; abrirWhats(x.whats, Cli.msgSumida(x)); }
+};
+
+/* ============ INICIALIZACAO ============ */
+Dados.carregar();
+document.querySelectorAll('#navBar button').forEach(b=>b.addEventListener('click',()=>Tela.ir(b.dataset.tela)));
+/* o Controle pode ter mudado os dados em outra aba: rele ao voltar pra esta */
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && !TRAVADA){ Dados.carregar(); Tela.render(); } });
+/* travado, a tela paga nem se monta (a vitrine fica no lugar) */
+if(!TRAVADA) Tela.render();
+</script>
+<script>
+/* O botao de voltar tem que levar ao MENU DA COMPRADORA, nao ao hub pelado.
+   O hub manda `#de=<chave>` no link; aqui isso vira a pasta <chave>/ IRMA desta
+   pagina. Sem a marca (alguem abriu o app direto), fica o hub.html de sempre.
+   Achado pelo dono em 30/08/2026: voltar caia no menu travado. */
+(function(){
+  try{
+    /* chaves LONGAS primeiro: alternancia em JS casa da esquerda pra direita,
+       entao (c|cd) casaria "c" dentro de "cd" e a compradora do bump voltaria
+       pro menu do front, sem o Divulga. O $ ancora o fim, pra nao casar prefixo. */
+    var m = (location.hash || '').match(/de=(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)$/);
+    if(!m) return;
+
+    /* O #de= NAO grava mais o nivel (03/11/2026, achado de seguranca): qualquer um
+       abria `divulga.html#de=tudo` e ganhava tudo pra sempre. A memoria so nasce do
+       CAMINHO da pasta (hub.html), como antes de 31/08. Quem ja tinha a memoria
+       gravada por aqui continua com ela: nada e apagado. O hash serve so pro voltar. */
+
+    var a = document.getElementById('voltarMenu');
+    if(!a) return;
+    /* O destino sai da PASTA DESTA PAGINA, nunca de '../'.
+       BUG REAL, 31/08/2026 (dono, no app instalado): os apps moram em
+       /app/index.html, entao '../tudo/' subia um nivel A MAIS e caia em
+       lucronamao.github.io/tudo/, fora de /app/. Da 404 no Pages e 401 quando
+       o SW nao consegue servir, e a compradora era obrigada a fechar e reabrir
+       o app. Mesma classe de erro do fallback do service worker: caminho
+       relativo montado sem o prefixo da aplicacao. */
+    /* O menu da compradora e o index.html DA PASTA da chave.
+       Se esta pagina JA esta dentro da pasta certa (/app/tudo/index.html), o menu
+       e o proprio './': nao montar /app/tudo/tudo/, que nao existe.
+       Se esta na copia da raiz (/app/index.html, link antigo), sobe pra pasta. */
+    var aqui = location.pathname.replace(/[^\/]*$/, '');
+    var jaNaPasta = new RegExp('/' + m[1] + '/$').test(aqui);
+    a.setAttribute('href', jaNaPasta ? aqui : aqui + m[1] + '/');
+  }catch(e){}
+})();
+</script>
+
+
+
+
+<script>
+/* ===== A PAGINA DA RAIZ APONTA PRO MANIFEST DA PASTA (31/08/2026) =====
+
+   PROVADO NO APARELHO, nao suposto. O dono abriu /app/tudo/diagnostico.html,
+   adicionou a tela de inicio, e o icone salvou a pasta /app/tudo/: ou seja o iOS
+   ignorou a URL da aba e usou a `start_url` do manifest. A start_url VENCE.
+
+   Consequencia pro caso da compradora: as paginas da RAIZ linkam
+   /app/manifest.webmanifest, cuja start_url e `/app/hub.html`, SEM chave. Salvando
+   de qualquer pagina da raiz (link antigo, historico do Safari, ou o icone velho
+   que ela reabriu), o icone nasce travado. Reescrever a URL da aba NAO resolve,
+   porque o iOS nao olha a URL: olha o manifest.
+
+   Conserto: se esta pagina sabe a chave, ela troca o <link rel=manifest> pelo
+   manifest DA PASTA: que e um arquivo http(s) real, nao blob (blob nao e
+   confiavel no iOS, e o manifest precisa ser same-origin da start_url).
+
+   A chave vem, em ordem: do caminho, do #de= que o menu manda, do ?libera=
+   antigo, e por fim do nivel que o service worker guarda (Cache Storage, que
+   atravessa o isolamento entre Safari e app instalado). */
+(function(){
+  var MAPA_K = {c:1,d:1,p:1,cd:1,cp:1,u:1,tudo:1};
+
+  function aplicar(chave){
+    if(!chave || !MAPA_K[chave]) return;
+    var base = location.pathname.replace(/\/app\/.*$/, '/app/');
+    if(base.indexOf('/app/') < 0) base = '/app/';
+    var href = base + chave + '/manifest.webmanifest';
+    var el = document.querySelector('link[rel="manifest"]');
+    if(!el){ el = document.createElement('link'); el.rel = 'manifest'; document.head.appendChild(el); }
+    if(el.getAttribute('href') !== href) el.setAttribute('href', href);
+  }
+
+  try{
+    /* 1. caminho */
+    var m = location.pathname.match(/\/(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)(?:\/|$)/);
+    if(m){ aplicar(m[1]); return; }   /* ja esta na pasta: o manifest local ja serve */
+
+    /* 2. #de= que o menu manda ao abrir o app */
+    var h = (location.hash||'').match(/de=(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)$/);
+    if(h){ aplicar(h[1]); return; }
+
+    /* 3. ?libera= dos links antigos */
+    var q = (new URLSearchParams(location.search).get('libera')||'').replace(/^so-/,'');
+    if(MAPA_K[q]){ aplicar(q); return; }
+
+    /* 4. o nivel que o service worker guarda: atravessa Safari -> app instalado */
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.ready.then(function(reg){
+        if(!reg.active) return;
+        navigator.serviceWorker.addEventListener('message', function(ev){
+          var d = ev.data || {};
+          if(d.tipo !== 'nivel' || !Array.isArray(d.itens) || !d.itens.length) return;
+          var i = d.itens, c = i.indexOf('controle')>=0, dv = i.indexOf('divulga')>=0, p = i.indexOf('preco')>=0;
+          aplicar((c&&dv&&p) ? 'tudo' : (c&&dv) ? 'cd' : (c&&p) ? 'cp' : c ? 'c' : dv ? 'd' : p ? 'p' : null);
+        });
+        reg.active.postMessage({tipo:'ler-nivel'});
+      }).catch(function(){});
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

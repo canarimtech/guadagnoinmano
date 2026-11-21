@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="it"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diagnostica · Guadagno in Mano</title>
+<!-- o mesmo manifest e apple-touch-icon das outras paginas: e isso que o iOS le
+     pra decidir a URL e o icone do atalho, e o que precisamos ver no aparelho dela -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="../favicon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Guadagno in Mano">
+<style>
+:root{--fundo:#0f1011;--painel:#151617;--tinta:#ecedee;--suave:#9aa0a6;--ok:#8fbf4a;--ruim:#e5534b;--aviso:#e3b341;--linha:#2a2c2e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--tinta);
+font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:18px}
+h1{font-size:19px;margin:0 0 4px}
+.sub{color:var(--suave);font-size:13px;margin-bottom:18px}
+.card{background:var(--painel);border:1px solid var(--linha);border-radius:12px;padding:14px;margin-bottom:12px}
+.rot{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--suave);margin-bottom:6px}
+.val{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;word-break:break-all}
+.ok{color:var(--ok)} .ruim{color:var(--ruim)} .aviso{color:var(--aviso)}
+.grande{font-size:17px;font-weight:700;margin-bottom:10px}
+button{width:100%;padding:15px;font-size:16px;font-weight:700;border:0;border-radius:11px;
+background:var(--ok);color:#0f1011;margin-top:6px}
+button.sec{background:transparent;color:var(--tinta);border:1px solid var(--linha)}
+#saida{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;
+background:#0b0c0d;border:1px solid var(--linha);border-radius:10px;padding:12px;margin-top:10px}
+</style></head><body>
+
+<h1>Diagnostica dell'app</h1>
+<div class="sub">Questa schermata mostra solo informazioni. Non cambia niente sul tuo telefono.</div>
+
+<div class="card"><div class="rot">cosa è sbloccato ora</div><div class="val grande" id="lib">…</div></div>
+<div class="card"><div class="rot">indirizzo aperto</div><div class="val" id="url">…</div></div>
+<div class="card"><div class="rot">La stai aprendo dall'icona?</div><div class="val" id="modo">…</div></div>
+<div class="card"><div class="rot">Versione dell'app installata sul telefono</div><div class="val" id="ver">…</div></div>
+<div class="card"><div class="rot">indirizzo che salva l'icona</div><div class="val" id="starturl">…</div></div>
+<div class="card"><div class="rot">telefono</div><div class="val" id="ua">…</div></div>
+
+<button onclick="copiar()">Copia tutto da inviare</button>
+<button class="sec" onclick="limpar()">Azzera e ricomincia (cancella la vecchia app dal telefono)</button>
+<div id="saida"></div>
+
+<script>
+const $ = i => document.getElementById(i);
+const MAPA = {c:['controle'],d:['divulga'],p:['preco'],cd:['controle','divulga'],
+              cp:['controle','preco'],u:['preco'],tudo:['controle','divulga','preco']};
+let relatorio = {};
+
+async function rodar(){
+  const m = location.pathname.match(/\/(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)(?:\/|$)/);
+  const chave = m ? m[1] : null;
+  const doLink = chave ? MAPA[chave] : [];
+  let mem = [];
+  try { const v = JSON.parse(localStorage.getItem('lucrostudioit_liberado')||'[]');
+        if(Array.isArray(v)) mem = v; } catch(e){ mem = ['(archiviazione bloccata)']; }
+
+  const lib = doLink.length ? doLink : mem;
+  $('lib').innerHTML = lib.length
+    ? '<span class="ok">' + lib.join(' + ') + '</span>'
+    : '<span class="ruim">NIENTE SBLOCCATO (è il problema)</span>';
+
+  $('url').textContent = location.pathname + (location.search||'') + (location.hash||'');
+
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  $('modo').innerHTML = standalone
+    ? '<span class="ok">Sì, dall\'icona della schermata Home</span>'
+    : '<span class="aviso">No, dal browser</span>';
+
+  // versao do app = cache do service worker
+  let ver = '(nessuna)';
+  try {
+    const ks = await caches.keys();
+    ver = ks.length ? ks.join(', ') : '(nessuna)';
+  } catch(e){ ver = '(non riesco a leggerlo)'; }
+  $('ver').innerHTML = /lucrostudioit-v14/.test(ver)
+    ? '<span class="ok">' + ver + ' (aggiornata)</span>'
+    : '<span class="ruim">' + ver + ' (VECCHIA, è il problema)</span>';
+
+  // start_url que o icone guardaria
+  let su = '(senza manifest)';
+  try {
+    const el = document.querySelector('link[rel=manifest]');
+    if(el){ const mf = await (await fetch(el.href, {cache:'reload'})).json(); su = mf.start_url; }
+  } catch(e){ su = 'ERRO: ' + e.message; }
+  const suOk = /\/(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)\/$/.test(su);
+  $('starturl').innerHTML = (suOk ? '<span class="ok">' : '<span class="ruim">') + su + '</span>';
+
+  $('ua').textContent = navigator.userAgent;
+
+  relatorio = {liberado: lib, url: location.href, dall_icona: standalone,
+               versione_sul_telefono: ver, start_url: su, ua: navigator.userAgent};
+}
+
+function copiar(){
+  const t = Object.entries(relatorio).map(([k,v]) => k + ': ' + JSON.stringify(v)).join('\n');
+  $('saida').textContent = t;
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(
+    ()=>{ $('saida').textContent = '✓ Copiato! Ora incollalo nella conversazione.\n\n' + t; },
+    ()=>{});
+}
+
+async function limpar(){
+  $('saida').textContent = 'Pulizia in corso…';
+  try {
+    for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
+    for (const k of await caches.keys()) await caches.delete(k);
+    $('saida').textContent = '✓ Fatto. Ora CANCELLA l\'icona dalla schermata Home e aggiungila di nuovo dal link.';
+  } catch(e){ $('saida').textContent = 'Errore: ' + e.message; }
+}
+
+rodar();
+</script>
+
+<script>
+/* ===== A PAGINA DA RAIZ APONTA PRO MANIFEST DA PASTA (31/08/2026) =====
+
+   PROVADO NO APARELHO, nao suposto. O dono abriu /app/tudo/diagnostico.html,
+   adicionou a tela de inicio, e o icone salvou a pasta /app/tudo/: ou seja o iOS
+   ignorou a URL da aba e usou a `start_url` do manifest. A start_url VENCE.
+
+   Consequencia pro caso da compradora: as paginas da RAIZ linkam
+   /app/manifest.webmanifest, cuja start_url e `/app/hub.html`, SEM chave. Salvando
+   de qualquer pagina da raiz (link antigo, historico do Safari, ou o icone velho
+   que ela reabriu), o icone nasce travado. Reescrever a URL da aba NAO resolve,
+   porque o iOS nao olha a URL: olha o manifest.
+
+   Conserto: se esta pagina sabe a chave, ela troca o <link rel=manifest> pelo
+   manifest DA PASTA: que e um arquivo http(s) real, nao blob (blob nao e
+   confiavel no iOS, e o manifest precisa ser same-origin da start_url).
+
+   A chave vem, em ordem: do caminho, do #de= que o menu manda, do ?libera=
+   antigo, e por fim do nivel que o service worker guarda (Cache Storage, que
+   atravessa o isolamento entre Safari e app instalado). */
+(function(){
+  var MAPA_K = {c:1,d:1,p:1,cd:1,cp:1,u:1,tudo:1};
+
+  function aplicar(chave){
+    if(!chave || !MAPA_K[chave]) return;
+    var base = location.pathname.replace(/\/app\/.*$/, '/app/');
+    if(base.indexOf('/app/') < 0) base = '/app/';
+    var href = base + chave + '/manifest.webmanifest';
+    var el = document.querySelector('link[rel="manifest"]');
+    if(!el){ el = document.createElement('link'); el.rel = 'manifest'; document.head.appendChild(el); }
+    if(el.getAttribute('href') !== href) el.setAttribute('href', href);
+  }
+
+  try{
+    /* 1. caminho */
+    var m = location.pathname.match(/\/(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)(?:\/|$)/);
+    if(m){ aplicar(m[1]); return; }   /* ja esta na pasta: o manifest local ja serve */
+
+    /* 2. #de= que o menu manda ao abrir o app */
+    var h = (location.hash||'').match(/de=(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)$/);
+    if(h){ aplicar(h[1]); return; }
+
+    /* 3. ?libera= dos links antigos */
+    var q = (new URLSearchParams(location.search).get('libera')||'').replace(/^so-/,'');
+    if(MAPA_K[q]){ aplicar(q); return; }
+
+    /* 4. o nivel que o service worker guarda: atravessa Safari -> app instalado */
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.ready.then(function(reg){
+        if(!reg.active) return;
+        navigator.serviceWorker.addEventListener('message', function(ev){
+          var d = ev.data || {};
+          if(d.tipo !== 'nivel' || !Array.isArray(d.itens) || !d.itens.length) return;
+          var i = d.itens, c = i.indexOf('controle')>=0, dv = i.indexOf('divulga')>=0, p = i.indexOf('preco')>=0;
+          aplicar((c&&dv&&p) ? 'tudo' : (c&&dv) ? 'cd' : (c&&p) ? 'cp' : c ? 'c' : dv ? 'd' : p ? 'p' : null);
+        });
+        reg.active.postMessage({tipo:'ler-nivel'});
+      }).catch(function(){});
+    }
+  }catch(e){}
+})();
+</script>
+</body></html>

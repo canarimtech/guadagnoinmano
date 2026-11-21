@@ -1,0 +1,2895 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#3f3a45">
+  <meta name="apple-mobile-web-app-title" content="Guadagno in Mano">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Guadagno in Mano per estetiste e onicotecniche</title>
+<!-- CONTROLE DO STUDIO (front, R$ 47). Escada de 09/11/2026: o front ficou enxuto,
+     igual ao da Lucro na Mao. Trattamento, servicos com Costo del materiale, guadagno, Da incassare,
+     despesas, resumo e backup. Da cliente guarda so o NOME no trattamento e no Da incassare
+     (com a sugestao dos nomes ja usados). Ficha, ranking, sumidas e agenda moram na
+     Agenda e clienti (divulga.html); materiais, baixa e Lista della spesa no Controle de
+     Estoque (precificacao.html). O backup daqui leva tudo: as chaves dos dois bumps
+     (lucrostudioit_clientes, lucrostudioit_agenda) e os materiais. -->
+<!-- ativacao pelo e-mail da compra: roda ANTES de tudo (ver ativacao.js) -->
+<script>/* rede de seguranca da ativacao: decide "legado" ou "pendente" ANTES de a pagina gravar o tema,
+   mesmo que o ativacao.js nao carregue (sem isto, a primeira abertura com rede ruim virava legado) */
+try{var K='lucrostudioit_ativacao';if(!localStorage.getItem(K)){var u=0;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('lucrostudioit_')===0){u=1;break}}localStorage.setItem(K,JSON.stringify(u?{estado:'legado',desde:Date.now()}:{estado:'pendente'}))}}catch(e){}</script>
+<script src="ativacao.js"></script>
+<!-- o que esta liberado: a mesma regra do menu (so pra baixa de material e o aviso de acabando) -->
+<script src="liberado.js"></script>
+<style>
+:root{
+  --vinho:#8e2757; --vinho-escuro:#6d1d43; --rose:#f6e7ee; --rose-2:#fdf4f8;
+  --tinta:#2b2230; --cinza:#675c6d; --linha:#eadfe6; --branco:#fff;
+  --verde:#1e7d4f; --verde-bg:#e6f4ec; --ambar:#a05e03; --ambar-bg:#fdf2df;
+  --verm:#b3261e; --verm-bg:#fbeae9; --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--rose-2);color:var(--tinta);
+  font-size:16px;padding-bottom:76px;min-height:100vh}
+header{background:var(--vinho);color:#fff;padding:12px 14px;position:sticky;top:0;z-index:20;
+  display:flex;justify-content:space-between;align-items:center;gap:10px}
+header h1{font-size:16.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .loja{font-size:12px;opacity:.85;font-weight:400}
+main{padding:14px;max-width:560px;margin:0 auto}
+.card{background:var(--branco);border:1px solid var(--linha);border-radius:var(--radius);
+  padding:14px;margin-bottom:12px}
+.card h2{font-size:14px;color:var(--cinza);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--rose);border-radius:12px;padding:12px}
+.kpi .v{font-size:22px;font-weight:800;color:var(--vinho);white-space:nowrap;letter-spacing:-.3px}
+.kpi .v.grande{font-size:18px}
+.kpi .v.pos{color:var(--verde)} .kpi .v.neg{color:var(--verm)}
+.kpi .l{font-size:12px;color:var(--cinza);margin-top:2px}
+button{font-family:inherit;border:0;cursor:pointer;border-radius:12px;font-size:16px}
+.btn{background:var(--vinho);color:#fff;width:100%;padding:15px;font-weight:700;margin-top:8px}
+.btn:active{background:var(--vinho-escuro)}
+.btn.sec{background:var(--rose);color:var(--vinho)}
+.btn.mini{width:auto;padding:8px 14px;font-size:14px;margin:0}
+.btn.perigo{background:var(--verm-bg);color:var(--verm)}
+input,select{width:100%;padding:13px;border:1.5px solid #8f8496;border-radius:12px;
+  font-size:16px;font-family:inherit;background:#fff;margin-top:4px}
+input:focus,select:focus{outline:none;border-color:var(--vinho)}
+label{font-size:13px;color:var(--cinza);font-weight:600;display:block;margin-top:12px}
+.linha2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--linha);
+  display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;padding:9px 2px 7px;font-size:11px;color:var(--cinza);
+  display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:0}
+nav button.on{color:var(--vinho);font-weight:700}
+nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.lista-item{display:flex;justify-content:space-between;align-items:center;padding:12px 2px;
+  border-bottom:1px solid var(--linha);gap:8px}
+.lista-item:last-child{border-bottom:0}
+.lista-item .info{flex:1;min-width:0}
+.lista-item .t{font-weight:600;font-size:15px}
+.lista-item .s{font-size:12.5px;color:var(--cinza);margin-top:1px}
+.badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.badge.ok{background:var(--verde-bg);color:var(--verde)}
+.badge.baixo{background:var(--ambar-bg);color:var(--ambar)}
+.badge.zero{background:var(--verm-bg);color:var(--verm)}
+.badge.fiado{background:var(--ambar-bg);color:var(--ambar)}
+/* O fundo do modal segue a AREA VISIVEL (visualViewport), nao a tela inteira: top e height vem do
+   script "MODAL ACIMA DO TECLADO". Bug real, 19/10/2026: o teclado do celular cobre o fundo da tela
+   sem encolher a pagina; a busca do "Registrar venda" filtrava a lista, o modal (preso no fundo)
+   encolhia e ia inteiro para tras do teclado. */
+.modal-fundo{position:fixed;left:0;right:0;top:0;height:100%;background:rgba(43,34,48,.5);z-index:40;display:none;
+  align-items:flex-end;justify-content:center}
+.modal-fundo.aberto{display:flex}
+.modal{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;
+  max-height:88%;overflow-y:auto;padding:18px 16px 24px}
+/* teclado aberto: o modal ocupa a area visivel inteira, entao o campo fica parado no topo
+   enquanto a lista encolhe embaixo dele */
+.modal-fundo.teclado .modal{height:100%;max-height:none;border-radius:0}
+/* modal com busca (escolher o servico ou a cliente do trattamento): altura FIXA. Preso no fundo, ele encolhia
+   quando a busca deixava poucos produtos e o campo descia ate 275 px; ao apagar, subia
+   de novo (cliente, 08/11/2026: "fica descendo e pulando") */
+.modal.com-busca{height:88%}
+.modal h3{font-size:17px;margin-bottom:4px}
+.modal .sub{font-size:13px;color:var(--cinza);margin-bottom:10px}
+.aviso{border-radius:12px;padding:11px 12px;font-size:13.5px;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start}
+.aviso.backup{background:var(--ambar-bg);color:var(--ambar)}
+.aviso.verde{background:var(--verde-bg);color:var(--verde)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;background:var(--tinta);
+  color:#fff;padding:12px 18px;border-radius:12px;font-size:14.5px;z-index:60;opacity:0;
+  transition:opacity .25s;max-width:92vw;text-align:center;pointer-events:none}
+.toast.mostra{opacity:1}
+.toast.guadagno{background:var(--verde);font-weight:700}
+.vazio{text-align:center;color:var(--cinza);font-size:14px;padding:26px 10px;line-height:1.5}
+.passo{font-size:12px;color:var(--cinza);text-align:center;margin-bottom:10px;font-weight:600}
+.escolha-prod{display:flex;justify-content:space-between;align-items:center;width:100%;
+  background:var(--rose);text-align:left;padding:13px;margin-bottom:8px;border-radius:12px}
+.escolha-prod .n{font-weight:700} .escolha-prod .p{color:var(--vinho);font-weight:700}
+.qtd-row{display:flex;align-items:center;gap:14px;justify-content:center;margin:10px 0}
+.qtd-row button{width:52px;height:52px;font-size:26px;background:var(--rose);color:var(--vinho);font-weight:800}
+.qtd-row .n{font-size:30px;font-weight:800;min-width:52px;text-align:center}
+/* carrinho de venda (varios produtos numa venda) */
+.cart-item{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  background:var(--rose-2);border:1px solid var(--rose);padding:11px 12px;margin-bottom:8px;border-radius:12px}
+.cart-item .n{font-weight:700;font-size:15px;line-height:1.3}
+.cart-item .s{font-size:12.5px;color:var(--cinza);margin-top:2px}
+.cart-item .v{font-weight:800;white-space:nowrap}
+.cart-item .x{width:34px;height:34px;flex-shrink:0;padding:0;font-size:19px;font-weight:800;
+  background:#fff;color:var(--cinza);border:1px solid var(--linha)}
+.cart-tot{display:flex;justify-content:space-between;align-items:baseline;
+  border-top:2px solid var(--vinho);margin-top:4px;padding-top:10px}
+.cart-tot .l{font-weight:700;font-size:15px} .cart-tot .v{font-weight:800;font-size:22px;color:var(--vinho)}
+.cart-guadagno{text-align:right;font-size:13px;color:var(--verde);font-weight:700;margin-top:2px}
+/* recebimento de Da incassare (total ou parcial) */
+.fi-linhas{background:var(--rose-2);border-radius:12px;padding:12px;margin:4px 0 14px}
+.fi-linha{display:flex;justify-content:space-between;font-size:14.5px;padding:3px 0}
+.fi-linha.falta{border-top:1px solid var(--rose);margin-top:5px;padding-top:7px;font-weight:800;font-size:16px}
+.fi-linha.falta .v{color:var(--vinho)}
+/* ===== O NUMERO QUE IMPORTA E GRANDE (21/09/2026) =====
+   Regra do dono: "as clientes tem MUITA dificuldade com app, tem que ser facil e
+   visualmente simples". Antes, "ainda falta" era mais uma linha do mesmo tamanho
+   entre outras duas, e o resultado do que ela digitava vinha como frase corrida.
+   Agora o que ela precisa conferir de relance (quanto deve agora, quanto fica
+   depois) e numero grande, e a frase vira so o rotulo em cima dele. */
+.fi-falta{border-top:1px solid var(--rose);margin-top:8px;padding-top:9px;text-align:center}
+.fi-falta .rot{font-size:12.5px;color:var(--cinza);font-weight:600;text-transform:lowercase}
+.fi-falta .big{font-size:29px;font-weight:800;color:var(--vinho);line-height:1.15;margin-top:2px}
+.fi-previa .rot{font-size:12.5px;color:var(--cinza);font-weight:600;line-height:1.35}
+.fi-previa .big{font-size:25px;font-weight:800;color:var(--vinho);line-height:1.15;margin-top:3px}
+.fi-previa.quita .rot{color:var(--verde)}
+.fi-previa.quita .big{color:var(--verde)}
+.fi-hist{font-size:12.5px;color:var(--cinza);margin-top:8px;line-height:1.6}
+/* parcelas combinadas, dentro do quadro de valores do Da incassare */
+.fi-parc{border-top:1px solid var(--rose);margin-top:8px;padding-top:8px;
+  font-size:13.5px;color:var(--cinza);text-align:center}
+.fi-parc b{color:var(--vinho)}
+/* atalhos que SO preenchem o campo: visual de link, nunca de botao de acao */
+.fi-atalhos{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.fi-atalhos button{flex:1;min-width:120px;min-height:44px;padding:10px 8px;background:#fff;
+  border:1.5px solid var(--linha);color:var(--vinho);font-size:13.5px;font-weight:700}
+.fi-atalhos button:active{background:var(--rose)}
+/* a previa: diz o que o botao vai fazer, antes de ela tocar */
+.fi-previa{margin-top:12px;background:var(--rose-2);border-radius:11px;padding:11px 12px;
+  font-size:14px;text-align:center;color:var(--tinta);line-height:1.45}
+.fi-previa b{color:var(--vinho)}
+.fi-previa.quita{background:var(--verde-bg);color:var(--verde)}
+.fi-previa.quita b{color:var(--verde)}
+.fi-previa.aviso-erro{background:var(--verm-bg);color:var(--verm)}
+.fi-previa.aviso-erro b{color:var(--verm)}
+.fi-previa.aviso-vazio{background:var(--rose-2);color:var(--cinza)}
+.btn:disabled{opacity:.45}
+/* data da despesa: hoje/ontem resolvem o caso comum sem abrir o calendario */
+.dt-atalhos{display:flex;gap:7px;margin:6px 0 8px}
+.dt-atalhos button{flex:1;padding:12px 8px;background:#fff;border:1.5px solid var(--linha);
+  color:var(--vinho);font-size:14.5px;font-weight:700;border-radius:11px}
+.dt-atalhos button.on{background:var(--vinho);color:#fff;border-color:var(--vinho)}
+.dt-atalhos button:active{opacity:.75}
+.dt-previa{margin-top:9px;background:var(--rose-2);border-radius:11px;padding:10px 12px;
+  font-size:13.5px;text-align:center;color:var(--tinta);line-height:1.45}
+.dt-previa b{color:var(--vinho)}
+.dt-previa.erro{background:var(--verm-bg);color:var(--verm)}
+.dt-previa.erro b{color:var(--verm)}
+/* cancelar embaixo de um botao de acao nao pode ter o mesmo peso dele */
+.btn.discreto{background:none;color:var(--cinza);font-weight:600;padding:12px;font-size:14.5px}
+.btn.discreto:active{background:var(--rose-2)}
+/* historico recolhido: ocupa uma linha ate ela querer ver */
+.fi-det{margin-top:14px;border-top:1px solid var(--linha);padding-top:10px}
+.fi-det summary{font-size:13.5px;color:var(--cinza);font-weight:600;cursor:pointer;
+  list-style:none;padding:8px 2px;display:flex;align-items:center;gap:7px}
+.fi-det summary::-webkit-details-marker{display:none}
+.fi-det summary::before{content:'\203a';font-weight:800;color:var(--vinho);font-size:17px;
+  line-height:1;display:inline-block;width:10px;text-align:center}
+.fi-det[open] summary::before{content:'\2039'}
+.fi-hl{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:7px 0;font-size:13.5px;border-bottom:1px solid var(--linha)}
+.fi-hl:last-child{border-bottom:0}
+.fi-hl button{font-size:11.5px;padding:4px 9px}
+.pgto-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.pgto-grid button{padding:13px;background:var(--rose);color:var(--tinta);font-weight:600;font-size:15px}
+.pgto-grid button.on{background:var(--vinho);color:#fff}
+/* parcelas: grade de botoes grandes, do mesmo tamanho, faceis de acertar com o dedo */
+/* ===== A VENDA E UM BLOCO DE DUAS FAIXAS (14/09/2026) =====
+   Informacao em cima, botoes embaixo na largura inteira. Antes disso os botoes
+   moravam numa coluna estreita a direita e espremiam o texto ate quebrar letra a
+   letra no celular. */
+.venda-bloco{border-bottom:1px solid var(--linha);padding:13px 2px 12px}
+.venda-bloco:last-child{border-bottom:0}
+.venda-topo{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.venda-topo .info{flex:1;min-width:0}
+.venda-topo .t{font-weight:600;font-size:15px;line-height:1.3}
+.venda-topo .s{font-size:12.5px;color:var(--cinza);margin-top:3px;line-height:1.45}
+.venda-valor{text-align:right;flex-shrink:0}
+.venda-valor .vv{font-weight:800;font-size:16px;white-space:nowrap}
+.venda-valor .badge{display:inline-block;margin-top:4px}
+.venda-acoes{display:flex;gap:5px;margin-top:10px}
+.venda-acoes .va{flex:1 1 0;min-width:0;white-space:nowrap;padding:9px 3px;font-size:12.5px;font-weight:700;
+  background:var(--rose);color:var(--vinho);border-radius:10px}
+.venda-acoes .va.principal{background:var(--vinho);color:#fff}
+.venda-acoes .va.perigo{background:var(--verm-bg);color:var(--verm)}
+.venda-acoes .va:active{opacity:.75}
+/* atalho pro Da incassare: linha clicavel, nao mais um aviso morto */
+.kpi-link{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  margin-top:10px;background:var(--ambar-bg);color:var(--ambar);border:0;border-radius:12px;
+  padding:12px 14px;font-size:14px;font-family:inherit;text-align:left;font-weight:600}
+.kpi-link b{font-size:16px;font-weight:800}
+.kpi-link .seta{font-size:22px;font-weight:800;line-height:1;opacity:.7}
+.nota-caixa{font-size:12.5px;color:var(--cinza);line-height:1.45;margin-top:10px;text-align:center}
+.parc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:6px}
+.parc-grid button{padding:12px 4px;background:var(--rose);color:var(--tinta);font-weight:700;font-size:14.5px}
+.parc-grid button.on{background:var(--vinho);color:#fff}
+.parc-info{margin-top:9px;background:var(--rose-2);border:1px solid var(--rose);border-radius:11px;
+  padding:10px 12px;font-size:14.5px;color:var(--tinta);text-align:center}
+.parc-info b{color:var(--vinho);font-size:16px}
+/* resumo da venda com desconto (30/09/2026): subtotal, desconto e total, como no caixa */
+.resumo{margin:12px 0 4px;border:1px solid var(--linha);border-radius:14px;padding:4px 14px}
+.resumo .rl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;font-size:14.5px}
+.resumo .rl + .rl{border-top:1px solid var(--linha)}
+.resumo .rl .v{font-weight:700;white-space:nowrap}
+.resumo .rl.menos .v{color:var(--verm)}
+.resumo .rl.tot{font-weight:800;font-size:16px;border-top:1px solid var(--linha)}
+.resumo .rl.tot .v{font-size:20px;color:var(--vinho);font-weight:800}
+.desc-ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.desc-tipo{display:flex;background:var(--rose);border-radius:9px;padding:3px}
+.desc-tipo button{padding:6px 11px;background:transparent;color:var(--cinza);font-weight:800;font-size:13.5px;border-radius:7px}
+.desc-tipo button.on{background:#fff;color:var(--vinho);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.resumo input#descImporto{width:108px;margin:0;padding:9px 10px;text-align:right;font-size:16px;font-weight:700}
+.desc-info{font-size:12.5px;color:var(--cinza);text-align:right;margin:-4px 0 10px;line-height:1.4}
+.desc-info .ruim{color:var(--verm);font-weight:700}
+.edit-aviso{margin:10px 0 4px;background:var(--ambar-bg);color:var(--ambar);border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.55}
+.edit-aviso.oculto{display:none}
+.opcional{font-weight:600;color:var(--cinza);text-transform:none;letter-spacing:0}
+.opcional.obrig{color:var(--vinho)}
+.mes-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.mes-nav .m{font-weight:800;font-size:16px}
+.mes-nav button{background:var(--rose);color:var(--vinho);width:44px;height:44px;font-size:18px;font-weight:800}
+.oculto{display:none!important}
+.filtros{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto}
+.filtros button{padding:7px 13px;background:#fff;border:1.5px solid var(--linha);color:var(--cinza);font-size:13.5px;font-weight:600;white-space:nowrap}
+.filtros button.on{background:var(--vinho);color:#fff;border-color:var(--vinho)}
+.wizard-logo{text-align:center;padding:26px 0 10px}
+.wizard-logo .m1{font-size:26px;font-weight:800;color:var(--vinho)}
+.wizard-logo .m2{font-size:14px;color:var(--cinza);margin-top:4px}
+
+.cfg-fundo{position:fixed;inset:0;background:rgba(43,34,48,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.cfg-fundo.aberto{display:flex}
+.cfg-box{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:18px 16px 26px}
+.cfg-box h3{font-size:17px;margin-bottom:2px}
+.cfg-box .cfg-sub{font-size:13px;color:var(--cinza);margin-bottom:14px}
+.cfg-box h4{font-size:12.5px;color:var(--cinza);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px}
+.cfg-cores{display:flex;gap:12px}
+.cfg-cores button{width:42px;height:42px;border-radius:50%;border:3px solid transparent;outline:2px solid var(--linha);cursor:pointer}
+.cfg-cores button.on{border-color:var(--tinta)}
+.cfg-btn{background:var(--vinho);color:#fff;width:100%;padding:14px;font-weight:700;border:0;border-radius:12px;font-size:15.5px;cursor:pointer;margin-top:8px;font-family:inherit}
+.cfg-btn.sec{background:var(--rose);color:var(--vinho)}
+.btn-cfg{background:none;border:0;color:#fff;display:flex;align-items:center;cursor:pointer;padding:4px}
+.btn-cfg svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:360px){
+  header h1{font-size:15px}
+  header .loja{font-size:11px}
+  #btnBkpTopo{padding:7px 9px!important;font-size:12px!important}
+  .kpi .v{font-size:19px}
+  .kpi .v.grande{font-size:16px}
+  nav button{font-size:10px}
+}
+.pag{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;flex-wrap:wrap}
+.pag button{min-width:38px;height:38px;padding:0 10px;background:#fff;border:1.5px solid var(--linha);
+  color:var(--tinta);font-size:14.5px;font-weight:700;border-radius:10px}
+.pag button.on{background:var(--vinho);color:#fff;border-color:var(--vinho)}
+.pag button:disabled{opacity:.35}
+.pag .info{width:100%;text-align:center;font-size:12.5px;color:var(--cinza);margin-top:2px}
+/* faixa de instalacao: o caminho VISIVEL pra virar app na tela inicial */
+.faixa-inst{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--linha);
+  border-left:4px solid var(--vinho);border-radius:14px;padding:12px 12px 12px 13px;margin:0 auto 14px;max-width:560px}
+.faixa-inst .fi-ico{width:40px;height:40px;border-radius:11px;background:var(--rose);display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
+.faixa-inst .fi-ico svg{width:21px;height:21px;fill:none;stroke:var(--vinho);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.faixa-inst .fi-txt{flex:1;min-width:0}
+.faixa-inst .fi-txt b{display:block;font-size:14.5px;line-height:1.25}
+.faixa-inst .fi-txt span{display:block;font-size:12.5px;color:var(--cinza);line-height:1.35;margin-top:2px}
+.faixa-inst .fi-btn{background:var(--vinho);color:#fff;border:0;border-radius:11px;padding:11px 15px;
+  font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap}
+.faixa-inst .fi-x{background:none;border:0;color:var(--cinza);font-size:20px;line-height:1;padding:2px 4px;
+  cursor:pointer;flex-shrink:0;font-family:inherit}
+@media(max-width:400px){
+  .faixa-inst{flex-wrap:wrap}
+  .faixa-inst .fi-btn{width:100%;order:9}
+}
+/* passo a passo de instalacao (iPhone, e Android que nao ofereceu o prompt) */
+.ps-fundo{position:fixed;inset:0;background:rgba(43,34,48,.55);z-index:60;display:none;align-items:flex-end;justify-content:center}
+.ps-fundo.aberto{display:flex}
+.ps-box{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:20px 18px 26px}
+.ps-box h3{font-size:18px;margin-bottom:3px}
+.ps-box .ps-sub{font-size:13.5px;color:var(--cinza);line-height:1.45;margin-bottom:15px}
+.ps-box ol{list-style:none;counter-reset:ps;margin:0;padding:0}
+.ps-box ol li{counter-increment:ps;position:relative;padding:0 0 15px 40px;font-size:14.5px;line-height:1.5}
+.ps-box ol li::before{content:counter(ps);position:absolute;left:0;top:-1px;width:27px;height:27px;
+  border-radius:50%;background:var(--vinho);color:#fff;font-weight:800;font-size:13.5px;
+  display:flex;align-items:center;justify-content:center}
+.ps-box .ps-ico{width:18px;height:18px;vertical-align:-4px;fill:none;stroke:var(--vinho);
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin:0 1px}
+.ps-box .ps-btn{background:var(--vinho);color:#fff;width:100%;padding:14px;font-weight:700;border:0;
+  border-radius:12px;font-size:15.5px;cursor:pointer;font-family:inherit;margin-top:4px}
+.ps-box .ps-nota{display:block;font-size:12.5px;line-height:1.4;color:var(--ambar);
+  background:var(--ambar-bg);border-radius:9px;padding:7px 10px;margin-top:6px}
+.ps-aviso{display:flex;gap:9px;background:var(--rose);border-radius:11px;padding:11px 12px;
+  margin-bottom:14px;font-size:13px;line-height:1.45;color:var(--tinta)}
+.ps-aviso svg{width:17px;height:17px;flex-shrink:0;margin-top:1px;fill:none;stroke:var(--vinho);
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ps-aviso b{font-weight:800}
+/* ====== ANIMACAO: o caminho do iPhone, desenhado ======
+   Fiel ao fluxo real do iOS 26 (conferido em video do aparelho do dono, 27/08/2026).
+   Desenho e nao video: ~5 KB, funciona offline junto com o app, nao tem nada de
+   pessoal na tela e nao envelhece quando a Apple muda o visual.
+   O que o desenho reproduz, e que eu tinha errado antes:
+     - a folha de compartilhar do iOS e ESCURA (#262528), nao clara
+     - "Ver mais" nao e link no meio da lista: e um BOTAO REDONDO com seta,
+       na fileira de acoes, e vira "Mostra meno" depois
+     - "Adicionar a Tela de Inicio" e o ULTIMO item da lista que se abre
+     - existe uma tela final, com o nome do app e o botao Adicionar em azul */
+.demo{background:var(--rose-2);border:1px solid var(--linha);border-radius:14px;
+  padding:13px 12px 11px;margin-bottom:16px}
+.demo-topo{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.demo-rot{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--cinza)}
+.demo-passo{font-size:12px;font-weight:700;color:var(--vinho);background:var(--rose);
+  border-radius:99px;padding:3px 10px}
+.fone{position:relative;width:172px;height:268px;margin:0 auto;background:#0e0d10;
+  border-radius:23px;padding:5px;box-shadow:0 10px 26px -14px rgba(20,4,12,.7)}
+.fone-tela{position:relative;width:100%;height:100%;background:#fff;border-radius:19px;
+  overflow:hidden;display:flex;flex-direction:column}
+/* a pagina do proprio app, ao fundo */
+.pag{flex:1;background:#fdf4f8;overflow:hidden}
+.pag-top{background:var(--vinho);padding:9px 8px 8px;text-align:center}
+.pag-top b{display:block;color:#fff;font-size:8.5px;font-weight:800;letter-spacing:.02em}
+.pag-top i{display:block;color:rgba(255,255,255,.75);font-size:5.5px;font-style:normal;margin-top:2px}
+.pag-card{background:#fff;border:1px solid #eadfe6;border-radius:7px;margin:7px 6px;padding:6px}
+.pag-card b{display:block;font-size:6.5px;color:#2b2230}
+.pag-card i{display:block;font-size:5px;color:#7a6f80;font-style:normal;margin-top:1px}
+.pag-btn{background:var(--vinho);border-radius:5px;height:13px;margin-top:5px}
+/* barra do safari */
+.barra{height:30px;background:#f7f7f8;border-top:1px solid #e2e2e6;display:flex;
+  align-items:center;justify-content:space-between;padding:0 9px;flex-shrink:0}
+.barra i{display:block;width:11px;height:11px;border-radius:2px;background:#b8b8bd}
+.b-url{flex:1;height:14px;border-radius:7px;background:#ececf0;margin:0 7px}
+.b-pontos{position:relative;width:15px;height:19px;flex-shrink:0}
+.b-pontos span{position:absolute;left:50%;width:2.6px;height:2.6px;border-radius:50%;
+  background:#3c3c43;transform:translateX(-50%)}
+.b-pontos span:nth-child(1){top:3px}.b-pontos span:nth-child(2){top:8px}.b-pontos span:nth-child(3){top:13px}
+/* menu dos tres pontinhos */
+.menu{position:absolute;left:7px;right:7px;bottom:36px;background:#fbfbfd;border-radius:11px;
+  box-shadow:0 8px 26px -8px rgba(0,0,0,.5);padding:3px;opacity:0;transform:translateY(10px);
+  transition:opacity .28s,transform .28s;overflow:hidden}
+.menu div{display:flex;align-items:center;gap:6px;padding:6px 7px;border-radius:7px;
+  font-size:8px;color:#111;border-bottom:1px solid #ececf0}
+.menu div:last-child{border-bottom:0}
+.menu div.on{background:var(--rose);font-weight:800;color:var(--vinho)}
+.menu .mi{width:10px;height:10px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round}
+/* a folha de compartilhar: ESCURA, como no iOS de verdade */
+.folha{position:absolute;left:0;right:0;bottom:0;max-height:94%;background:#262528;
+  border-radius:13px 13px 0 0;box-shadow:0 -8px 26px -8px rgba(0,0,0,.6);
+  opacity:0;transform:translateY(100%);transition:opacity .3s,transform .3s;
+  padding:8px 7px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+.f-cab{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.f-cab .f-ico{width:22px;height:22px;border-radius:5px;background:var(--vinho);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-weight:800}
+.f-cab b{font-size:7px;color:#fff;display:block;line-height:1.2}
+.f-cab i{font-size:5.5px;color:#8e8e93;font-style:normal;display:block;margin-top:1px}
+/* fileira de acoes redondas: e AQUI que fica o "Ver mais" */
+.f-acoes{display:flex;justify-content:space-between;gap:4px;flex-shrink:0;padding:0 2px}
+.f-acoes div{flex:1;text-align:center}
+.f-acoes .c{width:26px;height:26px;border-radius:50%;background:#3a393d;margin:0 auto 3px;
+  display:flex;align-items:center;justify-content:center;transition:background .2s}
+.f-acoes .c svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.f-acoes span{font-size:5px;color:#c7c7cc;line-height:1.15;display:block}
+.f-acoes div.on .c{background:var(--vinho)}
+.f-acoes div.on span{color:#fff;font-weight:800}
+/* a lista que o "Ver mais" abre */
+.f-lista{background:#19181b;border-radius:9px;overflow:hidden;
+  max-height:0;opacity:0;transition:max-height .4s ease,opacity .3s}
+.f-lista.aberta{max-height:130px;opacity:1}
+.f-lista div{display:flex;align-items:center;gap:6px;padding:5px 7px;font-size:6.5px;color:#fff;
+  border-bottom:1px solid #2c2b2f;white-space:nowrap;overflow:hidden}
+.f-lista div:last-child{border-bottom:0}
+.f-lista .li{width:10px;height:10px;flex-shrink:0;fill:none;stroke:#fff;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.f-lista div.on{background:var(--vinho);font-weight:800}
+/* tela final: nome do app e botao Adicionar */
+.final{position:absolute;inset:0;background:#1c1b1f;opacity:0;pointer-events:none;
+  transition:opacity .3s;padding:20px 8px 9px;display:flex;flex-direction:column;gap:9px}
+.final.on{opacity:1}
+.final-cab{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.final-cab b{font-size:8px;color:#fff}
+.final-cab .x{width:16px;height:16px;border-radius:50%;background:#3a393d;color:#c7c7cc;
+  font-size:9px;display:flex;align-items:center;justify-content:center}
+.final-cab .add{background:#0a84ff;color:#fff;font-size:7.5px;font-weight:800;
+  border-radius:99px;padding:3px 9px;transition:transform .2s}
+.final-cab .add.pisca{transform:scale(1.12)}
+.final-nome{display:flex;align-items:center;gap:7px;background:#262528;border-radius:8px;padding:7px}
+.final-nome .fi{width:22px;height:22px;border-radius:5px;background:var(--vinho);flex-shrink:0}
+.final-nome b{font-size:7.5px;color:#fff;display:block}
+.final-nome i{font-size:5.5px;color:#8e8e93;font-style:normal;display:block;margin-top:1px}
+/* o dedo */
+.dedo{position:absolute;width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,.3);border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);
+  opacity:0;pointer-events:none;z-index:5;transform:translate(-50%,-50%);
+  transition:opacity .22s, left .4s cubic-bezier(.4,0,.2,1), top .4s cubic-bezier(.4,0,.2,1)}
+.dedo.bate{animation:bate .42s ease}
+@keyframes bate{0%,100%{transform:translate(-50%,-50%) scale(1)}45%{transform:translate(-50%,-50%) scale(.7)}}
+.demo-leg{text-align:center;font-size:12.5px;line-height:1.4;color:var(--tinta);
+  margin-top:9px;min-height:34px;font-weight:600}
+.demo-leg b{color:var(--vinho)}
+.demo-ctrl{display:flex;justify-content:center;margin-top:6px}
+.demo-ctrl button{background:none;border:1px solid var(--linha);border-radius:99px;
+  padding:5px 13px;font-size:11.5px;color:var(--cinza);cursor:pointer;font-family:inherit;font-weight:600}
+@media (prefers-reduced-motion: reduce){.dedo,.menu,.folha,.f-lista,.final{transition:none}}
+/* acessibilidade (26/10/2026): toque sem atraso de duplo toque agora que o zoom
+   esta liberado, e placeholder legivel (o padrao do navegador fica perto de 2,3:1) */
+html{touch-action:manipulation}
+::placeholder{color:#7a6f80;opacity:1}
+/* alvos de toque (26/10/2026): voltar, fechar faixa e engrenagem tinham de 20 a 31 px;
+   a margem negativa aumenta a area do toque sem mudar o desenho */
+#voltarMenu{padding:11px;margin:-11px}
+.fi-x,.fn-x{min-width:44px;min-height:44px}
+.btn-cfg{padding:10px;margin:-6px;min-width:44px;min-height:44px;justify-content:center}
+/* alvos de toque (03/11/2026): o "x" da despesa tinha 35 px e o backup do topo 32 */
+.desp-dir{display:flex;align-items:center;gap:6px}
+.desp-x{min-width:44px;min-height:44px;font-size:14px!important}
+#btnBkpTopo{min-height:40px}
+/* cliente na hora do trattamento: lista propria, botoes grandes (datalist fica ruim no iPhone) */
+.cli-sug{margin-top:6px}
+.cli-op{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;
+  background:var(--rose);color:var(--tinta);padding:13px 14px;margin-top:6px;font-size:16px;font-weight:700;border-radius:12px}
+.cli-op small{font-size:12.5px;color:var(--cinza);font-weight:600}
+/* lembrete de backup (26/10/2026) */
+.lembrete-ico{width:54px;height:54px;border-radius:16px;background:var(--rose);display:flex;align-items:center;justify-content:center;margin:4px auto 10px}
+.lembrete-ico svg{width:28px;height:28px;fill:none;stroke:var(--vinho);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:11px;min-width:0">
+    <a href="./" id="voltarMenu" aria-label="Torna al menu" style="color:#fff;display:flex;flex-shrink:0">
+      <svg style="width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    </a>
+    <div style="min-width:0"><h1>Guadagno in Mano</h1><div class="loja" id="hdrLoja" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+    <button class="btn mini sec" onclick="Tela.backupRapido()" id="btnBkpTopo" style="white-space:nowrap;padding:8px 11px;font-size:13px">backup</button>
+    <button class="btn-cfg" onclick="Config.abrir()" aria-label="Impostazioni"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1.03 1.56V21a2 2 0 11-4 0v-.09A1.7 1.7 0 008.94 19.3a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.7 1.7 0 00.34-1.87 1.7 1.7 0 00-1.56-1.03H3a2 2 0 110-4h.09A1.7 1.7 0 004.7 8.94a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06a1.7 1.7 0 001.87.34H9a1.7 1.7 0 001.03-1.56V3a2 2 0 114 0v.09a1.7 1.7 0 001.03 1.56 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87V9a1.7 1.7 0 001.56 1.03H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.51 1.03z"/></svg></button>
+  </div>
+</header>
+
+<div style="padding:14px 16px 0">
+<div class="faixa-inst" id="faixaInstalla" style="display:none">
+  <div class="fi-ico"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 19h2"/><path d="M12 7v6M9.5 10.5L12 13l2.5-2.5"/></svg></div>
+  <div class="fi-txt"><b>Metti l'app sul telefono</b><span>icona nella schermata Home, si apre senza browser e funziona senza internet</span></div>
+  <button class="fi-btn" onclick="Installa.instalar()">Installa</button>
+  <button class="fi-x" onclick="Installa.dispensarFaixa()" aria-label="Chiudi">&times;</button>
+</div>
+</div>
+
+
+<main id="app"></main>
+
+<nav id="navBar">
+  <button data-tela="vender" class="on"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Registra</button>
+  <button data-tela="vendas"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Storico</button>
+  <button data-tela="estoque"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v3.5L6.5 10A4 4 0 006 12v7a2 2 0 002 2h8a2 2 0 002-2v-7a4 4 0 00-.5-2L14 6.5V3"/></svg>Trattamenti</button>
+  <button data-tela="resumo"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Riepilogo</button>
+  <button data-tela="mais"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.6"/><circle cx="5" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>Altro</button>
+</nav>
+
+<div class="modal-fundo" id="modalFundo" onclick="if(event.target===this)Modal.fechar()">
+  <div class="modal" id="modalCorpo" role="dialog" aria-modal="true" tabindex="-1"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============ DADOS (localStorage, 1 chave, versao no schema) ============ */
+const CHAVE = 'lucrostudioit_v1';
+const D = {
+  dados: null,
+  novo(){ return {v:1, config:{loja:'', criadoEm:hoje(), ultimoBackup:null, vendasDesdeBackup:0, wizardOk:false},
+           produtos:[], vendas:[], despesas:[], seq:1}; },
+  carregar(){ try{ this.dados = JSON.parse(localStorage.getItem(CHAVE)) || this.novo(); }
+              catch(e){ this.dados = this.novo(); } },
+  /* Celular sem espaco (o localStorage tem uns 5 MB, dividido com fotos e logo):
+     antes o erro parava o fluxo no meio, sem aviso, e a venda sumia ao reabrir.
+     Agora avisa alto e por mais tempo, e devolve false (26/10/2026). */
+  salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(this.dados)); return true; }
+    catch(e){ toast('Non è stato possibile salvare: il telefono è pieno. Tocca subito Backup in alto e libera spazio sul telefono.'); clearTimeout(toastTimer);
+      toastTimer=setTimeout(()=>{ document.getElementById('toast').className='toast'; },9000); return false; } },
+  /* ===== SALVOU OU DESFEZ (03/11/2026) =====
+     Achado de QA: com o celular sem espaco, salvar() avisava, mas a tela seguia como
+     se tivesse dado certo ("Venda registrada!" por cima do aviso) e a venda sumia ao
+     reabrir. Agora quem muda dado chama gravar(): se nao gravou, a memoria volta a
+     ser o que esta guardado no aparelho (nada pela metade), o aviso fica, e quem
+     chamou nao fecha a tela nem anuncia sucesso. */
+  gravar(){ if(this.salvar()) return true; this.carregar(); return false; },
+  id(){ return this.dados.seq++; }
+};
+/* ===== AS CHAVES DOS BUMPS (09/11/2026) =====
+   A Agenda e clienti guarda as clientes (lucrostudioit_clientes = {v, seq, lista:[{id, nome,
+   whats, obs, criadoEm, nomesAntigos}]}) e a agenda (lucrostudioit_agenda = {v, seq,
+   horarios, ciclos, avisos}) em chaves proprias, como o Clientes na Mao da lojinha:
+   ela NUNCA escreve no lucrostudioit_v1. Daqui o Controle so LE as clientes (sugestao de
+   nome e o clienteId do trattamento), leva as duas chaves no backup e le o pedido de
+   "registrar trattamento" que a agenda deixa em lucrostudioit_atender. */
+const Extra = {
+  K_CLI:'lucrostudioit_clientes', K_AGENDA:'lucrostudioit_agenda', K_ATENDER:'lucrostudioit_atender',
+  ler(k){ try{ return JSON.parse(localStorage.getItem(k)||'null'); }catch(e){ return null; } },
+  gravar(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } },
+  /* sem acento, minusculo, espacos colapsados: e assim que um nome liga a outro */
+  norm(t){ return String(t==null?'':t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim(); },
+  clientes(){ const c=this.ler(this.K_CLI);
+    return (c&&Array.isArray(c.lista)) ? c.lista.filter(x=>x&&typeof x==='object'&&Number.isInteger(x.id)&&String(x.nome||'').trim()) : []; },
+  /* as clientes que moraram no lucrostudioit_v1 (30/10 a 09/11/2026) passam pra chave da
+     Agenda e clienti, com os mesmos ids (o clienteId dos trattamenti continua valendo) */
+  migrar(){
+    const v=D.dados.clientes; if(!Array.isArray(v)) return;
+    if(v.length && !this.ler(this.K_CLI)){
+      const lista=v.filter(x=>x&&Number.isInteger(x.id)&&x.id>0&&String(x.nome||'').trim())
+        .map(x=>({id:x.id, nome:String(x.nome).trim(), whats:String(x.whats||''), obs:String(x.obs||''), criadoEm:String(x.criadoEm||'')}));
+      if(!this.gravar(this.K_CLI,{v:1, seq:Math.max(1,...lista.map(x=>x.id+1)), lista})) return;
+    }
+    delete D.dados.clientes; D.salvar();
+  }
+};
+/* ===== O QUE ELA COMPROU (liberado.js, a mesma regra do menu) =====
+   Se o arquivo nao carregou, tudo responde "nao tem" e o Controle segue inteiro:
+   nunca e motivo pra um trattamento nao ser registrado. */
+const Partes = {
+  tem(x){ try{ return !!(window.Liberado && Liberado.tem(x)); }catch(e){ return false; } },
+  /* Magazzino prodotti: baixa de material e aviso de acabando */
+  estoque(){ return this.tem('preco'); },
+  /* o outro app mora na mesma pasta; o #de= vai junto pro voltar achar o menu certo */
+  url(arq){ const m=(location.hash||'').match(/de=(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)(?:&|$)/); return arq+(m?'#de='+m[1]:''); }
+};
+/* ===== O DIA E O DO CELULAR DELA (16/10/2026) =====
+   Antes era new Date().toISOString(), que da o dia em Londres (UTC). No horario de
+   Brasilia, das 21h a meia-noite a venda nascia com a data de AMANHA, sumia da tela
+   Oggi e, no ultimo dia do mes, caia no mes seguinte. Agora e o dia do fuso do
+   aparelho, que no Brasil e o da cidade dela (Brasilia, Manaus, Acre, Noronha). */
+function hoje(){ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+function agora(){ return new Date().toISOString(); }
+function dataBR(iso){ return String(iso).split('-').reverse().join('/'); }
+/* n dias antes de um dia ISO, sem o fuso mexer no resultado */
+function diaAntes(iso, n){ const d=new Date(iso+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()-n); return d.toISOString().slice(0,10); }
+/* o espaco aqui e NAO-SEPARAVEL (\u00a0): sem ele "4x de R$ 35,00" quebrava entre
+   o "R$" e o numero no fim da linha, e a lojista tinha que remontar o valor */
+function rs(n){ return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(Number(Math.round(n*100)/100)); }
+function num(v){ const s=String(v).replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'); const n=parseFloat(s); return isNaN(n)?0:n; }
+function fmtMoeda(n){ return (n||n===0) ? rs(n) : ''; }
+const PGTO_LABEL={contanti:'Contanti',carta:'Carta',bonifico:'Bonifico',satispay:'Satispay',da_incassare:'Da incassare',pix:'Contanti',Contanti:'Contanti','Carta':'Carta',cartao:'Carta','Da incassare':'Da incassare'};
+function rotuloPgto(f){ return PGTO_LABEL[f]||f; }
+function ehIncasso(x){ const k=(x&&typeof x==='object')?x.pgto:x; return k==='da_incassare'||k==='Da incassare'; }
+/* ===== PARCELAS (14/09/2026) =====
+   Opcoes que a lojista de fato usa. A parcela e arredondada pra CIMA no centavo,
+   pra n parcelas nunca somarem menos que o total. */
+const PARCELAS_OPC = [1,2,3,4,5,6,10,12];
+function valorParcela(total,n){ return n>1 ? Math.ceil(total/n*100)/100 : total; }
+/* como a venda parcelada se le numa linha: "3x de R$ 40,00".
+   A base e `parcelasBase` quando ela existe (Da incassare em que a lojista parcelou o
+   saldo devedor, nao o total), e o total nos demais casos. */
+function baseParcela(v){
+  return (v && typeof v.parcelasBase === 'number' && v.parcelasBase > 0) ? v.parcelasBase : (v ? v.total : 0);
+}
+function textoParcelas(v){
+  const n = v && v.parcelas ? v.parcelas : 1;
+  return n>1 ? n+'\u00a0rate da\u00a0'+rs(valorParcela(baseParcela(v),n)) : '';
+}
+/* ===== DESCONTO NA HORA DA VENDA (30/09/2026) =====
+   Pedido de compradoras: nao dava pra dar desconto no ato. A venda guarda o
+   desconto JA EM REAIS em v.desconto, e v.total nasce liquido (itens - desconto).
+   Por isso faturamento, guadagno, Da incassare, parcelas e recibo continuam lendo v.total e
+   batem sem mudar nada. Quem soma os itens de novo (backup, "+ produto" no Da incassare,
+   ranking de produtos) tem que descontar v.desconto, senao o desconto some.
+   v.descPct existe so pra mostrar "10%" no recibo; a conta nunca le ele. */
+function somaItens(itens){ return Math.round(itens.reduce((s,i)=>s+i.preco*i.qtd,0)*100)/100; }
+function descEmReais(sub, tipo, valor){
+  const d = tipo==='pct' ? sub*Math.min(Math.max(valor,0),100)/100 : Math.max(valor,0);
+  return Math.round(Math.min(d, sub)*100)/100;
+}
+function descontoDe(v){ return v && v.desconto>0 ? v.desconto : 0; }
+/* ===== O % SO APARECE QUANDO AINDA E O % DA VENDA (03/11/2026) =====
+   "Somar na conta" leva produto novo pra venda e o desconto continua o MESMO valor
+   em reais (ver confirmarAddConta), entao o descPct gravado deixa de ser o
+   percentual do subtotal novo: R$ 10,00 de 100 era 10%, de 200 e 5%. O recibo
+   mostrava "R$ 10,00 (10%)". Agora o % so aparece se ainda bate com o desconto
+   sobre o subtotal atual; senao fica so o valor em reais, que e o que vale.
+   O dado nao muda (descPct fica onde esta); a edicao tambem passa a ler o desconto
+   em reais nesse caso, pra nao recalcular 10% do subtotal novo sem ela ver. */
+function pctValido(v){
+  if(!descontoDe(v) || !(v.descPct>0)) return false;
+  return Math.abs(Math.round(somaItens(v.itens)*v.descPct)/100 - v.desconto) < 0.015;
+}
+function textoSconto(v){
+  return descontoDe(v) ? rs(v.desconto)+(pctValido(v)?' ('+String(v.descPct).replace('.',',')+'%)':'') : '';
+}
+/* ===== A MASCARA RODA NA CAPTURA, E O MOTIVO E UM BUG REAL (21/09/2026) =====
+   Um listener no `document` em fase de BORBULHA roda DEPOIS do `oninput` do proprio
+   campo. Entao a previa do Da incassare lia o valor AINDA SEM mascara: a lojista digitava
+   "6000", o campo mostrava "R$ 60,00" e o botao prometia "Receber R$ 6,00", dez
+   vezes menos, com a previa e o botao se contradizendo na mesma tela.
+   Com `capture:true` a mascara formata ANTES de qualquer oninput, entao todo mundo
+   que le o campo le o mesmo numero que ela esta vendo. */
+document.addEventListener('input',function(e){
+  const el=e.target; if(!el||!el.matches) return;
+  if(el.matches('[data-moeda]')){
+    const d=el.value.replace(/\D/g,'').replace(/^0+(?=\d{3})/,'').slice(0,10);
+    el.value=d?new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(parseInt(d)/100):'';
+  }
+  if(el.matches('[data-pct]')){
+    let v=el.value.replace(/[^\d,]/g,''); const i=v.indexOf(',');
+    if(i>=0) v=v.slice(0,i+1)+v.slice(i+1).replace(/,/g,'').slice(0,1);
+    el.value=v.slice(0,6);
+  }
+},true);
+/* na borbulha sobra so o que depende do valor JA mascarado */
+document.addEventListener('input',function(e){
+  const el=e.target; if(!el||!el.matches) return;
+  if(typeof POSMASK==='function') POSMASK(el);
+});
+function POSMASK(el){ if(el.id==='pCusto'||el.id==='pPreco'){ try{Produto.previa();}catch(e){} } }
+function mesDe(iso){ return iso.slice(0,7); }
+function nomeMes(ym){ const [a,m]=ym.split('-'); const n=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  return n[parseInt(m)-1]+' '+a; }
+/* "Novembre 2026": so o mes em maiuscula (o text-transform:capitalize pegava o "de") */
+function nomeMesTit(ym){ const t=nomeMes(ym); return t.charAt(0).toUpperCase()+t.slice(1); }
+
+const TEMAS={
+  vinho:   {a:'#8e2757',b:'#6d1d43',c:'#f6e7ee',d:'#fdf4f8',nome:'Bordeaux'},
+  violeta: {a:'#6b3fa0',b:'#532e80',c:'#efe8f7',d:'#f9f5fd',nome:'Viola'},
+  esmeralda:{a:'#176b50',b:'#145c45',c:'#e4f2ec',d:'#f3faf7',nome:'Smeraldo'},
+  petroleo:{a:'#22677a',b:'#194f5e',c:'#e3eff3',d:'#f2f8fa',nome:'Petrolio'},
+  grafite: {a:'#3f3a45',b:'#2b2730',c:'#ece9ef',d:'#f7f5f9',nome:'Grafite'}
+};
+function aplicarTema(n){ const t=TEMAS[n]||TEMAS.vinho; const r=document.documentElement.style;
+  r.setProperty('--vinho',t.a); r.setProperty('--vinho-escuro',t.b);
+  r.setProperty('--rose',t.c); r.setProperty('--rose-2',t.d);
+  const m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute('content',t.a);
+  localStorage.setItem('lucrostudioit_tema',n); }
+aplicarTema(localStorage.getItem('lucrostudioit_tema')||'grafite');
+
+/* ============ DEFESA 1: armazenamento persistente ============ */
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+
+/* ===== TEXTO DA USUARIA NO HTML: UMA FUNCAO SO (03/11/2026) =====
+   Achado de seguranca: nome de produto, cliente, despesa e o nome da loja entravam
+   crus no HTML, e um backup com `"><img src=x onerror=...>` rodava codigo no app.
+   Todo `${}` de texto que vai pra HTML ou atributo passa por esc() (& < > " ').
+   escA continua existindo (era o escape de value="..."), agora igual ao esc. */
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escA = esc;
+/* id que vai pra dentro de onclick="...(id)": so numero inteiro; o resto vira -1 (nao acha nada) */
+const idn = x => { const n=Number(x); return Number.isInteger(n) ? n : -1; };
+
+/* ============ TOAST ============ */
+let toastTimer=null;
+function toast(msg, guadagno){ const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast mostra'+(guadagno?' guadagno':'');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className='toast',4500); }
+
+/* ============ MODAL ============ */
+const Modal = {
+  /* ===== O MODAL E UM DIALOGO (acessibilidade, 26/10/2026) =====
+     O leitor de tela nao sabia que o modal tinha aberto e seguia lendo a tela de
+     tras. Agora: o titulo da nome ao dialogo, o resto da pagina fica inerte, o
+     foco entra no modal (se nenhum campo dele ja pegou), Esc fecha, e ao fechar o
+     foco volta pra onde estava. O toast e a tela de ativacao nunca ficam inertes. */
+  _volta:null,
+  abrir(html){ const c=document.getElementById('modalCorpo'), f=document.getElementById('modalFundo');
+    if(!f.classList.contains('aberto')) this._volta=document.activeElement;
+    c.innerHTML=html; c.classList.toggle('com-busca', !!c.querySelector('#buscaProd, #buscaCli')); f.classList.add('aberto'); this.ajustarArea();
+    const tit=c.querySelector('h3, .passo, .wizard-logo .m1');
+    if(tit){ tit.id='modalTit'; c.setAttribute('aria-labelledby','modalTit'); } else c.removeAttribute('aria-labelledby');
+    Array.prototype.forEach.call(document.body.children, el=>{
+      if(el===f || el.id==='toast' || el.id==='ativ' || el.hasAttribute('inert')) return;
+      el.setAttribute('inert',''); el.setAttribute('data-modal-inert',''); });
+    setTimeout(()=>{ if(f.classList.contains('aberto') && !c.contains(document.activeElement)) c.focus({preventScroll:true}); },60); },
+  fechar(){ document.getElementById('modalFundo').classList.remove('aberto');
+    document.querySelectorAll('[data-modal-inert]').forEach(el=>{ el.removeAttribute('inert'); el.removeAttribute('data-modal-inert'); });
+    const v=this._volta; this._volta=null;
+    if(v && document.body.contains(v) && v.focus) v.focus({preventScroll:true}); },
+  /* ===== MODAL ACIMA DO TECLADO (19/10/2026) =====
+     O teclado do celular (iPhone e Chrome do Android) encolhe so a area VISIVEL, nao a pagina,
+     entao um position:fixed preso no fundo fica atras dele. Aqui o fundo do modal copia o
+     tamanho e a posicao da area visivel a cada mudanca. */
+  ajustarArea(){ const vv=window.visualViewport, f=document.getElementById('modalFundo'); if(!vv||!f) return;
+    f.style.top=vv.offsetTop+'px'; f.style.height=vv.height+'px';
+    f.classList.toggle('teclado', document.documentElement.clientHeight - vv.height > 120 && vv.scale < 1.05); }
+};
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape' && document.getElementById('modalFundo').classList.contains('aberto')) Modal.fechar(); });
+if(window.visualViewport){
+  visualViewport.addEventListener('resize', ()=>Modal.ajustarArea());
+  visualViewport.addEventListener('scroll', ()=>Modal.ajustarArea());
+}
+
+
+/* ============ PAGINACAO (20 por pagina) ============ */
+const POR_PAGINA = 20;
+function paginar(lista, pagina){
+  const total=lista.length, paginas=Math.max(1,Math.ceil(total/POR_PAGINA));
+  const p=Math.min(Math.max(1,pagina),paginas);
+  return {itens:lista.slice((p-1)*POR_PAGINA, p*POR_PAGINA), pagina:p, paginas, total,
+    de:total?((p-1)*POR_PAGINA+1):0, ate:Math.min(p*POR_PAGINA,total)};
+}
+function barraPag(info, fnIr){
+  if(info.paginas<=1) return info.total>POR_PAGINA?'':'';
+  const b=(rot,pg,dis,on)=>`<button ${dis?'disabled':''} class="${on?'on':''}" onclick="${fnIr}(${pg})">${rot}</button>`;
+  let nums=[];
+  const p=info.pagina, t=info.paginas;
+  let ini=Math.max(1,p-1), fim=Math.min(t,p+1);
+  if(p===1) fim=Math.min(t,3);
+  if(p===t) ini=Math.max(1,t-2);
+  if(ini>1) nums.push(b('1',1,false,false));
+  if(ini>2) nums.push('<button disabled>...</button>');
+  for(let i=ini;i<=fim;i++) nums.push(b(String(i),i,false,i===p));
+  if(fim<t-1) nums.push('<button disabled>...</button>');
+  if(fim<t) nums.push(b(String(t),t,false,false));
+  return `<div class="pag">
+    ${b('&lsaquo;',p-1,p===1,false)}${nums.join('')}${b('&rsaquo;',p+1,p===t,false)}
+    <div class="info">da ${info.de} a ${info.ate} di ${info.total}</div></div>`;
+}
+
+/* ============ CALCULOS ============ */
+/* ===== O FIADO ENTRA NO LUCRO QUANDO O DINHEIRO ENTRA (14/09/2026) =====
+
+   Regra do dono: "no Da incassare, deve somar no guadagno/faturamento somente quando o valor
+   for baixado del conto. Somar antes de receber nao faz sentido."
+
+   O que muda: a venda fiada NAO conta mais integral no mes em que foi feita. Cada
+   recebimento (v.pagamentos=[{data,valor}]) entra no faturamento do mes DAQUELA data,
+   e o custo entra na mesma proporcao dChe spesa è? recebido. Venda de agosto paga em
+   setembro aparece em setembro: e o regime de caixa, que e o que a lojista ve no
+   bolso.
+
+   A proporcao do custo importa: sem ela, um Da incassare com 50% recebido mostraria guadagno
+   inflado (receita pela metade, custo zero) ou negativo (receita pela metade, custo
+   inteiro). Com ela, receber metade da venda rende exatamente metade do guadagno.
+
+   Pix, Contanti e cartao seguem como sempre: entram inteiros no mes da venda. */
+const Calc = {
+  vendasDoMes(ym){ return D.dados.vendas.filter(v=>mesDe(v.data)===ym); },
+  /* Quanto de uma venda Incassato no caixa dentro do mes ym.
+     Nao-Da incassare: o total, no mes da venda. Fiado: a soma dos recebimentos do mes. */
+  recebidoNoMes(v, ym){
+    if(!ehIncasso(v)) return mesDe(v.data)===ym ? v.total : 0;
+    if(Array.isArray(v.pagamentos))
+      return v.pagamentos.reduce((s,x)=>s+(mesDe(String(x.data||''))===ym?(Number(x.valor)||0):0),0);
+    /* venda antiga, anterior ao historico: cai no mes da venda se estava quitada */
+    return (v.pago && mesDe(v.data)===ym) ? v.total : 0;
+  },
+  totais(ym){
+    const vs=this.vendasDoMes(ym);
+    let vendido=0, custo=0, fiadoPend=0, nCaixa=0;
+    /* faturamento e custo varrem TODAS as vendas, nao so as do mes: um Da incassare de
+       agosto recebido em setembro precisa aparecer em setembro */
+    D.dados.vendas.forEach(v=>{
+      const rec=this.recebidoNoMes(v,ym);
+      if(rec>0){
+        vendido+=rec;
+        /* custo na mesma proporcao do que Incassato */
+        custo += v.total>0 ? v.custo*(rec/v.total) : 0;
+        nCaixa++;
+      }
+    });
+    /* o Da incassare a receber e o saldo de TODA venda fiada aberta, independente do mes:
+       divida velha continua sendo Contanti na rua */
+    D.dados.vendas.forEach(v=>{ if(ehIncasso(v)) fiadoPend+=Venda.saldo(v); });
+    const despesas=D.dados.despesas.filter(d=>mesDe(d.data)===ym).reduce((s,d)=>s+d.valor,0);
+    const investido=D.dados.produtos.reduce((s,p)=>s+p.custo*p.qtd,0);
+    /* Da incassare ainda abertChe spesa è? VENDIDO neste mes: o que a tela precisa explicar */
+    const fiadoDoMes=vs.filter(v=>ehIncasso(v)).reduce((s,v)=>s+Venda.saldo(v),0);
+    return {vendido, guadagno:vendido-custo, despesas, liquido:vendido-custo-despesas,
+            fiadoPend, fiadoDoMes, investido, n:nCaixa, nVendas:vs.length};
+  },
+  /* guadagno ja REALIZADO de uma venda: proporcional ao que Incassato no caixa */
+  lucroRealizado(v){
+    if(!ehIncasso(v)) return v.total-v.custo;
+    const pg=Venda.jaPago(v);
+    return v.total>0 ? (v.total-v.custo)*(pg/v.total) : 0;
+  },
+  topProdutos(ym){
+    const cont=Object.create(null);
+    this.vendasDoMes(ym).forEach(v=>{
+      /* o desconto da venda se reparte entre os itens na proporcao do preco */
+      const sub=somaItens(v.itens), f=sub>0 ? (sub-descontoDe(v))/sub : 1;
+      v.itens.forEach(i=>{
+      cont[i.nome]=cont[i.nome]||{nome:i.nome,qtd:0,guadagno:0};
+      cont[i.nome].qtd+=i.qtd; cont[i.nome].guadagno+=(i.preco*f-i.custo)*i.qtd; }); });
+    return Object.values(cont).sort((a,b)=>b.guadagno-a.guadagno).slice(0,5);
+  }
+};
+
+/* ============ BACKUP (defesas 2, 3, 4, 5) ============ */
+const Backup = {
+  precisa(){ const c=D.dados.config;
+    if(!c.ultimoBackup) return D.dados.vendas.length>=3;
+    const dias=(Date.now()-new Date(c.ultimoBackup))/864e5;
+    return c.vendasDesdeBackup>=10 || dias>=7; },
+  nomeArquivo(){ return 'Backup Guadagno in Mano '+hoje().split('-').reverse().join('-')+'.csv'; },
+  gerarCSV(){
+    const L=[]; const s=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+    const n=v=>String(Math.round(v*100)/100).replace('.',',');
+    L.push('CONTROLE DA LOJINHA;BACKUP;v1');
+    L.push('loja;'+s(D.dados.config.loja));
+    L.push('gerado em;'+new Date().toLocaleString('it-IT'));
+    L.push('');
+    L.push('#PRODUTOS');
+    L.push('id;nome;custo;preco;estoque');
+    D.dados.produtos.forEach(p=>L.push([p.id,s(p.nome),n(p.custo),n(p.preco),p.qtd].join(';')));
+    L.push('');
+    L.push('#VENDAS');
+    /* coluna 'parcelas' Incassato em 14/09/2026, no fim da linha: backup gerado antes
+       disso simplesmente nao tem a coluna, e a leitura assume 1 */
+    /* desconto e desconto_pct entraram em 30/09/2026, tambem no fim: se repetem em
+       toda linha da mesma venda, e backup antigo sem elas le desconto zero */
+    /* cliente_id Incassato na versao Studio, no fim da linha como as outras */
+    L.push('venda;data;produto_id;produto;qtd;preco_unit;custo_unit;pagamento;cliente;pago;recebido;parcelas;base_parcela;desconto;desconto_pct;cliente_id');
+    D.dados.vendas.forEach(v=>v.itens.forEach(i=>
+      L.push([v.id,v.data,i.produtoId,s(i.nome),i.qtd,n(i.preco),n(i.custo),v.pgto,s(v.cliente||''),v.pago?'sim':'nao',n(Venda.jaPago(v)),v.parcelas||1,
+        (typeof v.parcelasBase==='number'?n(v.parcelasBase):''),
+        (descontoDe(v)?n(v.desconto):''),(v.descPct?n(v.descPct):''),v.clienteId||''].join(';'))));
+    L.push('');
+    /* Historico de recebimento do Da incassare: uma linha por pagamento parcial.
+       Sem esta secao, restaurar um backup perderia as datas dos parciais. */
+    L.push('#RECEBIMENTOS');
+    L.push('venda;data;valor');
+    D.dados.vendas.forEach(v=>{ if(Array.isArray(v.pagamentos))
+      v.pagamentos.forEach(x=>L.push([v.id,x.data,n(x.valor)].join(';'))); });
+    L.push('');
+    L.push('#DESPESAS');
+    L.push('id;data;descricao;valor');
+    D.dados.despesas.forEach(d2=>L.push([d2.id,d2.data,s(d2.desc),n(d2.valor)].join(';')));
+    /* ===== AGENDA CHEIA (bump, 09/11/2026) =====
+       As clientes e a agenda moram em outras chaves (lucrostudioit_clientes,
+       lucrostudioit_agenda), mas vao no MESMO arquivo: trocou de celular, vai tudo junto.
+       Sem dado, a secao nem sai. O #CLIENTES tem as mesmas 5 primeiras colunas do
+       backup de 30/10/2026 (quando as clientes moravam aqui), entao o backup velho
+       restaura as clientes direto na Agenda e clienti. */
+    const cli=Extra.ler(Extra.K_CLI);
+    if(cli && Array.isArray(cli.lista) && cli.lista.length){
+      L.push('');
+      L.push('#CLIENTES');
+      L.push('id;nome;whatsapp;anotacoes;desde;nomes_antigos');
+      cli.lista.forEach(x=>L.push([x.id,s(x.nome),s(x.whats||''),s(String(x.obs||'').replace(/[\r\n]+/g,' ')),s(x.criadoEm||''),
+        s((x.nomesAntigos||[]).join('|'))].join(';')));
+    }
+    const ag=Extra.ler(Extra.K_AGENDA);
+    if(ag && typeof ag==='object'){
+      if(Array.isArray(ag.horarios) && ag.horarios.length){
+        L.push('');
+        L.push('#AGENDA');
+        L.push('id;data;hora;cliente_id;cliente;servico_id;servico;anotacao;lembrete_em');
+        ag.horarios.forEach(h=>L.push([h.id,h.data,h.hora,(h.clienteId!=null?h.clienteId:''),s(h.nome),
+          (h.servicoId!=null?h.servicoId:''),s(h.servico||''),s(String(h.obs||'').replace(/[\r\n]+/g,' ')),s(h.lembradoEm||'')].join(';')));
+      }
+      if(ag.ciclos && typeof ag.ciclos==='object' && Object.keys(ag.ciclos).length){
+        L.push('');
+        L.push('#CICLOS');
+        L.push('servico_id;dias');
+        Object.keys(ag.ciclos).forEach(k=>L.push([k,ag.ciclos[k]].join(';')));
+      }
+      if(ag.avisos && typeof ag.avisos==='object' && Object.keys(ag.avisos).length){
+        L.push('');
+        L.push('#AVISOS');
+        L.push('cliente;data');
+        Object.keys(ag.avisos).forEach(k=>L.push([s(k),ag.avisos[k]].join(';')));
+      }
+    }
+    /* Magazzino prodotti (bump): materiais e o que cada servico gasta. O #MEUS_CUSTOS
+       e do antigo Quanto Cobrar: so sai pra quem ainda tem esse dado guardado. */
+    if(Array.isArray(D.dados.materiais) && (D.dados.materiais.length || D.dados.qc)){
+      L.push('');
+      L.push('#MATERIAIS');
+      L.push('id;nome;pagou;rende;unidades;consumido');
+      D.dados.materiais.forEach(m=>L.push([m.id,s(m.nome),n(m.pagou),m.rende,m.unidades||0,n(m.consumido||0)].join(';')));
+      L.push('');
+      L.push('#RECEITAS');
+      L.push('servico_id;material_id;usos;tempo_min');
+      D.dados.produtos.forEach(p=>(p.receita||[]).forEach(r=>L.push([p.id,r.materialId,r.usos,p.tempo||0].join(';'))));
+      D.dados.produtos.forEach(p=>{ if(!(p.receita||[]).length && p.tempo) L.push([p.id,'',0,p.tempo].join(';')); });
+      if(D.dados.qc){
+        L.push('');
+        L.push('#MEUS_CUSTOS');
+        L.push('item;valor');
+        const q=D.dados.qc||{};
+        L.push(['valor_hora',n(q.valorHora||0)].join(';'));
+        L.push(['atendimentos_mes',q.atendMes||0].join(';'));
+        (q.fixos||[]).forEach(f=>L.push([s('fixo:'+f.nome),n(f.valor)].join(';')));
+      }
+    }
+    L.push('#FIM');
+    return '\ufeff'+L.join('\r\n');
+  },
+  arquivo(){ return new File([new Blob([this.gerarCSV()],{type:'text/csv;charset=utf-8'})],
+    this.nomeArquivo(), {type:'text/csv'}); },
+  async compartilhar(){
+    const f=this.arquivo();
+    if(navigator.canShare && navigator.canShare({files:[f]})){
+      try{ await navigator.share({files:[f], title:'Backup Guadagno in Mano'});
+        this.registrou(); return; }catch(e){ if(e.name==='AbortError') return; }
+    }
+    const url=URL.createObjectURL(f); const a=document.createElement('a');
+    a.href=url; a.download=f.name; a.click(); URL.revokeObjectURL(url); this.registrou();
+  },
+  registrou(){ D.dados.config.ultimoBackup=agora(); D.dados.config.vendasDesdeBackup=0;
+    if(!D.gravar()){ Tela.render(); return; }
+    toast('Backup fatto! Conservalo nella tua chat di WhatsApp'); Tela.render(); },
+  restaurar(arq){
+    const r=new FileReader();
+    r.onload=()=>{ let d=null;
+      try{
+        const txt=r.result;
+        if((arq.name||'').toLowerCase().endsWith('.json')||txt.trim().startsWith('{')) d=this.deJSON(txt);
+        else d=this.deCSV(txt);
+        /* nada do arquivo segue cru: cada campo e conferido e convertido (ver normalizar) */
+        if(d) d=this.normalizar(d);
+      }catch(e){ d=null; }
+      if(!d){ toast('Questo file non è un backup valido'); return; }
+      /* materiais ficam no lucrostudioit_v1; clientes e agenda vem em d._extra (outras chaves) */
+      const fora=d._descartados||0; delete d._descartados;
+      Backup._pendExtra=d._extra||{}; delete d._extra;
+      Backup._pend=d;
+      const ex=Backup._pendExtra;
+      const nP=d.produtos.length, nV=d.vendas.length;
+      const nC=ex.clientes?ex.clientes.lista.length:0, nH=ex.agenda?ex.agenda.horarios.length:0, nM=(d.materiais||[]).length;
+      const mais=[nC?`<b>${nC} ${nC===1?'cliente':'clienti'}</b>`:'', nH?`<b>${nH} ${nH===1?'appuntamento':'appuntamenti'} in agenda</b>`:'',
+        nM?`<b>${nM} ${nM===1?'materiale':'materiali'}</b>`:''].filter(Boolean);
+      /* TEXTO: aviso de linha com defeito deixada de fora */
+      Modal.abrir(`<h3>Ripristinare il backup?</h3>
+        <p class="sub">Questo file contiene <b>${nP} ${nP===1?'trattamento':'trattamenti'}</b>, <b>${nV} ${nV===1?'trattamento':'trattamenti'}</b>${mais.length?', '+mais.join(', '):''}
+        (studio: ${esc(d.config.loja||'senza nome')}). Questo <b>sostituirà</b> quello che c'è ora nell'app.</p>
+        ${fora?`<div class="aviso backup">${fora} ${fora===1?'riga del file era danneggiata ed è stata esclusa':'righe del file erano danneggiate e sono state escluse'}.</div>`:''}
+        <button class="btn" onclick="Backup.confirmaRestaurar()">Sì, ripristina questo backup</button>
+        <button class="btn sec" onclick="Modal.fechar()">Annulla</button>`);
+    };
+    r.readAsText(arq);
+  },
+  deJSON(txt){ const d=JSON.parse(txt);
+    if(!d || typeof d!=='object' || !d.v || !Array.isArray(d.produtos) || !Array.isArray(d.vendas)) throw 0; return d; },
+  /* ===== O ARQUIVO E CONFERIDO CAMPO A CAMPO (03/11/2026) =====
+     Achado de seguranca: o restaurar (CSV e JSON) gravava o que viesse no arquivo,
+     e um texto com HTML ou um id que nao era numero rodava codigo no app, ate na
+     previa, antes de ela confirmar. Aqui cada registro sai no MESMO formato que o
+     app grava, com cada campo do tipo certo:
+       data: AAAA-MM-DD (DD/MM/AAAA, que o Excel costuma gravar, vira AAAA-MM-DD);
+       pagamento: so pix, Contanti, Carta, Da incassare ("cartao" sem acento vira Carta);
+       id: inteiro; numeros: Number; textos: texto.
+     Registro que nao da pra salvar (sem data, pagamento estranho, venda sem
+     produto) fica de fora e entra na conta do aviso. Campo que o app nao conhece
+     nao passa.
+     VERSAO STUDIO: materiais, a receita e o tempo de cada servico (Controle de
+     Estoque) moram no mesmo lucrostudioit_v1 e passam pelas mesmas regras. As clientes
+     e a agenda (Agenda e clienti) saem em out._extra, tambem campo a campo: id inteiro,
+     data AAAA-MM-DD, hora HH:MM, texto como texto (a tela escapa na hora de mostrar). */
+  normalizar(d){
+    let fora=0;
+    const int=x=>{ const t=String(x==null?'':x).replace(/"/g,'').trim(); if(t==='') return null; const n=Number(t); return Number.isInteger(n)?n:null; };
+    const nr=x=>{ const n=Number(x); return isFinite(n)?n:0; };
+    const tx=x=>x==null?'':String(x);
+    const dia=x=>{ let t=String(x==null?'':x).trim();
+      const br=t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if(br) t=br[3]+'-'+br[2].padStart(2,'0')+'-'+br[1].padStart(2,'0');
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(t)) return null;
+      const dt=new Date(t+'T12:00:00Z');
+      return (!isNaN(dt) && dt.toISOString().slice(0,10)===t) ? t : null; };
+    const pg=x=>{ const t=String(x==null?'':x).trim().toLowerCase();
+      if(t==='contanti'||t==='carta'||t==='bonifico'||t==='satispay'||t==='da_incassare') return t;
+      if(t==='pix'||t==='Contanti') return 'contanti';
+      if(t==='Da incassare'||t==='da incassare') return 'da_incassare';
+      if(/^cart/.test(t)) return 'carta';
+      return null; };
+    const ISO=/^\d{4}-\d{2}-\d{2}(T[\d:.]+Z?)?$/;
+    const quando=x=>{ const t=tx(x).trim(); return ISO.test(t)?t:null; };
+    const c0=(d.config&&typeof d.config==='object')?d.config:{};
+    const out={v:1, config:{
+        loja:tx(c0.loja),
+        criadoEm:dia(c0.criadoEm)||hoje(),
+        ultimoBackup:quando(c0.ultimoBackup),
+        vendasDesdeBackup:Math.max(0,int(c0.vendasDesdeBackup)||0),
+        wizardOk:c0.wizardOk!==false },
+      produtos:[], vendas:[], despesas:[], seq:1};
+    (Array.isArray(d.produtos)?d.produtos:[]).forEach(p=>{
+      const id=p?int(p.id):null;
+      if(id===null || id<0){ fora++; return; }
+      const n={id, nome:tx(p.nome), custo:nr(p.custo), preco:nr(p.preco), qtd:int(p.qtd)||0};
+      if(Array.isArray(p.receita)){ const rc=p.receita.filter(r=>r&&typeof r==='object'&&int(r.materialId)!==null&&int(r.usos)>0)
+        .map(r=>({materialId:int(r.materialId), usos:int(r.usos)})); if(rc.length) n.receita=rc; }
+      if(int(p.tempo)>0) n.tempo=int(p.tempo);
+      out.produtos.push(n); });
+    (Array.isArray(d.vendas)?d.vendas:[]).forEach(v=>{
+      const id=v?int(v.id):null, data=v?dia(v.data):null, pgto=v?pg(v.pgto):null;
+      const itens=(v&&Array.isArray(v.itens)?v.itens:[]).filter(i=>i&&typeof i==='object').map(i=>({
+        produtoId:int(i.produtoId)||0, nome:tx(i.nome), qtd:Math.max(1,int(i.qtd)||1), preco:nr(i.preco), custo:nr(i.custo)}));
+      if(id===null || id<0 || !data || !pgto || !itens.length){ fora++; return; }
+      const n={id, data, criadaEm:quando(v.criadaEm)||data, itens, pgto,
+        cliente:(v.cliente!=null && String(v.cliente).trim()!=='') ? tx(v.cliente) : null,
+        pago:!!v.pago, total:nr(v.total), custo:nr(v.custo), parcelas:Math.max(1,int(v.parcelas)||1)};
+      if(Array.isArray(v.pagamentos)) n.pagamentos=v.pagamentos.filter(x=>x&&dia(x.data)).map(x=>({data:dia(x.data), valor:nr(x.valor)}));
+      else if(v.pagamentos===null) n.pagamentos=null;
+      if(v.parcelasBase!=null && v.parcelasBase!=='') n.parcelasBase=nr(v.parcelasBase);
+      if(nr(v.desconto)>0) n.desconto=nr(v.desconto);
+      if(nr(v.descPct)>0) n.descPct=nr(v.descPct);
+      if(v.clienteId!=null && int(v.clienteId)!==null) n.clienteId=int(v.clienteId);
+      if(Array.isArray(v.adicoes)) n.adicoes=v.adicoes.filter(a=>a&&typeof a==='object').map(a=>({data:dia(a.data)||data,
+        itens:(Array.isArray(a.itens)?a.itens:[]).filter(i=>i&&typeof i==='object').map(i=>({nome:tx(i.nome), qtd:Math.max(1,int(i.qtd)||1), preco:nr(i.preco)}))}));
+      if(Array.isArray(v.edicoes)) n.edicoes=v.edicoes.filter(e=>e&&typeof e==='object').map(e=>{
+        const r={data:quando(e.data)||data, antes:nr(e.antes), depois:nr(e.depois)};
+        if(dia(e.dataAntes)) r.dataAntes=dia(e.dataAntes);
+        if(dia(e.dataDepois)) r.dataDepois=dia(e.dataDepois);
+        return r; });
+      out.vendas.push(n); });
+    (Array.isArray(d.despesas)?d.despesas:[]).forEach(x=>{
+      const id=x?int(x.id):null, data=x?dia(x.data):null;
+      if(id===null || id<0 || !data){ fora++; return; }
+      out.despesas.push({id, data, desc:tx(x.desc), valor:nr(x.valor)}); });
+    /* clientes: do #CLIENTES (d._clientes), da chave da Agenda num JSON (d.clientesAgenda)
+       ou do JSON antigo, quando moravam aqui (d.clientes) */
+    const ex={};
+    const cliBruto=(d._clientes&&Array.isArray(d._clientes.lista)) ? d._clientes.lista
+      : (d.clientesAgenda&&Array.isArray(d.clientesAgenda.lista)) ? d.clientesAgenda.lista
+      : Array.isArray(d.clientes) ? d.clientes : null;
+    if(cliBruto){
+      const lista=[];
+      cliBruto.forEach(c=>{
+        const id=c&&typeof c==='object'?int(c.id):null, nome=c&&typeof c==='object'?tx(c.nome).trim():'';
+        if(id===null || id<=0 || !nome || lista.some(x=>x.id===id)){ fora++; return; }
+        const n={id, nome, whats:tx(c.whats), obs:tx(c.obs), criadoEm:quando(c.criadoEm)||dia(c.criadoEm)||''};
+        if(Array.isArray(c.nomesAntigos)){ const na=c.nomesAntigos.map(tx).filter(x=>x.trim()); if(na.length) n.nomesAntigos=na; }
+        lista.push(n); });
+      ex.clientes={v:1, seq:Math.max(1,...lista.map(x=>x.id+1)), lista};
+    }
+    const agBruto=(d._agenda&&typeof d._agenda==='object') ? d._agenda
+      : (d.agenda&&typeof d.agenda==='object'&&!Array.isArray(d.agenda)) ? d.agenda : null;
+    if(agBruto){
+      const hora=x=>{ const m=tx(x).trim().match(/^(\d{1,2}):(\d{2})$/); if(!m) return null;
+        const h=+m[1], mi=+m[2]; return (h<24&&mi<60) ? String(h).padStart(2,'0')+':'+m[2] : null; };
+      const horarios=[];
+      (Array.isArray(agBruto.horarios)?agBruto.horarios:[]).forEach(h=>{
+        if(!h || typeof h!=='object'){ fora++; return; }
+        const id=int(h.id), data=dia(h.data), hr=hora(h.hora), nome=tx(h.nome).trim();
+        if(id===null || id<=0 || !data || !hr || !nome || horarios.some(x=>x.id===id)){ fora++; return; }
+        const cid=int(h.clienteId), sid=int(h.servicoId);
+        horarios.push({id, data, hora:hr, clienteId:(cid!==null&&cid>0)?cid:null, nome,
+          servicoId:(sid!==null&&sid>0)?sid:null, servico:tx(h.servico), obs:tx(h.obs), lembradoEm:quando(h.lembradoEm)}); });
+      const ciclos={};
+      if(agBruto.ciclos && typeof agBruto.ciclos==='object') Object.keys(agBruto.ciclos).forEach(k=>{
+        const sid=int(k), dd=int(agBruto.ciclos[k]); if(sid!==null&&sid>0&&dd!==null&&dd>=1&&dd<=365) ciclos[sid]=dd; });
+      const avisos={};
+      if(agBruto.avisos && typeof agBruto.avisos==='object') Object.keys(agBruto.avisos).forEach(k=>{
+        const dt=dia(agBruto.avisos[k]); if(/^[cn]:/.test(k) && dt) avisos[k]=dt; });
+      ex.agenda={v:1, seq:Math.max(1,...horarios.map(x=>x.id+1)), horarios, ciclos, avisos};
+    }
+    out._extra=ex;
+    if(Array.isArray(d.materiais)){
+      out.materiais=[];
+      d.materiais.forEach(m=>{
+        const id=m?int(m.id):null;
+        if(id===null || id<=0 || !tx(m.nome).trim()){ fora++; return; }
+        out.materiais.push({id, nome:tx(m.nome), pagou:nr(m.pagou), rende:Math.max(0,int(m.rende)||0),
+          unidades:Math.max(0,int(m.unidades)||0), consumido:Math.max(0,nr(m.consumido))}); });
+    }
+    if(d.qc && typeof d.qc==='object'){
+      out.qc={valorHora:Math.max(0,nr(d.qc.valorHora)), atendMes:Math.max(0,int(d.qc.atendMes)||0),
+        fixos:(Array.isArray(d.qc.fixos)?d.qc.fixos:[]).filter(f=>f&&typeof f==='object'&&tx(f.nome).trim())
+          .map(f=>({nome:tx(f.nome), valor:nr(f.valor)}))};
+    }
+    const ids=[...out.produtos.map(p=>p.id),...out.vendas.map(v=>v.id),...out.despesas.map(x=>x.id),
+      ...(out.materiais||[]).map(x=>x.id),0];
+    out.seq=Math.max(int(d.seq)||1, Math.max(...ids)+1);
+    if(!out.produtos.length && !out.vendas.length) throw 0;
+    out._descartados=fora;
+    return out;
+  },
+  deCSV(txt){
+    const linhas=txt.replace(/^\uFEFF/,'').split(/\r?\n/);
+    if(!linhas[0]||!linhas[0].startsWith('CONTROLE DA LOJINHA')) throw 0;
+    const num2=v=>{const x=parseFloat(String(v).replace(/"/g,'').replace(',','.'));return isNaN(x)?0:x;};
+    const uns=v=>{v=String(v||'');if(v.startsWith('"')&&v.endsWith('"'))v=v.slice(1,-1).replace(/""/g,'"');return v;};
+    const cols=l=>{const out=[];let cur='';let q=false;
+      for(const ch of l){ if(ch==='"'){q=!q;cur+=ch;} else if(ch===';'&&!q){out.push(cur);cur='';} else cur+=ch; }
+      out.push(cur); return out; };
+    const d=D.novo(); d.config.wizardOk=true;
+    let sec=''; const vendasMap={};
+    for(const l of linhas){
+      if(!l.trim()) continue;
+      if(l.startsWith('#')){ sec=l.trim(); continue; }
+      const c2=cols(l);
+      if(sec==='' && l.startsWith('loja;')) d.config.loja=uns(c2[1]);
+      if(sec==='#PRODUTOS' && c2[0]!=='id')
+        d.produtos.push({id:parseInt(c2[0])||0,nome:uns(c2[1]),custo:num2(c2[2]),preco:num2(c2[3]),qtd:parseInt(c2[4])||0});
+      if(sec==='#VENDAS' && c2[0]!=='venda'){
+        const id=parseInt(c2[0])||0;
+        if(!vendasMap[id]) vendasMap[id]={id,data:c2[1],criadaEm:c2[1],itens:[],pgto:c2[7],
+          cliente:uns(c2[8])||null,pago:c2[9]!=='nao',total:0,custo:0,
+          /* coluna 10 e do backup novo; backup antigo nao tem e fica undefined */
+          _recebido:(c2.length>10&&String(c2[10]).trim()!=='')?num2(c2[10]):null,
+          /* coluna 11 (parcelas) so existe do backup de 14/09/2026 em diante */
+          parcelas:(c2.length>11&&String(c2[11]).trim()!=='')?(parseInt(c2[11])||1):1,
+          /* coluna 12: sobre quanto a parcela foi combinada (Da incassare em que a lojista
+             parcelou o saldo devedor). Vazio = a parcela e sobre o total. */
+          parcelasBase:(c2.length>12&&String(c2[12]).trim()!=='')?num2(c2[12]):null,
+          /* colunas 13 e 14 (desconto) so existem do backup de 30/09/2026 em diante */
+          desconto:(c2.length>13&&String(c2[13]).trim()!=='')?num2(c2[13]):0,
+          descPct:(c2.length>14&&String(c2[14]).trim()!=='')?num2(c2[14]):0,
+          clienteId:(c2.length>15&&String(c2[15]).trim()!=='')?(parseInt(c2[15])||null):null,
+          pagamentos:null};
+        vendasMap[id].itens.push({produtoId:parseInt(c2[2])||0,nome:uns(c2[3]),
+          qtd:parseInt(c2[4])||1,preco:num2(c2[5]),custo:num2(c2[6])});
+      }
+      if(sec==='#RECEBIMENTOS' && c2[0]!=='venda'){
+        const id=parseInt(c2[0])||0;
+        if(vendasMap[id]){ if(!Array.isArray(vendasMap[id].pagamentos)) vendasMap[id].pagamentos=[];
+          vendasMap[id].pagamentos.push({data:c2[1],valor:num2(c2[2])}); }
+      }
+      if(sec==='#DESPESAS' && c2[0]!=='id')
+        d.despesas.push({id:parseInt(c2[0])||0,data:c2[1],desc:uns(c2[2]),valor:num2(c2[3])});
+      if(sec==='#CLIENTES' && c2[0]!=='id'){ d._clientes=d._clientes||{lista:[]};
+        const ant=uns(c2[5]||'');
+        d._clientes.lista.push({id:c2[0],nome:uns(c2[1]),whats:uns(c2[2]),obs:uns(c2[3]),criadoEm:uns(c2[4]||''),
+          nomesAntigos:ant?ant.split('|'):[]}); }
+      if(sec==='#AGENDA' && c2[0]!=='id'){ d._agenda=d._agenda||{horarios:[],ciclos:{},avisos:{}};
+        d._agenda.horarios.push({id:c2[0],data:c2[1],hora:c2[2],clienteId:c2[3],nome:uns(c2[4]),servicoId:c2[5],
+          servico:uns(c2[6]),obs:uns(c2[7]),lembradoEm:uns(c2[8]||'')}); }
+      if(sec==='#CICLOS' && c2[0]!=='servico_id'){ d._agenda=d._agenda||{horarios:[],ciclos:{},avisos:{}};
+        d._agenda.ciclos[String(parseInt(c2[0])||0)]=c2[1]; }
+      if(sec==='#AVISOS' && c2[0]!=='cliente'){ d._agenda=d._agenda||{horarios:[],ciclos:{},avisos:{}};
+        const k=uns(c2[0]); if(/^[cn]:/.test(k)) d._agenda.avisos[k]=c2[1]; }
+      if(sec==='#MATERIAIS' && c2[0]!=='id'){ if(!d.materiais) d.materiais=[];
+        d.materiais.push({id:parseInt(c2[0])||0,nome:uns(c2[1]),pagou:num2(c2[2]),rende:parseInt(c2[3])||0,unidades:parseInt(c2[4])||0,consumido:num2(c2[5])}); }
+      if(sec==='#RECEITAS' && c2[0]!=='servico_id'){ (d._receitas=d._receitas||[]).push(c2); }
+      if(sec==='#MEUS_CUSTOS' && c2[0]!=='item'){ d.qc=d.qc||{valorHora:0,fixos:[],atendMes:0}; const k=uns(c2[0]);
+        if(k==='valor_hora') d.qc.valorHora=num2(c2[1]);
+        else if(k==='atendimentos_mes') d.qc.atendMes=parseInt(c2[1])||0;
+        else if(k.startsWith('fixo:')) d.qc.fixos.push({nome:k.slice(5),valor:num2(c2[1])}); }
+    }
+    d.vendas=Object.values(vendasMap).map(v=>{
+      v.total=Math.round((somaItens(v.itens)-descontoDe(v))*100)/100;
+      v.custo=v.itens.reduce((s,i)=>s+i.custo*i.qtd,0);
+      if(!v.desconto) delete v.desconto;
+      if(!v.descPct) delete v.descPct;
+      /* Reconstruir o Da incassare, na ordem de confianca:
+         (1) historico #RECEBIMENTOS, (2) coluna 'recebido' do backup novo,
+         (3) backup antigo, que so tem o binario 'pago'. */
+      if(ehIncasso(v)){
+        if(!Array.isArray(v.pagamentos)){
+          const r=v._recebido;
+          if(r!==null && r>0) v.pagamentos=[{data:v.data,valor:Math.min(r,v.total)}];
+          else if(r!==null) v.pagamentos=[];
+          else v.pagamentos = v.pago ? [{data:v.data,valor:v.total}] : [];
+        }
+        const rec=v.pagamentos.reduce((s,x)=>s+(Number(x.valor)||0),0);
+        v.pago = rec >= Math.round(v.total*100)/100;
+      } else { v.pagamentos=null; v.pago=true; }
+      delete v._recebido;
+      if(v.parcelasBase===null) delete v.parcelasBase;
+      return v; })
+      .sort((a,b)=>String(b.data).localeCompare(String(a.data)));
+    /* receitas voltam para dentro de cada servico (o tempo vem na mesma linha) */
+    (d._receitas||[]).forEach(c2=>{ const p=d.produtos.find(x=>x.id===(parseInt(c2[0])||0)); if(!p) return;
+      const t=parseInt(c2[3])||0; if(t) p.tempo=t;
+      const mid=parseInt(c2[1]), u=parseInt(c2[2])||0;
+      if(mid && u>0) (p.receita=p.receita||[]).push({materialId:mid,usos:u}); });
+    delete d._receitas;
+    const ids=[...d.produtos.map(p=>p.id),...d.vendas.map(v=>v.id),...d.despesas.map(x=>x.id),...(d.materiais||[]).map(x=>x.id),0];
+    d.seq=Math.max(...ids)+1;
+    if(!d.produtos.length && !d.vendas.length) throw 0;
+    return d;
+  },
+  confirmaRestaurar(){ const antes=D.dados; D.dados=this._pend;
+    /* tudo o que veio do arquivo ja esta num backup: sem isto, o aviso "N trattamenti
+       sem backup" aparecia logo depois de restaurar (QA 07/11/2026) */
+    D.dados.config.vendasDesdeBackup=0;
+    if(!D.dados.config.ultimoBackup) D.dados.config.ultimoBackup=agora();
+    /* sem espaco: o que estava no aparelho fica como estava, e a tela nao diz que restaurou */
+    if(!D.salvar()){ D.dados=antes; return; }
+    /* backup com clientes/agenda substitui as duas chaves; backup sem as secoes nao
+       mexe nelas, pra nao apagar o que ela ja tem na Agenda e clienti */
+    const ex=this._pendExtra||{};
+    if(ex.clientes) Extra.gravar(Extra.K_CLI, ex.clientes);
+    if(ex.agenda) Extra.gravar(Extra.K_AGENDA, ex.agenda);
+    this._pendExtra=null;
+    Modal.fechar(); Tela.render();
+    toast('Backup ripristinato. È tutto di nuovo al suo posto'); },
+  exportarCSV(ym){
+    const vs=Calc.vendasDoMes(ym);
+    let csv='data;produtos;quantidade;Metodo di pagamento;parcelas;cliente;desconto;total;custo;guadagno;status\n';
+    vs.forEach(v=>{ csv+=[v.data, v.itens.map(i=>i.nome+' x'+i.qtd).join(' + '),
+      v.itens.reduce((s,i)=>s+i.qtd,0), v.pgto,
+      (v.parcelas&&v.parcelas>1)?v.parcelas+'x':'Tutto subito', v.cliente||'',
+      String(Math.round(descontoDe(v)*100)/100).replace('.',','),
+      String(Math.round(v.total*100)/100).replace('.',','), String(Math.round(v.custo*100)/100).replace('.',','),
+      String(Math.round((v.total-v.custo)*100)/100).replace('.',','),
+      ehIncasso(v)
+        ? (Venda.saldo(v)<=0 ? 'pago'
+           : (Venda.jaPago(v)>0 ? 'parcial (falta '+String(Venda.saldo(v)).replace('.',',')+')' : 'pendente'))
+        : 'pago'
+      ].join(';')+'\n'; });
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='vendas-'+ym+'.csv'; a.click(); toast('Foglio del mese esportato');
+  }
+};
+
+/* ============ VENDA ============ */
+const Venda = {
+  carrinho:null,
+  iniciar(){ if(!D.dados.produtos.length){ Tela.ir('estoque'); toast('Prima aggiungi un trattamento'); return; }
+    this._editVenda=null; this._addVenda=null;
+    this.carrinho={itens:[],pgto:null,cliente:''}; this.busca=''; this.pag=1; this._editIdx=null; this.telaProduto(); },
+  busca:'', pag:1, _editIdx:null,
+  /* quantas pecas ja entraram no carrinho */
+  nItens(){ return this.carrinho ? this.carrinho.itens.reduce((s,i)=>s+i.qtd,0) : 0; },
+  /* Estoque disponivel DESCONTANDO o que ja esta no carrinho. Sem isso, colocar 2 e
+     depois +3 do mesmo produto nao avisaria que passou do estoque. */
+  /* VERSAO MANICURE: o cadastro e de SERVICO, que nao tem estoque. A quantidade
+     continua existindo por baixo (o backup e o restaurar leem a coluna), mas nunca
+     limita nem avisa nada. */
+  dispon(prodId, ignorarIdx){ return Infinity; },
+  telaProduto(){
+    const total=D.dados.produtos.length;
+    /* A busca repinta SO a lista (pintarLista), nunca o campo (19/10/2026). Antes cada letra
+       redesenhava o modal inteiro e criava um campo novo, refocado num setTimeout. */
+    const busca = total>8
+      ? `<input id="buscaProd" placeholder="Cerca trattamento…" value="${escA(this.busca)}" autocomplete="off"
+          oninput="Venda.busca=this.value;Venda.pag=1;Venda.pintarLista()">`
+      : '';
+    const n=this.nItens();
+    const naConta=!!this._addVenda;
+    if(this._editVenda){
+      Modal.abrir(`<div class="passo">Aggiungi al trattamento</div>${busca}
+      <div id="vendaLista">${this.listaHTML()}</div>
+      <button class="btn sec" style="margin-top:10px" onclick="Venda.telaModifica()">Torna al trattamento</button>`);
+      return; }
+    const voltar = n>0
+      ? `<button class="btn sec" style="margin-top:10px" onclick="Venda.telaCarrinho()">${naConta?`Vedi il conto (${n} ${n===1?'trattamento':'trattamenti'})`:`Torna ai trattamenti (${n} ${n===1?'trattamento':'trattamenti'})`}</button>`
+      : (naConta?`<button class="btn sec" style="margin-top:10px" onclick="Venda.cancelarAddConta()">Annulla</button>`:'');
+    const passo = naConta
+      ? (n>0?'Tocca un altro trattamento che hai fatto':'Cos\'altro le hai fatto?')
+      : (n>0?'aggiungi un altro trattamento · toccalo':'Passo 1 di 3 · tocca il trattamento');
+    Modal.abrir(`<div class="passo">${passo}</div>${busca}
+      <div id="vendaLista">${this.listaHTML()}</div>${voltar}`);
+  },
+  /* a lista de produtos (filtrada pela busca) e a paginacao */
+  listaHTML(){
+    let ps=[...D.dados.produtos].sort((a,b)=>a.nome.localeCompare(b.nome));
+    if(this.busca) ps=ps.filter(p=>p.nome.toLowerCase().includes(this.busca.toLowerCase()));
+    const pg=paginar(ps, this.pag);
+    const lista = pg.itens.map(p=>{
+      const it=this.carrinho ? this.carrinho.itens.find(i=>i.produtoId===p.id) : null;
+      const obs = it ? ` <span style="font-weight:600;font-size:12.5px;color:var(--vinho)">(${it.qtd>1?it.qtd+'x ':''}nel trattamento)</span>` : '';
+      return `<button class="escolha-prod" onclick="Venda.escolheu(${idn(p.id)})">
+        <span class="n">${esc(p.nome)}${obs}</span>
+        <span class="p">${rs(p.preco)}</span></button>`;
+    }).join('');
+    return `<div style="margin-top:10px">${lista || '<div class="vazio">Nessun trattamento trovato.</div>'}</div>
+      ${barraPag(pg,'Venda.irPag')}`;
+  },
+  pintarLista(){ const el=document.getElementById('vendaLista');
+    if(el) el.innerHTML=this.listaHTML(); else this.telaProduto(); },
+  irPag(p){ this.pag=p; this.pintarLista();
+    document.querySelector('.modal')?.scrollTo({top:0,behavior:'smooth'}); },
+  /* servico entra direto no trattamento, sem o passo da quantidade: quase sempre e 1.
+     Quem fez 2 vezes (mae e filha, por exemplo) toca no item e muda a quantidade. */
+  escolheu(id){ this._prod=D.dados.produtos.find(p=>p.id===id); this._qtd=1; this._editIdx=null; this.addAoCarrinho(); },
+  /* mudar a quantidade de um item que JA esta no carrinho */
+  editarItem(idx){ const it=this.carrinho.itens[idx]; if(!it) return;
+    this._prod=D.dados.produtos.find(p=>p.id===it.produtoId)
+      || {id:it.produtoId,nome:it.nome,preco:it.preco,custo:it.custo,qtd:0};
+    this._qtd=it.qtd; this._editIdx=idx; this.telaQtd(); },
+  telaQtd(){ const p=this._prod; const ed=this._editIdx!==null;
+    Modal.abrir(`<div class="passo">Quante volte l'hai fatto</div>
+      <h3>${esc(p.nome)}</h3><p class="sub">${rs(p.preco)} cada</p>
+      <div class="qtd-row">
+        <button onclick="Venda.mudaQtd(-1)" aria-label="Diminuisci">&minus;</button>
+        <span class="n" id="qtdN" aria-live="polite">${this._qtd}</span>
+        <button onclick="Venda.mudaQtd(1)" aria-label="Aumenta">+</button>
+      </div>
+      <div class="aviso backup oculto" id="avisoEstoque"></div>
+      <button class="btn" onclick="Venda.addAoCarrinho()">${ed?'Salva':'Aggiungi'}</button>
+      ${(ed||this.nItens()>0)?`<button class="btn sec" onclick="Venda.telaCarrinho()">Annulla</button>`:''}`);
+    this.avisoQtd(); },
+  mudaQtd(d){ this._qtd=Math.max(1,this._qtd+d);
+    document.getElementById('qtdN').textContent=this._qtd; this.avisoQtd(); },
+  avisoQtd(){
+    const av=document.getElementById('avisoEstoque'); if(!av) return;
+    const d=this.dispon(this._prod.id, this._editIdx);
+    if(d<=0){ av.classList.remove('oculto');
+      av.innerHTML='Questo prodotto è finito. Puoi registrare lo stesso, ma poi controlla il magazzino.'; return; }
+    if(this._qtd>d){ av.classList.remove('oculto');
+      av.innerHTML='Attenzione: in magazzino ne hai solo <b>'+d+'</b>'
+        +(d!==this._prod.qtd?' (contando quello già nel conto)':'')
+        +'. Registrandone '+this._qtd+', finisce (poi sistemalo in Magazzino prodotti).'; return; }
+    av.classList.add('oculto');
+  },
+  addAoCarrinho(){
+    const p=this._prod, q=this._qtd;
+    if(this._editIdx!==null){ this.carrinho.itens[this._editIdx].qtd=q; }
+    else {
+      /* o mesmo produto escolhido duas vezes SOMA numa linha, nao duplica */
+      const ex=this.carrinho.itens.find(i=>i.produtoId===p.id);
+      if(ex) ex.qtd+=q;
+      else this.carrinho.itens.push({produtoId:p.id,nome:p.nome,qtd:q,preco:p.preco,custo:p.custo});
+    }
+    this._editIdx=null; this.telaCarrinho();
+  },
+  removerItem(idx){
+    if(this._editVenda && this.carrinho.itens.length<=1){ toast('Serve almeno un trattamento. Per cancellare tutto, usa Elimina.'); return; }
+    this.carrinho.itens.splice(idx,1);
+    if(!this.carrinho.itens.length){ this.busca=''; this.pag=1; this.telaProduto();
+      toast(this._addVenda?'Scegli cosa le hai fatto':'Non hai scelto nessun trattamento'); return; }
+    this.telaCarrinho(); },
+  telaCarrinho(){
+    const c=this.carrinho;
+    /* somando numa conta de Da incassare ja aberta: o "carrinho" e o resumo daquela conta,
+       nunca a tela que leva a criar uma venda nova */
+    if(this._editVenda){ this._editIdx=null; this.telaModifica(); return; }
+    if(this._addVenda){
+      if(!c || !c.itens.length){ this.busca=''; this.pag=1; this.telaProduto(); return; }
+      this._editIdx=null; this.telaAddRiepilogo(); return;
+    }
+    if(!c || !c.itens.length){ this.busca=''; this.pag=1; this.telaProduto(); return; }
+    this._editIdx=null;
+    const total=c.itens.reduce((s,i)=>s+i.preco*i.qtd,0);
+    const custo=c.itens.reduce((s,i)=>s+i.custo*i.qtd,0);
+    const linhas=c.itens.map((i,idx)=>
+      `<div class="cart-item">
+        <div style="min-width:0;flex:1;cursor:pointer" onclick="Venda.editarItem(${idx})">
+          <div class="n">${esc(i.nome)}</div>
+          <div class="s">${esc(i.qtd)} x ${rs(i.preco)} · tocca per cambiare</div>
+        </div>
+        <span class="v">${rs(i.preco*i.qtd)}</span>
+        <button class="x" onclick="Venda.removerItem(${idx})" aria-label="Togli ${escA(i.nome)} dal conto">&times;</button>
+      </div>`).join('');
+    Modal.abrir(`<div class="passo">Passo 2 di 3 · cosa hai fatto</div>
+      ${linhas}
+      <div class="cart-tot"><span class="l">Totale</span><span class="v">${rs(total)}</span></div>
+      <div class="cart-guadagno">il tuo guadagno: ${rs(total-custo)}</div>
+      <button class="btn sec" style="margin-top:14px" onclick="Venda.busca='';Venda.pag=1;Venda.telaProduto()">+ Aggiungi un altro trattamento</button>
+      <button class="btn" onclick="Venda.telaPgto()">Vai al pagamento</button>`);
+  },
+  /* ===== NOME E PARCELAS (14/09/2026) =====
+     Nome: pedido em TODA venda, porque a lojista quer saber pra quem vendeu, mas
+     obrigatorio so no Da incassare (senza nome nao ha como cobrar depois).
+     Parcelas: cartao e Da incassare. E informativo, e existe porque a freguesa pensa em
+     "3x de 40", nao em "120 em aberto". No Da incassare a lojista continua podendo baixar
+     qualquer valor: a parcela e a conta que ela combina e mostra. */
+  ehParcelavel(f){ return ehIncasso(f); },
+  telaPgto(){
+    const c=this.carrinho;
+    if(!c || !c.itens.length){ this.telaProduto(); return; }
+    const resumo=c.itens.length===1
+      ? c.itens[0].nome+(c.itens[0].qtd>1?' x'+c.itens[0].qtd:'')
+      : c.itens.length+' trattamenti';
+    if(!c.parcelas) c.parcelas=1;
+    if(!c.desc) c.desc={tipo:'rs',valor:0};
+    const par=this.ehParcelavel(c.pgto);
+    Modal.abrir(`<div class="passo">Passo 3 di 3 · come ti ha pagato?</div>
+      <p class="sub" style="margin-top:2px">${esc(resumo)}</p>
+      <div id="descArea"></div>
+      <label>Metodo di pagamento</label>
+      <div class="pgto-grid">
+        ${['contanti','carta','bonifico','satispay','da_incassare'].map(f=>`<button id="pg-${f}" class="${c.pgto===f?'on':''}" onclick="Venda.pgto('${f}')">${rotuloPgto(f)}</button>`).join('')}
+      </div>
+
+      <div id="parcCampo" class="${par?'':'oculto'}">
+        <label>In quante rate?</label>
+        <div class="parc-grid" id="parcGrid">
+          ${PARCELAS_OPC.map(n=>`<button type="button" class="${c.parcelas===n?'on':''}"
+            onclick="Venda.setParcelas(${n})">${n===1?'Tutto subito':n+'x'}</button>`).join('')}
+        </div>
+        <div class="parc-info" id="parcInfo"></div>
+      </div>
+
+      <label for="fiadoNome">Nome della cliente <span id="nomeOpc" class="opcional">(facoltativo)</span></label>
+      <input id="fiadoNome" placeholder="es. Giulia" value="${escA(c.cliente||'')}" autocomplete="off" autocapitalize="words">
+      <div class="cli-sug" id="cliSug"></div>
+
+      <button class="btn" onclick="Venda.confirmar()">Registra trattamento &#10003;</button>
+      <button class="btn sec" onclick="Venda.telaCarrinho()">Torna ai trattamenti</button>`);
+    this.descMontar(); this.pgtoPintar(); this.cliMontar(); },
+  /* os numeros do carrinho com o desconto que esta digitado agora */
+  contaCarrinho(){
+    const c=this.carrinho, sub=somaItens(c.itens);
+    const custo=c.itens.reduce((s,i)=>s+i.custo*i.qtd,0);
+    const d=c.desc||{};
+    const desc=descEmReais(sub, d.tipo, d.valor||0);
+    return {sub, desc, total:Math.round((sub-desc)*100)/100, custo};
+  },
+  /* resumo da venda: subtotal, desconto e total. Campo vazio = sem desconto,
+     entao a venda comum passa reto, sem botao nenhum a mais pra tocar */
+  descMontar(){
+    const el=document.getElementById('descArea'); if(!el) return;
+    const d=this.carrinho.desc, pct=d.tipo==='pct';
+    const val=d.valor>0 ? (pct ? String(d.valor).replace('.',',') : fmtMoeda(d.valor)) : '';
+    el.innerHTML=`<div class="resumo">
+      <div class="rl"><span>Subtotale</span><span class="v" id="rSub"></span></div>
+      <div class="rl"><span>Sconto</span>
+        <span class="desc-ctrl">
+          <span class="desc-tipo">
+            <button type="button" class="${pct?'':'on'}" onclick="Venda.descTipo('rs')">€</button>
+            <button type="button" class="${pct?'on':''}" onclick="Venda.descTipo('pct')">%</button>
+          </span>
+          <input id="descImporto" inputmode="${pct?'decimal':'numeric'}" ${pct?'data-pct':'data-moeda'}
+            placeholder="${pct?'0%':'0,00 €'}" value="${val}" autocomplete="off" oninput="Venda.descLer()">
+        </span></div>
+      <div class="desc-info" id="descInfo"></div>
+      <div class="rl tot"><span>Totale</span><span class="v" id="rTot"></span></div>
+    </div>`;
+    this.descPintar();
+  },
+  /* trocar R$ por % zera o campo: 10 reais e 10% sao coisas diferentes */
+  descTipo(t){ const d=this.carrinho.desc; if(d.tipo===t) return;
+    d.tipo=t; d.valor=0; this.descMontar(); this.pintarParcela();
+    if(this._editVenda) this.editAviso();
+    setTimeout(()=>{ const i=document.getElementById('descImporto'); if(i) i.focus(); },60); },
+  descLer(){ const i=document.getElementById('descImporto'); if(!i) return;
+    this.carrinho.desc.valor=num(i.value); this.descPintar(); this.pintarParcela();
+    if(this._editVenda) this.editAviso(); },
+  descPintar(){
+    const k=this.contaCarrinho(), d=this.carrinho.desc;
+    const s=document.getElementById('rSub'), t=document.getElementById('rTot');
+    if(s) s.textContent=rs(k.sub);
+    if(t) t.textContent=rs(k.total);
+    const el=document.getElementById('descInfo'); if(!el) return;
+    if(!(d.valor>0)){ el.innerHTML=''; el.style.display='none'; return; }
+    el.style.display='';
+    const passou = d.tipo==='pct' ? d.valor>100 : d.valor>k.sub;
+    if(passou){ el.innerHTML=`<span class="ruim">Sconto più alto del subtotale</span>`; return; }
+    const guadagno=k.total-k.custo;
+    const quanto = d.tipo==='pct' ? '−'+rs(k.desc)
+      : (k.sub>0 ? String(Math.round(k.desc/k.sub*1000)/10).replace('.',',')+'% del subtotale' : '');
+    el.innerHTML = quanto + ' · ' + (guadagno>=0 ? 'guadagno: '+rs(guadagno)
+      : `<span class="ruim">sotto il costo: ci perdi ${rs(-guadagno)}</span>`);
+  },
+  /* ===== NOME DA CLIENTE NO ATENDIMENTO (09/11/2026, igual ao front da lojinha) =====
+     So o nome, como sempre foi no Da incassare. Enquanto ela digita, aparecem em botoes
+     grandes os nomes que ja usou nos trattamenti e as clientes da Agenda e clienti (lista
+     propria: o datalist do iPhone e pequeno e some atras do teclado). Escolher uma
+     cliente da Agenda grava o clienteId junto do nome. O Controle nunca cadastra
+     cliente: a ficha e da Agenda e clienti, que liga pelo id ou pelo nome. */
+  cliMontar(){
+    const i=document.getElementById('fiadoNome'); if(!i) return;
+    i.addEventListener('input',()=>{ const c=this.carrinho; if(!c) return;
+      c.cliente=i.value; c.clienteId=null; this.cliPintar(); });
+    this.cliPintar(); },
+  /* as opcoes: clientes da Agenda (com id) e nomes ja usados que nao sao delas */
+  cliOpcoes(){
+    const cad=Extra.clientes(), vistos=new Set(), out=[];
+    cad.forEach(x=>{ vistos.add(Extra.norm(x.nome)); out.push({nome:String(x.nome).trim(), id:x.id, whats:x.whats||''}); });
+    D.dados.vendas.forEach(v=>{ const t=String(v.cliente||'').trim().replace(/\s+/g,' '), n=Extra.norm(t);
+      if(!n || vistos.has(n)) return; vistos.add(n); out.push({nome:t, id:null, whats:''}); });
+    return out; },
+  cliPintar(){
+    const box=document.getElementById('cliSug'), i=document.getElementById('fiadoNome'), c=this.carrinho;
+    if(!box||!i||!c) return;
+    const n=Extra.norm(i.value);
+    if(!n || c.clienteId!=null){ box.innerHTML=''; this._cliOps=[]; return; }
+    const ops=this.cliOpcoes().filter(o=>Extra.norm(o.nome).includes(n) && Extra.norm(o.nome)!==n)
+      .sort((a,b)=>(Extra.norm(b.nome).startsWith(n)?1:0)-(Extra.norm(a.nome).startsWith(n)?1:0) || a.nome.localeCompare(b.nome))
+      .slice(0,5);
+    this._cliOps=ops;
+    box.innerHTML=ops.map((o,k)=>`<button type="button" class="cli-op" onclick="Venda.cliEscolher(${k})">
+      <span>${esc(o.nome)}</span>${o.whats?`<small>${esc(o.whats)}</small>`:''}</button>`).join(''); },
+  cliEscolher(k){ const o=(this._cliOps||[])[k], c=this.carrinho, i=document.getElementById('fiadoNome');
+    if(!o||!c||!i) return;
+    c.cliente=o.nome; c.clienteId=o.id; i.value=o.nome; this.cliPintar(); },
+  /* o id da cliente da Agenda: a escolhida, ou a unica cadastrada com esse nome */
+  cliResolver(nome){
+    const n=Extra.norm(nome); if(!n) return null;
+    const cad=Extra.clientes(), c=this.carrinho||{};
+    const esc1=c.clienteId!=null ? cad.find(x=>x.id===c.clienteId) : null;
+    if(esc1 && Extra.norm(esc1.nome)===n) return esc1.id;
+    const iguais=cad.filter(x=>Extra.norm(x.nome)===n || (Array.isArray(x.nomesAntigos)&&x.nomesAntigos.some(a=>Extra.norm(a)===n)));
+    return iguais.length===1 ? iguais[0].id : null; },
+  pgto(f){ const c=this.carrinho; c.pgto=f;
+    ['contanti','carta','bonifico','satispay','da_incassare'].forEach(x=>{const b=document.getElementById('pg-'+x); if(b) b.classList.toggle('on',x===f);});
+    if(!this.ehParcelavel(f)) c.parcelas=1;
+    this.pgtoPintar(); },
+  /* mostra/esconde as parcelas e troca o rotulo do nome conforme a forma escolhida */
+  pgtoPintar(){
+    const c=this.carrinho, f=c.pgto;
+    const cp=document.getElementById('parcCampo');
+    if(cp) cp.classList.toggle('oculto', !this.ehParcelavel(f));
+    const opc=document.getElementById('nomeOpc');
+    if(opc){ opc.textContent = f==='da_incassare' ? '(da incassare dopo)' : '(facoltativo)';
+             opc.classList.toggle('obrig', f==='da_incassare'); }
+    this.pintarParcela(); },
+  setParcelas(n){ this.carrinho.parcelas=n;
+    document.querySelectorAll('#parcGrid button').forEach((b,i)=>
+      b.classList.toggle('on', PARCELAS_OPC[i]===n));
+    this.pintarParcela(); },
+  pintarParcela(){
+    const el=document.getElementById('parcInfo'); if(!el) return;
+    const c=this.carrinho, n=c.parcelas||1;
+    const total=this.contaCarrinho().total;
+    el.innerHTML = n>1
+      ? `<b>${n} rate da ${rs(valorParcela(total,n))}</b> · totale ${rs(total)}`
+      : 'In un\'unica soluzione';
+  },
+  confirmar(){
+    const c=this.carrinho;
+    if(!c || !c.itens.length){ toast('Non hai scelto nessun trattamento'); this.telaProduto(); return; }
+    if(!c.pgto){ toast('Scegli come ti ha pagato'); return; }
+    c.cliente=(document.getElementById('fiadoNome')?.value||'').trim();
+    if(ehIncasso(c) && !c.cliente){ toast('Scrivi il nome della cliente che deve ancora pagarti'); return; }
+    const d=c.desc||{};
+    if(d.valor>0 && (d.tipo==='pct' ? d.valor>100 : d.valor>somaItens(c.itens))){
+      toast('Lo sconto è più alto del subtotale del trattamento'); return; }
+    const {total, custo, desc}=this.contaCarrinho();
+    const parcelas=this.ehParcelavel(c.pgto)?(c.parcelas||1):1;
+    const v={id:D.id(),data:hoje(),criadaEm:agora(),itens:c.itens,pgto:c.pgto,
+      cliente:c.cliente||null,pago:!ehIncasso(c),total,custo,
+      /* parcelas e informativo: o numero de vezes combinado com a freguesa */
+      parcelas,
+      /* Da incassare nasce com historico de recebimento vazio; o parcial vira linha aqui */
+      pagamentos:ehIncasso(c)?[]:null};
+    if(desc>0){ v.desconto=desc; if(d.tipo==='pct') v.descPct=d.valor; }
+    const cid=this.cliResolver(v.cliente); if(cid!=null) v.clienteId=cid;
+    D.dados.vendas.unshift(v);
+    c.itens.forEach(i=>{ const p=D.dados.produtos.find(x=>x.id===i.produtoId); if(p) p.qtd=Math.max(0,p.qtd-i.qtd); });
+    baixarMateriais(c.itens);
+    D.dados.config.vendasDesdeBackup++;
+    /* sem espaco: o trattamento nao ficou e a memoria voltou ao que esta gravado */
+    if(!D.gravar()) return;
+    this.carrinho=null; Modal.fechar(); Tela.render();
+    /* no Da incassare o Contanti ainda nao Incassato: nao anunciar guadagno que ela nao recebeu */
+    toast(ehIncasso(v)
+      ? 'Segnato tra i da incassare' + (v.cliente?' · '+v.cliente:'') + ' · da incassare '+rs(total)
+      : 'Trattamento registrato! Guadagno: '+rs(total-custo), !ehIncasso(v));
+  },
+
+  /* ============ FIADO: recebimento total ou PARCIAL ============
+     O modelo antigo era binario (v.pago true/false). Agora a venda fiada pode
+     carregar v.pagamentos=[{data,valor}]. Venda ANTIGA nao tem esse campo, e as
+     funcoes abaixo tratam a ausencia: pago:true vale como quitada, pago:false como
+     nada recebido. Nada e reescrito na carga, entao backup velho continua valido. */
+  jaPago(v){
+    if(Array.isArray(v.pagamentos)) return v.pagamentos.reduce((s,x)=>s+(Number(x.valor)||0),0);
+    return v.pago ? v.total : 0;   /* venda anterior ao campo */
+  },
+  saldo(v){ return Math.max(0, Math.round((v.total - this.jaPago(v))*100)/100); },
+  /* quantas parcelas o que ja foi pago cobre, e quanto vale uma parcela */
+  parcelasDe(v){ return v && v.parcelas ? v.parcelas : 1; },
+  valorDaParcela(v){ return valorParcela(baseParcela(v), this.parcelasDe(v)); },
+  parcelasPagas(v){
+    const n=this.parcelasDe(v); if(n<=1) return null;
+    const vp=this.valorDaParcela(v);
+    if(vp<=0) return null;
+    /* quanto do ACORDO ja Incassato. Se o acordo foi feito sobre o saldo (parcelasBase),
+       o que ela tinha pago antes dele nao conta como parcela deste acordo. */
+    const antes = (typeof v.parcelasBase==='number' && v.parcelasBase>0)
+      ? Math.max(0, v.total - v.parcelasBase) : 0;
+    const noAcordo = Math.max(0, this.jaPago(v) - antes);
+    const pagas=Math.min(n, Math.floor((noAcordo+0.004)/vp));
+    return {n, vp, pagas};
+  },
+
+  /* ===== UM BOTAO SO PRA RECEBER (14/09/2026) =====
+     Regra do dono: "ele exibe 2 botoes de pagar, mesmo colocando o valor parcial
+     ele exibe pagar total e pagar isso, nao ta amigavel, deve ter 1 botao so ali
+     quando for pagar, e ele desconta o valor que ta digitado".
+
+     Como ficou: o campo de valor manda, e sempre. Os atalhos de cima (tudo, uma
+     parcela, metade) NAO dao baixa: eles so PREENCHEM o campo. Quem confirma e um
+     unico botao, e o texto dele diz exatamente quanto vai ser descontado e quanto
+     sobra depois. Assim nao existe mais escolher entre dois botoes que fazem
+     coisas diferentes com o mesmo numero na tela. */
+  telaReceber(id, nomeVisto){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    const pg=this.jaPago(v), falta=this.saldo(v);
+    if(falta<=0){ toast('Questo conto è già saldato'); return; }
+    const hist=Array.isArray(v.pagamentos)&&v.pagamentos.length
+      ? `<details class="fi-det"><summary>Vedi cosa ha già pagato (${v.pagamentos.length})</summary>
+          ${v.pagamentos.map((x,i)=>
+          `<div class="fi-hl"><span>${esc(String(x.data).split('-').reverse().join('/'))} &mdash; <b>${rs(x.valor)}</b></span>
+            <button class="btn mini sec" onclick="Venda.desfazerPgto(${idn(id)},${i})">Annulla</button></div>`
+          ).join('')}</details>`
+      : '';
+    const pp=this.parcelasPagas(v);
+    /* linha das parcelas: so aparece quando a venda foi combinada parcelada */
+    const linhaParc = pp
+      ? `<div class="fi-parc">Concordato in <b>${pp.n} ${pp.n===1?'rata':'rate'} da ${rs(pp.vp)}</b> · ${pp.pagas} di ${pp.n} ${pp.n===1?'rata pagata':'rate pagate'}</div>`
+      : '';
+    /* atalhos: so preenchem o campo, nunca dao baixa sozinhos */
+    const meia=Math.round(falta/2*100)/100;
+    const atalhos=[['Tutto il resto', falta]];
+    if(pp && pp.vp < falta) atalhos.push(['Una rata · '+rs(pp.vp), pp.vp]);
+    if(!pp && meia>0 && meia<falta) atalhos.push(['Metà · '+rs(meia), meia]);
+    /* o nome que veio do Cobrar ("Ela pagou") e o mesmo que o Cobrar mostrou */
+    const quem=(nomeVisto||v.cliente||'');
+    Modal.abrir(`<h3>Incassa${quem?' da '+esc(quem):''}</h3>
+      <p class="sub">${esc(v.itens.map(i=>i.nome+(i.qtd>1?' x'+i.qtd:'')).join(', '))}</p>
+      <div class="fi-linhas">
+        <div class="fi-linha"><span>Totalee del trattamento</span><span class="v">${rs(v.total)}</span></div>
+        <div class="fi-linha"><span>Già incassato</span><span class="v">${rs(pg)}</span></div>
+        <div class="fi-falta"><div class="rot">Deve ancora darti</div><div class="big">${rs(falta)}</div></div>
+        ${linhaParc}
+      </div>
+      <label for="fiImporto">Quanto ti dà adesso?</label>
+      <input id="fiImporto" data-moeda inputmode="numeric" value="${fmtMoeda(falta)}"
+        oninput="Venda.previaReceber(${idn(id)})">
+      <div class="fi-atalhos">
+        ${atalhos.map(a=>`<button type="button" onclick="Venda.preencher(${idn(id)},${Number(a[1])})">${a[0]}</button>`).join('')}
+      </div>
+      <div class="fi-previa" id="fiPrevia"></div>
+      <button class="btn" id="fiBtn" onclick="Venda.receber(${idn(id)})">Conferma incasso</button>
+      <button class="btn discreto" onclick="Modal.fechar()">Annulla</button>
+      ${hist}`);
+    this.previaReceber(id);
+    setTimeout(()=>{ const i=document.getElementById('fiImporto'); if(i){ i.focus(); i.select(); } },60);
+  },
+  /* o atalho so escreve no campo; quem decide continua sendo o botao unico */
+  preencher(id, valor){
+    const i=document.getElementById('fiImporto'); if(!i) return;
+    i.value=fmtMoeda(Math.round(valor*100)/100);
+    this.previaReceber(id);
+  },
+  /* o botao diz o que vai acontecer ANTES de ela tocar: quanto desconta e quanto sobra */
+  previaReceber(id){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    const el=document.getElementById('fiPrevia'), bt=document.getElementById('fiBtn');
+    if(!el||!bt) return;
+    const falta=this.saldo(v);
+    let val=Math.round(num(document.getElementById('fiImporto').value)*100)/100;
+    if(val<=0){
+      el.className='fi-previa aviso-vazio'; el.textContent='Inserisci quanto ha pagato adesso.';
+      bt.disabled=true; bt.textContent='Conferma incasso'; return;
+    }
+    if(val>falta){
+      el.className='fi-previa aviso-erro';
+      el.innerHTML=`Ela deve só <b>${rs(falta)}</b>. Diminua o valor.`;
+      bt.disabled=true; bt.textContent='Conferma incasso'; return;
+    }
+    bt.disabled=false;
+    const resta=Math.round((falta-val)*100)/100;
+    el.className='fi-previa'+(resta<=0?' quita':'');
+    /* o resultado em NUMERO GRANDE, nao em frase: a lojista confere o "depois fica"
+       de relance, do mesmo jeito que confere o "Deve ancora darti" ali em cima */
+    el.innerHTML = resta<=0
+      ? `<div class="rot">Dopo questo pagamento</div>
+         <div class="big">Tutto saldato ✓</div>`
+      : `<div class="rot">Dopo questo pagamento ti deve ancora</div>
+         <div class="big">${rs(resta)}</div>`;
+    bt.textContent = resta<=0 ? 'Incassa '+rs(val)+' e salda' : 'Incassa '+rs(val);
+  },
+  receber(id){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    const falta=this.saldo(v);
+    if(falta<=0){ toast('Questo conto è già saldato'); Modal.fechar(); Tela.render(); return; }
+    let val = num(document.getElementById('fiImporto').value);
+    val = Math.round(val*100)/100;
+    if(val<=0){ toast('Inserisci quanto ha pagato'); return; }
+    if(val>falta){ toast('Deve ancora solo '+rs(falta)); return; }
+    if(!Array.isArray(v.pagamentos)){
+      /* venda antiga: converte o binario em historico sem perder o que ja constava */
+      v.pagamentos = (v.pago && v.total>0) ? [{data:v.data,valor:v.total}] : [];
+    }
+    v.pagamentos.push({data:hoje(),valor:val});
+    v.pago = this.saldo(v)<=0;
+    if(!D.gravar()) return;
+    Modal.fechar(); Tela.render();
+    /* o Contanti Incassato agora: e agora que o guadagno dessa venda conta */
+    toast(v.pago
+      ? 'Saldato ✓ · sono entrati '+rs(val)+' in cassa'
+      : 'Incassato '+rs(val)+' · ne mancano ancora '+rs(this.saldo(v)), true);
+  },
+  /* ===== ADICIONAR PRODUTO NUMA CONTA DE FIADO JA ABERTA (14/09/2026) =====
+
+     Regra do dono: "no Da incassare, adicionar uma opcao para a cliente conseguir
+     adicionar mais produtos, mesmo depois de vendido, pois hoje ela tem que fazer
+     uma nova venda. O ideal e ela conseguir adicionar mais produtos e ajustar as
+     parcelas/valor."
+
+     E o caso real da lojista de bairro: a freguesa leva uma blusa Da incassare hoje, volta
+     quinta e leva um brinco, e as duas coisas sao UMA conta. Antes disso, o app
+     obrigava a abrir outra venda, e a conta da mesma pessoa aparecia partida em
+     duas linhas.
+
+     O que a rotina faz: reaproveita o mesmo carrinho da venda normal (nada de tela
+     nova pra manter), da baixa no estoque dos produtos novos, soma total e custo na
+     venda que ja existe, e reabre a escolha de parcelas com o valor ja atualizado.
+     O que ela NAO mexe: os pagamentos ja recebidos ficam como estao. A conta cresce,
+     o que ja foi pago continua pago, e o que falta sobe na mesma medida. */
+  addNaConta(id){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    if(!ehIncasso(v)){ toast('Puoi aggiungere solo a un conto da incassare'); return; }
+    if(!D.dados.produtos.length){ Modal.fechar(); Tela.ir('estoque'); toast('Prima aggiungi un trattamento'); return; }
+    this._editVenda=null; this._addVenda=id;
+    this.carrinho={itens:[],pgto:'Da incassare',cliente:v.cliente||'',parcelas:v.parcelas||1};
+    this.busca=''; this.pag=1; this._editIdx=null;
+    this.telaProduto();
+  },
+  /* fim do fluxo de somar na conta: mostra o antes e o depois, e deixa mexer nas parcelas */
+  telaAddRiepilogo(){
+    const v=D.dados.vendas.find(x=>x.id===this._addVenda);
+    if(!v){ this._addVenda=null; this.carrinho=null; Modal.fechar(); return; }
+    const c=this.carrinho;
+    const novoTotale=c.itens.reduce((s,i)=>s+i.preco*i.qtd,0);
+    const totalFinal=Math.round((v.total+novoTotale)*100)/100;
+    const jaPg=this.jaPago(v);
+    const faltaFinal=Math.round((totalFinal-jaPg)*100)/100;
+    if(!c.parcelas) c.parcelas=v.parcelas||1;
+    Modal.abrir(`<h3>Somar na conta${v.cliente?' de '+esc(v.cliente):''}</h3>
+      <p class="sub">Va tutto su un unico conto e ti paga tutto insieme.</p>
+      ${c.itens.map((i,idx)=>`<div class="cart-item">
+          <div style="min-width:0;flex:1;cursor:pointer" onclick="Venda.editarItem(${idx})">
+            <div class="n">${esc(i.nome)}</div>
+            <div class="s">${esc(i.qtd)} x ${rs(i.preco)} · tocca per cambiare</div>
+          </div>
+          <span class="v">${rs(i.preco*i.qtd)}</span>
+          <button class="x" onclick="Venda.removerItem(${idx})" aria-label="Togli ${escA(i.nome)}">&times;</button>
+        </div>`).join('')}
+      <button class="btn sec" onclick="Venda.busca='';Venda.pag=1;Venda.telaProduto()">+ Aggiungi un altro trattamento</button>
+      <div class="fi-linhas" style="margin-top:14px">
+        <div class="fi-linha"><span>Conto precedente</span><span class="v">${rs(v.total)}</span></div>
+        <div class="fi-linha"><span>Trattamento di adesso</span><span class="v">+ ${rs(novoTotale)}</span></div>
+        <div class="fi-linha"><span>Già incassato</span><span class="v">${rs(jaPg)}</span></div>
+        <div class="fi-linha falta"><span>Nuovo totale da incassare</span><span class="v">${rs(faltaFinal)}</span></div>
+      </div>
+      <label>In quante rate ti paga il resto?</label>
+      <div class="parc-grid" id="parcGrid">
+        ${PARCELAS_OPC.map(n=>`<button type="button" class="${c.parcelas===n?'on':''}"
+          onclick="Venda.setParcelasConta(${n})">${n===1?'Tutto subito':n+'x'}</button>`).join('')}
+      </div>
+      <div class="parc-info" id="parcInfo"></div>
+      <button class="btn" onclick="Venda.confirmarAddConta()">Somar na conta &#10003;</button>
+      <button class="btn discreto" onclick="Venda.cancelarAddConta()">Annulla</button>`);
+    this.pintarParcelaConta(); },
+  setParcelasConta(n){ this.carrinho.parcelas=n;
+    document.querySelectorAll('#parcGrid button').forEach((b,i)=>
+      b.classList.toggle('on', PARCELAS_OPC[i]===n));
+    this.pintarParcelaConta(); },
+  /* aqui a parcela se calcula sobre o que FALTA, nao sobre o total: o que ela ja
+     pagou nao volta a ser parcelado */
+  pintarParcelaConta(){
+    const el=document.getElementById('parcInfo'); if(!el) return;
+    const v=D.dados.vendas.find(x=>x.id===this._addVenda); if(!v) return;
+    const c=this.carrinho, n=c.parcelas||1;
+    const novoTotale=c.itens.reduce((s,i)=>s+i.preco*i.qtd,0);
+    const falta=Math.round((v.total+novoTotale-this.jaPago(v))*100)/100;
+    el.innerHTML = n>1
+      ? `<b>${n} rate da ${rs(valorParcela(falta,n))}</b> · ne mancano ${rs(falta)}`
+      : 'paga '+rs(falta)+' in un\'unica soluzione';
+  },
+  confirmarAddConta(){
+    const v=D.dados.vendas.find(x=>x.id===this._addVenda), c=this.carrinho;
+    if(!v||!c||!c.itens.length){ this.cancelarAddConta(); return; }
+    /* baixa do estoque so dos produtos que entram agora */
+    c.itens.forEach(i=>{ const p=D.dados.produtos.find(x=>x.id===i.produtoId); if(p) p.qtd=Math.max(0,p.qtd-i.qtd); });
+    baixarMateriais(c.itens);
+    /* o mesmo produto ja existente na venda SOMA na linha, em vez de duplicar */
+    c.itens.forEach(i=>{
+      const ex=v.itens.find(x=>x.produtoId===i.produtoId && x.preco===i.preco);
+      if(ex) ex.qtd+=i.qtd; else v.itens.push({produtoId:i.produtoId,nome:i.nome,qtd:i.qtd,preco:i.preco,custo:i.custo});
+    });
+    /* o desconto dado na venda original continua valendo, em reais; o que entra agora vai cheio */
+    v.total=Math.round((somaItens(v.itens)-descontoDe(v))*100)/100;
+    v.custo=Math.round(v.itens.reduce((s,i)=>s+i.custo*i.qtd,0)*100)/100;
+    v.parcelas=c.parcelas||1;
+    /* o acordo foi feito sobre o que FALTA, entao e esse o valor que parcela */
+    v.parcelasBase=Math.max(0, Math.round((v.total - this.jaPago(v))*100)/100);
+    /* a conta cresceu: se estava quitada, volta a ter saldo aberto */
+    v.pago=this.saldo(v)<=0;
+    /* registro de que a conta foi mexida depois de aberta, pra ela nao estranhar a data */
+    if(!Array.isArray(v.adicoes)) v.adicoes=[];
+    v.adicoes.push({data:hoje(),itens:c.itens.map(i=>({nome:i.nome,qtd:i.qtd,preco:i.preco}))});
+    D.dados.config.vendasDesdeBackup++;
+    if(!D.gravar()) return;
+    this.carrinho=null; this._addVenda=null; Modal.fechar(); Tela.render();
+    toast('Somado na conta · ela deve '+rs(this.saldo(v)));
+  },
+  cancelarAddConta(){ this.carrinho=null; this._addVenda=null; Modal.fechar(); Tela.render(); },
+  _addVenda:null,
+
+  /* ===== EDITAR UMA VENDA JA REGISTRADA (30/09/2026) =====
+     Pedido de compradoras: troca, reembolso, desconto esquecido. Antes o unico
+     caminho era excluir e registrar de novo, perdendo a data e o Da incassare.
+     Reaproveita o carrinho da venda (mesma lista, mesma tela de quantidade, mesmo
+     resumo com desconto). So ao SALVAR mexe no estoque, e so pela diferenca: o
+     que saiu da venda volta pro estoque, o que Incassato a mais sai. */
+  _editVenda:null, _editOrig:null,
+  qtdPorProduto(itens){ const m={}; itens.forEach(i=>{ m[i.produtoId]=(m[i.produtoId]||0)+i.qtd; }); return m; },
+  editar(id){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    this._addVenda=null; this._editVenda=id; this._editOrig=this.qtdPorProduto(v.itens);
+    this.carrinho={itens:v.itens.map(i=>({...i})), pgto:v.pgto, cliente:v.cliente||'',
+      desc:{tipo:pctValido(v)?'pct':'rs', valor:pctValido(v)?v.descPct:descontoDe(v)}, data:v.data};
+    this.busca=''; this.pag=1; this._editIdx=null;
+    this.telaModifica();
+  },
+  telaModifica(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda);
+    if(!v){ this.cancelarEdicao(); return; }
+    const c=this.carrinho;
+    const linhas=c.itens.map((i,idx)=>
+      `<div class="cart-item">
+        <div style="min-width:0;flex:1;cursor:pointer" onclick="Venda.editarItem(${idx})">
+          <div class="n">${esc(i.nome)}</div>
+          <div class="s">${esc(i.qtd)} x ${rs(i.preco)} · tocca per modificare</div>
+        </div>
+        <span class="v">${rs(i.preco*i.qtd)}</span>
+        <button class="x" onclick="Venda.removerItem(${idx})" aria-label="Togli ${escA(i.nome)} dal trattamento">&times;</button>
+      </div>`).join('');
+    Modal.abrir(`<h3>Modifica trattamento</h3>
+      <p class="sub">${esc(dataBR(v.data))}${v.cliente?' · '+esc(v.cliente):''} · ${esc(rotuloPgto(v.pgto))}</p>
+      ${linhas}
+      <button class="btn sec" style="margin-top:10px" onclick="Venda.busca='';Venda.pag=1;Venda.telaProduto()">Aggiungi trattamento</button>
+      <div id="descArea"></div>
+      <label for="eData">${ehIncasso(v)?'Quando è nato questo conto?':'Quando l\'hai fatto?'}</label>
+      <div class="dt-atalhos">
+        <button type="button" id="eDtOggi" onclick="Venda.editDataAtalho(0)">oggi</button>
+        <button type="button" id="eDtIeri" onclick="Venda.editDataAtalho(1)">ieri</button>
+      </div>
+      <input id="eData" type="date" value="${escA(c.data||'')}" max="${hoje()}"
+        oninput="Venda.editDataLer()" onchange="Venda.editDataLer()">
+      <div class="dt-previa" id="ePrevia" style="display:none"></div>
+      <div class="edit-aviso oculto" id="editAviso"></div>
+      <button class="btn" onclick="Venda.revisarEdicao()">Salva modifiche</button>
+      <button class="btn sec" onclick="Venda.sairEdicao()">Annulla</button>`);
+    this.descMontar(); this.editAviso(); this.editDataPintar();
+  },
+  /* ===== A DATA DA VENDA SE CORRIGE NA EDICAO (16/10/2026) =====
+     Pedido do dono: a venda nasce sempre com a data de hoje, e so na edicao ela
+     pode mudar (venda de ontem lancada hoje, Da incassare anotado dias depois). Vale para
+     venda e para Da incassare. Mesmo padrao da data da despesa: hoje/ontem resolvem o caso
+     comum sem abrir o calendario.
+     O que a data move: no pix, Contanti e cartao, o mes em que o valor entra nas
+     contas. No Da incassare, so onde a conta aparece: o que ela ja pagou continua no dia em
+     que Incassato, e por isso a data do Da incassare nao pode passar do primeiro recebimento. */
+  editDataAtalho(diasAtras){
+    this.carrinho.data=diaAntes(hoje(), diasAtras);
+    const i=document.getElementById('eData'); if(i) i.value=this.carrinho.data;
+    this.editDataPintar();
+  },
+  editDataLer(){
+    const i=document.getElementById('eData'); if(!i) return;
+    this.carrinho.data=(i.value||'').trim(); this.editDataPintar();
+  },
+  editMudouData(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda);
+    return !!(v && this.carrinho && this.carrinho.data!==v.data);
+  },
+  /* '' = data valida; senao, o motivo em portugues */
+  editDataErro(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda), d=this.carrinho&&this.carrinho.data;
+    /* a data que ela nao mexeu nunca trava a edicao. Venda lancada depois das 21h
+       antes de 16/10/2026 tem a data de "amanha" gravada, e editar o produto dela
+       tem que continuar funcionando */
+    if(!v || d===v.data) return '';
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(d||'') || d<'2000-01-01')
+      return 'Scegli il giorno '+(ehIncasso(v)?'del conto.':'del trattamento.');
+    if(d>hoje()) return 'Questa data non è ancora arrivata. Scegli oggi o un giorno prima.';
+    const p1=this.primeiroPgto(v);
+    if(p1 && d>p1) return `Il suo primo pagamento è stato il <b>${dataBR(p1)}</b>. La data dell'importo da incassare non può essere successiva.`;
+    return '';
+  },
+  primeiroPgto(v){
+    if(!ehIncasso(v)) return null;
+    /* Da incassare antigo, sem historico: se esta quitado, o Contanti Incassato no dia da venda */
+    if(!Array.isArray(v.pagamentos)) return v.pago ? v.data : null;
+    const ds=v.pagamentos.map(x=>String(x.data||'')).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort();
+    return ds[0]||null;
+  },
+  /* o que a troca de data significa; '' quando a data nao mudou. soImpacto: so a
+     consequencia, para a confirmacao, que ja mostra a data na linha de cima */
+  editDataTexto(soImpacto){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda);
+    if(!v || !this.editMudouData() || this.editDataErro()) return '';
+    const d=this.carrinho.data;
+    const impacto = ehIncasso(v)
+      ? (this.jaPago(v)>0 ? 'Quello che ti ha già dato resta nel giorno in cui l\'hai incassato.' : '')
+      : (mesDe(d)!==mesDe(v.data) ? `L'importo entra nei conti di <b>${nomeMes(mesDe(d))}</b>, non più in quelli di ${nomeMes(mesDe(v.data))}.` : '');
+    if(soImpacto) return impacto;
+    return `${ehIncasso(v)?'O Da incassare':'O trattamento'} passa para <b>${dataBR(d)}</b>.`+(impacto?' '+impacto:'');
+  },
+  editDataPintar(){
+    const el=document.getElementById('ePrevia'); if(!el||!this.carrinho) return;
+    const d=this.carrinho.data;
+    const bh=document.getElementById('eDtOggi'), bo=document.getElementById('eDtIeri');
+    if(bh) bh.classList.toggle('on', d===hoje());
+    if(bo) bo.classList.toggle('on', d===diaAntes(hoje(),1));
+    const erro=this.editDataErro(), txt=erro||this.editDataTexto();
+    el.className='dt-previa'+(erro?' erro':'');
+    el.innerHTML=txt; el.style.display=txt?'':'none';
+  },
+  /* a venda muda de lugar na lista: as vendas ficam do dia mais novo pro mais velho */
+  reposicionar(v){
+    const L=D.dados.vendas, i=L.indexOf(v); if(i<0) return;
+    L.splice(i,1);
+    let j=L.findIndex(x=>String(x.data)<v.data || (String(x.data)===v.data && x.id<v.id));
+    if(j<0) j=L.length;
+    L.splice(j,0,v);
+  },
+  /* o que a alteracao significa no bolso dela e no estoque, antes de salvar */
+  editAviso(){
+    const el=document.getElementById('editAviso'); if(!el) return;
+    const L=this.editLinhas();
+    el.innerHTML=L.join('<br>'); el.classList.toggle('oculto', !L.length);
+  },
+  editLinhas(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda); if(!v) return [];
+    const k=this.contaCarrinho(), L=[];
+    if(ehIncasso(v)){
+      const pg=this.jaPago(v);
+      if(pg>k.total+0.004) L.push(`Già incassato: ${rs(pg)}<br><b>Restituire alla cliente: ${rs(pg-k.total)}</b>`);
+      else if(Math.abs(k.total-v.total)>0.004) L.push(`<b>Da incassare: ${rs(k.total-pg)}</b> (prima: ${rs(this.saldo(v))})`);
+    } else {
+      const dif=Math.round((v.total-k.total)*100)/100;
+      if(dif>0) L.push(`<b>Restituire alla cliente: ${rs(dif)}</b>`);
+      else if(dif<0) L.push(`<b>Addebitare alla cliente: ${rs(-dif)}</b>`);
+    }
+    const agora_=this.qtdPorProduto(this.carrinho.itens), volta=[], sai=[];
+    const ids=new Set([...Object.keys(this._editOrig),...Object.keys(agora_)]);
+    ids.forEach(pid=>{ const d=(this._editOrig[pid]||0)-(agora_[pid]||0); if(!d) return;
+      const it=this.carrinho.itens.find(i=>String(i.produtoId)===pid) || v.itens.find(i=>String(i.produtoId)===pid);
+      (d>0?volta:sai).push(Math.abs(d)+' '+esc(it?it.nome:'Trattamento')); });
+    return L;
+  },
+  /* houve mudanca de fato? compara produtos, quantidades, precos e desconto */
+  editMudouItens(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda); if(!v||!this.carrinho) return false;
+    const assin=itens=>itens.map(i=>i.produtoId+':'+i.qtd+':'+i.preco).sort().join('|');
+    return assin(v.itens)!==assin(this.carrinho.itens)
+      || Math.abs(this.contaCarrinho().desc-descontoDe(v))>0.004;
+  },
+  editMudou(){ return this.editMudouItens() || this.editMudouData(); },
+  /* SEGURANCA: nada e gravado sem ela ver o resumo e confirmar */
+  revisarEdicao(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda), c=this.carrinho;
+    if(!v||!c){ this.cancelarEdicao(); return; }
+    if(!c.itens.length){ toast('Serve almeno un trattamento. Per cancellare tutto, usa Elimina.'); return; }
+    const d=c.desc||{};
+    if(d.valor>0 && (d.tipo==='pct' ? d.valor>100 : d.valor>somaItens(c.itens))){
+      toast('Lo sconto è più alto del subtotale del trattamento'); return; }
+    const errData=this.editDataErro();
+    if(errData){ toast(errData.replace(/<[^>]+>/g,'')); this.editDataPintar(); return; }
+    if(!this.editMudou()){ toast('Nessuna modifica da salvare'); this.cancelarEdicao(); return; }
+    /* so a data mudou: o resumo mostra a data e o valor, que fica igual */
+    const soData=!this.editMudouItens(), mData=this.editMudouData();
+    const k=this.contaCarrinho(), L=soData ? [] : this.editLinhas();
+    if(mData && this.editDataTexto(true)) L.push(this.editDataTexto(true));
+    Modal.abrir(`<h3>Confermi la modifica?</h3>
+      <p class="sub">O trattamento de ${esc(dataBR(v.data))}${v.cliente?' ('+esc(v.cliente)+')':''} será atualizado.</p>
+      <div class="resumo">
+        ${mData?`<div class="rl"><span>Data</span><span class="v">${esc(dataBR(v.data))} → ${esc(dataBR(c.data))}</span></div>`:''}
+        ${soData?`<div class="rl"><span>Importo</span><span class="v">${rs(v.total)}</span></div>`
+        :`<div class="rl"><span>Importo precedente</span><span class="v">${rs(v.total)}</span></div>
+        <div class="rl tot"><span>Nuovo importo</span><span class="v">${rs(k.total)}</span></div>`}
+      </div>
+      ${L.length?`<div class="edit-aviso">${L.join('<br>')}</div>`:''}
+      <button class="btn" onclick="Venda.salvarEdicao()">Conferma modifica</button>
+      <button class="btn sec" onclick="Venda.telaModifica()">Torna indietro e controlla</button>`);
+  },
+  /* cancelar com alteracao feita pergunta antes de descartar */
+  sairEdicao(){
+    if(!this.editMudou()){ this.cancelarEdicao(); return; }
+    Modal.abrir(`<h3>Annullare le modifiche?</h3>
+      <p class="sub">Le modifiche a questo trattamento non verranno salvate.</p>
+      <button class="btn perigo" onclick="Venda.cancelarEdicao()">Annulla modifiche</button>
+      <button class="btn sec" onclick="Venda.telaModifica()">Continua a modificare</button>`);
+  },
+  salvarEdicao(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda), c=this.carrinho;
+    if(!v||!c){ this.cancelarEdicao(); return; }
+    if(this.editDataErro()){ this.telaModifica(); return; }
+    const dataAntes=v.data, mData=this.editMudouData();
+    /* so a data mudou: grava a data e mais nada. Estoque, valor e recebimentos ficam
+       exatamente como estavam */
+    if(!this.editMudouItens()){
+      if(!mData){ this.cancelarEdicao(); return; }
+      /* Da incassare antigo quitado: o pagamento fica no dia em que Incassato, nao vai junto */
+      if(ehIncasso(v) && !Array.isArray(v.pagamentos))
+        v.pagamentos=(v.pago&&v.total>0)?[{data:dataAntes,valor:v.total}]:[];
+      v.data=c.data; this.reposicionar(v);
+      if(!Array.isArray(v.edicoes)) v.edicoes=[];
+      v.edicoes.push({data:agora(), antes:v.total, depois:v.total, dataAntes, dataDepois:v.data});
+      D.dados.config.vendasDesdeBackup++;
+      if(!D.gravar()) return;
+      this.cancelarEdicao();
+      toast((ehIncasso(v)?'Spostato al ':'Trattamento spostato al ')+dataBR(v.data), true);
+      return;
+    }
+    if(!c.itens.length){ toast('Serve almeno un trattamento. Per cancellare tutto, usa Elimina.'); return; }
+    const d=c.desc||{};
+    if(d.valor>0 && (d.tipo==='pct' ? d.valor>100 : d.valor>somaItens(c.itens))){
+      toast('Lo sconto è più alto del subtotale del trattamento'); return; }
+    const k=this.contaCarrinho(), antes=v.total;
+    /* estoque: so a diferenca entre o que a venda tinha e o que ela tem agora */
+    const novo=this.qtdPorProduto(c.itens);
+    new Set([...Object.keys(this._editOrig),...Object.keys(novo)]).forEach(pid=>{
+      const p=D.dados.produtos.find(x=>String(x.id)===pid); if(!p) return;
+      p.qtd=Math.max(0, p.qtd + (this._editOrig[pid]||0) - (novo[pid]||0)); });
+    v.itens=c.itens.map(i=>({produtoId:i.produtoId,nome:i.nome,qtd:i.qtd,preco:i.preco,custo:i.custo}));
+    v.total=k.total;
+    v.custo=Math.round(c.itens.reduce((s,i)=>s+i.custo*i.qtd,0)*100)/100;
+    if(k.desc>0){ v.desconto=k.desc; if(d.tipo==='pct') v.descPct=d.valor; else delete v.descPct; }
+    else { delete v.desconto; delete v.descPct; }
+    if(ehIncasso(v)){
+      /* pagou mais do que a venda vale agora: o excesso foi devolvido, entao sai
+         do historico, a partir do recebimento mais recente */
+      if(!Array.isArray(v.pagamentos)) v.pagamentos=(v.pago&&antes>0)?[{data:v.data,valor:antes}]:[];
+      let sobra=Math.round((this.jaPago(v)-v.total)*100)/100;
+      for(let i=v.pagamentos.length-1; i>=0 && sobra>0; i--){
+        const tira=Math.min(sobra, v.pagamentos[i].valor);
+        v.pagamentos[i].valor=Math.round((v.pagamentos[i].valor-tira)*100)/100; sobra=Math.round((sobra-tira)*100)/100;
+        if(v.pagamentos[i].valor<=0) v.pagamentos.splice(i,1); }
+      if(typeof v.parcelasBase==='number') v.parcelasBase=Math.max(0, Math.round((v.parcelasBase+v.total-antes)*100)/100);
+      v.pago=this.saldo(v)<=0;
+    }
+    /* a data troca por ultimo: o Da incassare antigo acima converte o que ja estava pago
+       usando a data de ANTES, que e o dia em que aquele Contanti Incassato */
+    if(mData){ v.data=c.data; this.reposicionar(v); }
+    if(!Array.isArray(v.edicoes)) v.edicoes=[];
+    v.edicoes.push(mData ? {data:agora(), antes, depois:v.total, dataAntes, dataDepois:v.data}
+                         : {data:agora(), antes, depois:v.total});
+    D.dados.config.vendasDesdeBackup++;
+    if(!D.gravar()) return;
+    this.cancelarEdicao();
+    toast('Trattamento aggiornato: '+rs(v.total)+(mData?' · '+dataBR(v.data):''), true);
+  },
+  cancelarEdicao(){ this.carrinho=null; this._editVenda=null; this._editOrig=null; Modal.fechar(); Tela.render(); },
+
+  desfazerPgto(id, idx){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v||!Array.isArray(v.pagamentos)) return;
+    const x=v.pagamentos[idx]; if(!x) return;
+    v.pagamentos.splice(idx,1);
+    v.pago = this.saldo(v)<=0;
+    if(!D.gravar()) return;
+    Tela.render();
+    toast('Annullato: '+rs(x.valor));
+    if(this.saldo(v)>0) this.telaReceber(id); else Modal.fechar();
+  },
+  /* o botao antigo "recebi" agora abre a tela de valor */
+  marcarPago(id){ this.telaReceber(id); },
+
+  excluir(id){ const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    const pg=this.jaPago(v);
+    Modal.abrir(`<h3>Eliminare questo trattamento?</h3><p class="sub">${esc(v.itens.map(i=>i.nome+' x'+i.qtd).join(', '))} · ${rs(v.total)}.
+      O trattamento sai do faturamento. <b>Non si può annullare.</b>${(pg>0&&ehIncasso(v))?` <b>Atenção: este trattamento já tem ${rs(pg)} recebido.</b>`:''}</p>
+      <p class="sub">Se vuoi cambiare solo una parte, usa <b>Modifica</b>.</p>
+      <button class="btn perigo" onclick="Venda.confirmaExcluir(${idn(id)})">Sì, elimina</button>
+      <button class="btn sec" onclick="Modal.fechar()">Annulla</button>`); },
+  confirmaExcluir(id){ const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    v.itens.forEach(i=>{ const p=D.dados.produtos.find(x=>x.id===i.produtoId); if(p) p.qtd+=i.qtd; });
+    D.dados.vendas=D.dados.vendas.filter(x=>x.id!==id); if(!D.gravar()) return;
+    Modal.fechar(); Tela.render(); toast('Trattamento eliminato'); },
+  recibo(id){ const v=D.dados.vendas.find(x=>x.id===id); if(!v) return; const loja=D.dados.config.loja||'Il tuo studio';
+    // DEFESA VoC: recibo NUNCA mostra custo nem guadagno
+    const linhas=v.itens.map(i=>encodeURIComponent(`${i.qtd}x ${i.nome}: ${rs(i.preco*i.qtd)}`)).join('%0A');
+    let extra='';
+    if(ehIncasso(v)){ const pg=Venda.jaPago(v), falta=Venda.saldo(v);
+      extra = falta>0
+        ? `%0AGià pagato: ${encodeURIComponent(rs(pg))}%0A*Manca: ${encodeURIComponent(rs(falta))}*`
+        : `%0A*Pagato per intero*`; }
+    /* parcelas no recibo: e o numero que a freguesa quer ver, e evita a discussao
+       de "quanto era por mes mesmo?" la na frente */
+    const par=textoParcelas(v);
+    const linhaPar = par ? `%0ARate: ${encodeURIComponent(par)}` : '';
+    const linhaCli = v.cliente ? `%0ACliente: ${encodeURIComponent(v.cliente)}` : '';
+    const linhaDesc = descontoDe(v)
+      ? `Subtotale: ${encodeURIComponent(rs(somaItens(v.itens)))}%0ASconto: - ${encodeURIComponent(textoSconto(v))}%0A` : '';
+    const txt=`*${encodeURIComponent(loja)}*%0A${encodeURIComponent(v.data.split('-').reverse().join('/'))}${linhaCli}%0A%0A${linhas}%0A%0A${linhaDesc}*Totale: ${encodeURIComponent(rs(v.total))}*%0APagamento: ${encodeURIComponent(rotuloPgto(v.pgto))}${linhaPar}${extra}%0A%0AGrazie per averci scelto!`;
+    window.open('https://wa.me/?text='+txt,'_blank','noopener,noreferrer'); }
+};
+/* ============ MATERIAIS (Magazzino prodotti, o bump) ============
+   Quem tem o Magazzino prodotti disse o que cada servico gasta (que material e
+   quantos usos). Cada trattamento gasta esses usos; quando uma unidade acaba, a
+   proxima abre. A baixa so vale pra quem TEM o Magazzino prodotti (09/11/2026):
+   sem ele, nada acontece, mesmo que tenha material guardado de antes. */
+function baixarMateriais(itens){
+  if(!Partes.estoque()) return;
+  const ms=D.dados.materiais; if(!Array.isArray(ms)||!ms.length) return;
+  itens.forEach(i=>{ const p=D.dados.produtos.find(x=>x.id===i.produtoId); if(!p||!p.receita) return;
+    p.receita.forEach(r=>{ const m=ms.find(x=>x.id===r.materialId); if(!m||!(m.rende>0)) return;
+      m.consumido=(m.consumido||0)+r.usos*i.qtd;
+      while(m.consumido>=m.rende && (m.unidades||0)>0){ m.unidades--; m.consumido-=m.rende; } }); });
+}
+/* acabando: a mesma conta do Magazzino prodotti (precificacao.html, Est.acabando) */
+function materiaisAcabando(){
+  if(!Partes.estoque() || !Array.isArray(D.dados.materiais)) return [];
+  return D.dados.materiais.filter(m=>{ const r=Math.max(0,(m.unidades||0)*(m.rende||0)-(m.consumido||0));
+    return m.rende>0 && r<=Math.max(3, m.rende*0.3); });
+}
+
+/* ============ PRODUTO ============ */
+const Produto = {
+  form(id){ const p=id?D.dados.produtos.find(x=>x.id===id):null;
+    Modal.abrir(`<h3>${p?'Modifica':'Nuovo'} trattamento</h3>
+      <label for="pNome">Nome del trattamento</label><input id="pNome" value="${p?escA(p.nome):''}" placeholder="es. Semipermanente mani">
+      <div class="linha2">
+        <div><label for="pCusto">Costo del materiale</label><input id="pCusto" data-moeda inputmode="numeric" value="${p?fmtMoeda(p.custo):''}" placeholder="0,00 €" ${p&&(p.receita||[]).length?'readonly title="calcolato in Magazzino prodotti"':''}></div>
+        <div><label for="pPreco">Quanto lo fai pagare</label><input id="pPreco" data-moeda inputmode="numeric" value="${p?fmtMoeda(p.preco):''}" placeholder="0,00 €"></div>
+      </div>
+      <p class="sub" style="margin-top:6px">${p&&(p.receita||[]).length?'Costo del materiale calcolato in Magazzino, in base ai materiali di ogni trattamento.':'Costo del materiale: semipermanente, gel, cotone, lime, cera, acetone. Basta una media a trattamento.'}</p>
+      <div id="pLucroPrev" class="aviso verde oculto" style="margin-top:12px"></div>
+      <button class="btn" onclick="Produto.salvar(${p?idn(p.id):0})">Salva trattamento</button>
+      ${p?`<button class="btn perigo" onclick="Produto.excluir(${idn(p.id)})">Elimina trattamento</button>`:''}`);
+    ['pCusto','pPreco'].forEach(i=>document.getElementById(i).addEventListener('input',this.previa));
+    this.previa(); },
+  previa(){ const c=num(document.getElementById('pCusto').value), v=num(document.getElementById('pPreco').value);
+    const el=document.getElementById('pLucroPrev');
+    if(v>0&&c>=0){ el.classList.remove('oculto');
+      el.textContent = v>c ? `Guadagni ${rs(v-c)} a trattamento (${Math.round((v-c)/v*100)}% del prezzo)`
+        : 'Attenzione: questo prezzo non copre il materiale.'; } else el.classList.add('oculto'); },
+  /* servico nao tem estoque: a quantidade fica 0 so para o backup continuar com as mesmas colunas */
+  salvar(id){ const nome=document.getElementById('pNome').value.trim();
+    const custo=num(document.getElementById('pCusto').value), preco=num(document.getElementById('pPreco').value);
+    if(!nome){ toast('Dai un nome al trattamento'); return; }
+    if(preco<=0){ toast('Scrivi quanto lo fai pagare'); return; }
+    if(id){ const p=D.dados.produtos.find(x=>x.id===id); Object.assign(p,{nome,custo,preco}); }
+    else D.dados.produtos.push({id:D.id(),nome,custo,preco,qtd:0});
+    if(!D.gravar()) return;
+    Modal.fechar(); Tela.render(); toast(id?'Trattamento aggiornato ✓':'Trattamento aggiunto ✓'); },
+  /* o botao vermelho fica logo abaixo do Salvar: um toque errado apagava na hora */
+  excluir(id){ const p=D.dados.produtos.find(x=>x.id===id); if(!p) return;
+    Modal.abrir(`<h3>Eliminare questo trattamento dal listino?</h3><p class="sub"><b>${escA(p.nome)}</b> Esce dal tuo listino. I trattamenti già registrati restano nello storico.</p>
+      <button class="btn perigo" onclick="Produto.confirmaExcluir(${idn(id)})">Sì, elimina</button>
+      <button class="btn sec" onclick="Produto.form(${idn(id)})">Annulla</button>`); },
+  confirmaExcluir(id){ D.dados.produtos=D.dados.produtos.filter(p=>p.id!==id);
+    if(!D.gravar()) return;
+    Modal.fechar(); Tela.render(); toast('Trattamento eliminato'); }
+};
+
+/* ============ DESPESA ============ */
+/* ===== A DESPESA TEM DATA, E ELA MANDA NO MES (21/09/2026) =====
+   Regra do dono: "pode ser que ela queira lancar do mes passado". Antes a despesa
+   nascia sempre com hoje(), entao a compra de embalagem de setembro lancada em
+   outubro somava no mes errado e a conta de "Quanto ti rimane davvero" mentia nos dois
+   meses. O resumo ja filtra por mesDe(d.data): basta gravar a data que ela escolheu.
+
+   A tela e feita pra quem tem dificuldade com app: dois botoes grandes (hoje /
+   ontem) resolvem o caso comum sem abrir calendario, e uma linha embaixo diz em
+   bom portugues em que mes aquilo vai entrar. */
+const Despesa = {
+  form(){ Modal.abrir(`<h3>Nuova spesa</h3><p class="sub">es. materiale, affitto della cabina, benzina, commissioni POS, contributi INPS</p>
+    <label for="dDesc">Che spesa è?</label><input id="dDesc" placeholder="es. materiale"><p class="sub" id="inpsHelp" style="margin-top:8px">Scrivi la quota che versi all'INPS. Se non la sai, chiedila alla tua commercialista.</p><div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0"><button type="button" class="cfg-btn sec" onclick="(function(){var e=document.getElementById('dDesc');if(e){e.value='Contributi INPS';e.focus();}})()">Contributi INPS</button></div>
+    <label for="dImporto">Importo</label><input id="dImporto" data-moeda inputmode="numeric" placeholder="0,00 €">
+    <label for="dData">Quando l'hai pagata?</label>
+    <div class="dt-atalhos">
+      <button type="button" id="dtOggi" onclick="Despesa.setData(0)">oggi</button>
+      <button type="button" id="dtIeri" onclick="Despesa.setData(1)">ieri</button>
+    </div>
+    <input id="dData" type="date" value="${hoje()}" max="${hoje()}" onchange="Despesa.previa()">
+    <div class="dt-previa" id="dPrevia"></div>
+    <button class="btn" onclick="Despesa.salvar()">Aggiungi spesa</button>
+    <button class="btn discreto" onclick="Modal.fechar()">Annulla</button>`);
+    this.previa(); },
+  /* atalho: n dias atras, sem a lojista precisar abrir o calendario do celular */
+  setData(diasAtras){
+    const d=new Date(); d.setDate(d.getDate()-diasAtras);
+    const iso=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    const el=document.getElementById('dData'); if(el){ el.value=iso; this.previa(); }
+  },
+  /* diz, em portugues, em que mes esse lancamento vai cair */
+  previa(){
+    const el=document.getElementById('dPrevia'), inp=document.getElementById('dData');
+    if(!el||!inp) return;
+    const h=hoje();
+    const bh=document.getElementById('dtOggi'), bo=document.getElementById('dtIeri');
+    const o=new Date(); o.setDate(o.getDate()-1);
+    const ontem=new Date(o.getTime()-o.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    if(bh) bh.classList.toggle('on', inp.value===h);
+    if(bo) bo.classList.toggle('on', inp.value===ontem);
+    if(!inp.value){ el.textContent='Scegli il giorno della spesa.'; return; }
+    el.innerHTML = 'Entrerà nei conti di <b>'+nomeMes(mesDe(inp.value))+'</b>'
+      + (mesDe(inp.value)!==mesDe(h) ? ' (il mese scorso, non questo).' : '.');
+  },
+  salvar(){ const desc=document.getElementById('dDesc').value.trim(), valor=num(document.getElementById('dImporto').value);
+    const data=(document.getElementById('dData').value||'').trim();
+    if(!desc||valor<=0){ toast('Scrivi che spesa è e l\'importo'); return; }
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(data)){ toast('Scegli il giorno della spesa'); return; }
+    D.dados.despesas.unshift({id:D.id(),data,desc,valor});
+    /* a lista do resumo e por mes: se ela lancou de outro mes, leva a tela junto,
+       senao o lancamento "some" e ela lanca de novo achando que nao salvou */
+    if(!D.gravar()) return;
+    if(Tela.mesRiepilogo && mesDe(data)!==Tela.mesRiepilogo) Tela.mesRiepilogo=mesDe(data);
+    Modal.fechar(); Tela.render();
+    toast('Spesa aggiunta a '+nomeMes(mesDe(data))); },
+  /* o "x" e pequeno e fica colado no valor: confirma antes de apagar */
+  excluir(id){ const d=D.dados.despesas.find(x=>x.id===id); if(!d) return;
+    Modal.abrir(`<h3>Eliminare questa spesa?</h3><p class="sub">${escA(d.desc)} · ${rs(d.valor)}</p>
+      <button class="btn perigo" onclick="Despesa.confirmaExcluir(${idn(id)})">Sì, elimina</button>
+      <button class="btn sec" onclick="Modal.fechar()">Annulla</button>`); },
+  confirmaExcluir(id){ D.dados.despesas=D.dados.despesas.filter(d=>d.id!==id); if(!D.gravar()) return;
+    Modal.fechar(); Tela.render(); toast('Spesa eliminata'); }
+};
+
+/* ============ WIZARD (quick win < 10 min) ============ */
+const Wizard = {
+  passo1(){ Modal.abrir(`<div class="wizard-logo"><div class="m1">Guadagno in Mano</div>
+      <div class="m2">Guadagno in Mano · paghi una volta, niente abbonamento</div></div>
+    <p class="sub" style="text-align:center">In pochi passaggi registri il primo trattamento e vedi subito quanto guadagni. Iniziamo?</p>
+    <label for="wLoja">Come si chiama il tuo studio?</label><input id="wLoja" placeholder="es. Il mio studio">
+    <button class="btn" onclick="Wizard.passo2()">Inizia</button>
+    <button class="btn link" onclick="document.getElementById('wArq').click()">Hai cambiato telefono? Ripristina il backup</button>
+    <input type="file" id="wArq" accept=".csv,.json" class="oculto" onchange="if(this.files[0])Backup.restaurar(this.files[0]);this.value=''">`); },
+  passo2(){ const loja=document.getElementById('wLoja').value.trim();
+    D.dados.config.loja=loja||'Il tuo studio'; if(!D.gravar()) return;
+    document.getElementById('hdrLoja').textContent=D.dados.config.loja;
+    Modal.abrir(`<div class="passo">Ci sei quasi · aggiungi il primo trattamento</div>
+      <h3>Aggiungi un trattamento che fai</h3>
+      <p class="sub">Va bene uno qualsiasi. Gli altri li aggiungi dopo, con calma.</p>
+      <label for="pNome">Nome del trattamento</label><input id="pNome" placeholder="es. Semipermanente mani">
+      <div class="linha2">
+        <div><label for="pCusto">Costo del materiale</label><input id="pCusto" data-moeda inputmode="numeric" placeholder="0,00 €"></div>
+        <div><label for="pPreco">Quanto lo fai pagare</label><input id="pPreco" data-moeda inputmode="numeric" placeholder="0,00 €"></div>
+      </div>
+      <button class="btn" onclick="Wizard.fim()">Salva e inizia</button>`); },
+  fim(){ const nome=document.getElementById('pNome').value.trim();
+    const custo=num(document.getElementById('pCusto').value), preco=num(document.getElementById('pPreco').value);
+    if(!nome||preco<=0){ toast('Scrivi il nome e quanto lo fai pagare'); return; }
+    D.dados.produtos.push({id:D.id(),nome,custo,preco,qtd:0});
+    D.dados.config.wizardOk=true; if(!D.gravar()) return;
+    Modal.fechar(); Tela.render();
+    toast('Fatto! Quando arriva la prima cliente, tocca Registra.'); }
+};
+
+/* ============ TELAS ============ */
+const Tela = {
+  atual:'vender', mesRiepilogo:mesDe(hoje()), filtroVendas:'todas',
+  buscaEstoque:'', filtroEstoque:'', pagEstoque:1, pagVendas:1,
+  ir(t){ this.atual=t; this.pagVendas=1; this.pagEstoque=1; document.querySelectorAll('#navBar button').forEach(b=>b.classList.toggle('on',b.dataset.tela===t)); this.render(); },
+  backupRapido(){ Backup.compartilhar(); },
+  irPagVendas(p){ this.pagVendas=p; this.render(); window.scrollTo({top:0,behavior:'smooth'}); },
+  irPagEstoque(p){ this.pagEstoque=p; this.pintarEstoque(); window.scrollTo({top:0,behavior:'smooth'}); },
+  avisoBackup(){ return Backup.precisa()
+    ? `<div class="aviso backup"><svg style="width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8zM3.3 8.3L12 13l8.7-4.7M12 13v8"/></svg> <span><b>${(n=>n+(n===1?' trattamento':' trattamenti'))(D.dados.config.vendasDesdeBackup||D.dados.vendas.length)} senza backup.</b>
+       Tocca "backup" qui sopra e invia il file sul tuo WhatsApp. Ci vogliono 5 secondi.</span></div>` : ''; },
+  render(){
+    document.getElementById('hdrLoja').textContent=D.dados.config.loja;
+    const app=document.getElementById('app');
+    const t=this.atual;
+    if(t==='vender') app.innerHTML=this.telaVender();
+    if(t==='vendas') app.innerHTML=this.telaVendas();
+    if(t==='estoque') app.innerHTML=this.telaEstoque();
+    if(t==='resumo') app.innerHTML=this.telaRiepilogo();
+    if(t==='mais') app.innerHTML=this.telaMais();
+  },
+  telaVender(){
+    const ym=mesDe(hoje()), tt=Calc.totais(ym);
+    const hj=D.dados.vendas.filter(v=>v.data===hoje());
+    /* O guadagno de hoje e o que ENTROU hoje: venda Tutto subito de hoje mais Da incassare velho
+       recebido hoje. Segnato tra i da incassare hoje e sem pagamento nao conta (14/09/2026). */
+    const lucroOggi=D.dados.vendas.reduce((s,v)=>{
+      if(!ehIncasso(v)) return s + (v.data===hoje() ? v.total-v.custo : 0);
+      if(!Array.isArray(v.pagamentos) || v.total<=0) return s;
+      const recOggi=v.pagamentos.reduce((a,x)=>a+(String(x.data)===hoje()?(Number(x.valor)||0):0),0);
+      return s + (v.total-v.custo)*(recOggi/v.total);
+    },0);
+    /* Da incassare aberto de todo o periodo: o Contanti que esta na rua */
+    const aReceber=tt.fiadoPend;
+    /* quantas vendas de hoje de fato puseram Contanti no caixa: contar as 4 do dia
+       ao lado de um valor que ignora 2 Da incassares em aberto faria a conta parecer errada */
+    const nCaixaOggi=D.dados.vendas.filter(v=>{
+      if(!ehIncasso(v)) return v.data===hoje();
+      return Array.isArray(v.pagamentos) && v.pagamentos.some(x=>String(x.data)===hoje());
+    }).length;
+    /* Magazzino prodotti: o que esta acabando aparece aqui e leva pra Lista della spesa */
+    const acab=materiaisAcabando();
+    const avisoAcab=acab.length?`<a class="aviso backup" style="display:flex;text-decoration:none;color:inherit" href="${escA(Partes.url('precificacao.html'))}">
+      <span><b>Sta finendo:</b> ${acab.slice(0,4).map(m=>esc(m.nome)).join(', ')}${acab.length>4?' e altri '+(acab.length-4):''} · vedi la Lista della spesa</span></a>`:'';
+    return `${this.avisoBackup()}${avisoAcab}
+      <div class="card"><div class="kpis">
+        <div class="kpi"><div class="v pos">${rs(lucroOggi)}</div><div class="l">Il tuo guadagno di oggi (${nCaixaOggi} ${nCaixaOggi===1?'trattamento':'trattamenti'})</div></div>
+        <div class="kpi"><div class="v">${rs(tt.guadagno)}</div><div class="l">Guadagno del mese</div></div>
+      </div>
+      ${aReceber>0?`<button class="kpi-link" onclick="Tela.filtroVendas='da_incassare';Tela.ir('vendas')">
+        <span><b>${rs(aReceber)}</b> da incassare</span><span class="seta">›</span></button>`:''}
+      </div>
+      <button class="btn" style="padding:22px;font-size:19px" onclick="Venda.iniciar()">+ Registra trattamento</button>
+      <div class="card" style="margin-top:12px"><h2>Trattamenti di oggi</h2>
+        ${hj.length?hj.slice(0,5).map(v=>this.itemVenda(v)).join(''):'<div class="vazio">Ancora nessun trattamento oggi.<br>Finito con una cliente? Registrala in 3 tocchi.</div>'}
+      </div>`;
+  },
+  itemVenda(v){
+    /* Da incassare tem 3 estados: nada recebido, PARCIAL, e quitado */
+    const ehFiado = ehIncasso(v);
+    const falta = ehFiado ? Venda.saldo(v) : 0;
+    const pago = ehFiado ? Venda.jaPago(v) : 0;
+    const parcial = ehFiado && falta>0 && pago>0;
+    const badge = ehFiado
+      ? (falta<=0 ? '<span class="badge ok">Incassato</span>'
+         : `<span class="badge fiado">da incassare ${rs(falta)}</span>`)
+      : `<span class="badge ok">${esc(rotuloPgto(v.pgto))}</span>`;
+    /* O guadagno que aparece e o que JA ENTROU no caixa. Num Da incassare em aberto isso e
+       zero, e a linha diz "a receber" em vez de anunciar guadagno que nao chegou.
+       Antes de 14/09/2026 a lista mostrava o guadagno cheio de um Da incassare nao pago. */
+    const parc = textoParcelas(v);
+    let Contanti;
+    if(ehFiado && falta>0)
+      Contanti = parcial
+        ? `incassati ${rs(pago)} su ${rs(v.total)}`
+        : `ancora niente incassato`;
+    else
+      Contanti = `guadagno ${rs(v.total-v.custo)}`;
+    const detalhe = [
+      v.data.split('-').reverse().join('/'),
+      v.cliente || null,
+      descontoDe(v) ? 'sconto '+textoSconto(v) : null,
+      parc || null,
+      Contanti
+    ].filter(Boolean).join(' · ');
+    return `<div class="venda-bloco">
+      <div class="venda-topo">
+        <div class="info">
+          <div class="t">${esc(v.itens.map(i=>i.nome+(i.qtd>1?' x'+i.qtd:'')).join(', '))}</div>
+          <div class="s">${esc(detalhe)}</div>
+        </div>
+        <div class="venda-valor"><div class="vv">${rs(v.total)}</div>${badge}</div>
+      </div>
+      <div class="venda-acoes">
+        ${falta>0?`<button class="va principal" onclick="Venda.telaReceber(${idn(v.id)})">incassa</button>`:''}
+        ${ehFiado?`<button class="va" onclick="Venda.addNaConta(${idn(v.id)})">aggiungi</button>`:''}
+        <button class="va" onclick="Venda.editar(${idn(v.id)})">modifica</button>
+        <button class="va" onclick="Venda.recibo(${idn(v.id)})">Condividi</button>
+        <button class="va perigo" onclick="Venda.excluir(${idn(v.id)})">elimina</button>
+      </div></div>`;
+  },
+  telaVendas(){
+    let vs=[...D.dados.vendas];
+    if(this.filtroVendas==='da_incassare') vs=vs.filter(v=>ehIncasso(v)&&Venda.saldo(v)>0);
+    const f=(x,l)=>`<button class="${this.filtroVendas===x?'on':''}" onclick="Tela.filtroVendas='${x}';Tela.render()">${l}</button>`;
+    const fiadoTotale=D.dados.vendas.filter(v=>ehIncasso(v)).reduce((s,v)=>s+Venda.saldo(v),0);
+    const pg=paginar(vs, this.pagVendas);
+    return `<div class="filtros">${f('todas','Tutti ('+D.dados.vendas.length+')')}${f('da_incassare','Da incassare'+(fiadoTotale?' ('+rs(fiadoTotale)+')':''))}</div>
+      <div class="card">${pg.itens.length?pg.itens.map(v=>this.itemVenda(v)).join(''):'<div class="vazio">Qui non c\'è ancora niente.</div>'}</div>
+      ${barraPag(pg,'Tela.irPagVendas')}`;
+  },
+  /* ===== A BUSCA NAO RECRIA O CAMPO (08/11/2026, o mesmo conserto da Lucro na Mao) =====
+     Bug relatado na Lucro na Mao: "quando vou pesquisar um produto, o menu fica descendo
+     e pulando". Cada letra redesenhava a tela inteira (Tela.render) e criava um campo
+     NOVO, refocado num setTimeout: no celular o teclado fechava e abria a cada letra.
+     Aqui as buscas de cliente e de servico tinham o mesmo desenho. Agora a letra
+     repinta so a lista; o campo fica o mesmo. */
+  /* VERSAO MANICURE: a aba Estoque virou Servicos. Sem quantidade, sem "acabando":
+     o que importa e quanto ela cobra, quanto gasta de material e quanto sobra. */
+  estoqueFiltrado(){
+    let ps=[...D.dados.produtos].sort((a,b)=>a.nome.localeCompare(b.nome));
+    const total=ps.length;
+    const lucroMedio=total ? ps.reduce((s,p)=>s+(p.preco-p.custo),0)/total : 0;
+    if(this.buscaEstoque) ps=ps.filter(p=>String(p.nome).toLowerCase().includes(this.buscaEstoque.toLowerCase()));
+    return {ps, total, lucroMedio};
+  },
+  estoqueListaHTML(){
+    const {ps,total}=this.estoqueFiltrado();
+    const pg=paginar(ps, this.pagEstoque);
+    return `<div class="card" style="margin-top:12px">
+        ${pg.itens.length?pg.itens.map(p=>{
+          const l=p.preco-p.custo;
+          return `<div class="lista-item" onclick="Produto.form(${idn(p.id)})" style="cursor:pointer">
+            <div class="info"><div class="t">${esc(p.nome)}</div>
+            <div class="s">prezzo ${rs(p.preco)} · materiale ${rs(p.custo)}</div></div><b style="color:${l>0?'var(--verde)':'var(--vermelho, #c0392b)'}">${rs(l)}</b></div>`;
+        }).join(''):`<div class="vazio">${total?'Nessun trattamento trovato.':'Aggiungi i tuoi trattamenti e registri ogni cliente in 2 tocchi.'}</div>`}
+      </div>
+      ${barraPag(pg,'Tela.irPagEstoque')}`;
+  },
+  buscarEstoque(v){ this.buscaEstoque=v; this.pagEstoque=1; this.pintarEstoque(); },
+  pintarEstoque(){ const el=document.getElementById('estoqueLista');
+    if(!el){ this.render(); return; }
+    el.innerHTML=this.estoqueListaHTML(); },
+  telaEstoque(){
+    const {total,lucroMedio}=this.estoqueFiltrado();
+    return `<div class="card"><div class="kpis">
+        <div class="kpi"><div class="v">${total}</div><div class="l">${total===1?'Trattamento salvato':'Trattamenti salvati'}</div></div>
+        <div class="kpi"><div class="v pos">${rs(lucroMedio)}</div><div class="l">Guadagno medio a trattamento</div></div>
+      </div></div>
+      <button class="btn" onclick="Produto.form()">+ Aggiungi trattamento</button>
+      ${total>8?`<input id="buscaEstoque" enterkeyhint="search" placeholder="Cerca trattamento…" aria-label="Cerca trattamento" value="${escA(this.buscaEstoque||'')}" autocomplete="off"
+        oninput="Tela.buscarEstoque(this.value)"
+        style="margin-top:12px">`:''}
+      <div id="estoqueLista">${this.estoqueListaHTML()}</div>`;
+  },
+  telaRiepilogo(){
+    const ym=this.mesRiepilogo, tt=Calc.totais(ym), top=Calc.topProdutos(ym);
+    const desp=D.dados.despesas.filter(d=>mesDe(d.data)===ym);
+    return `<div class="mes-nav">
+        <button onclick="Tela.mudaMes(-1)" aria-label="Mese precedente">‹</button><span class="m">${nomeMesTit(ym)}</span><button onclick="Tela.mudaMes(1)" aria-label="Mese successivo">›</button></div>
+      <div class="card"><div class="kpis">
+        <div class="kpi"><div class="v">${rs(tt.vendido)}</div><div class="l">Incassato (${tt.n} ${tt.n===1?'pagamento':'pagamenti'})</div></div>
+        <div class="kpi"><div class="v pos">${rs(tt.guadagno)}</div><div class="l">Guadagno sull'incassato</div></div>
+        <div class="kpi"><div class="v neg">${rs(tt.despesas)}</div><div class="l">Spese del mese</div></div>
+        <div class="kpi"><div class="v ${tt.liquido>=0?'pos':'neg'}">${rs(tt.liquido)}</div><div class="l">Quanto ti rimane davvero</div></div>
+      </div>
+      <p class="nota-caixa">Conta solo i soldi che hai già incassato. Quello da incassare entra nel mese in cui la cliente ti paga.</p>
+      ${tt.fiadoPend>0?`<button class="kpi-link" onclick="Tela.filtroVendas='da_incassare';Tela.ir('vendas')">
+        <span><b>${rs(tt.fiadoPend)}</b> da incassare${tt.fiadoDoMes>0&&tt.fiadoDoMes!==tt.fiadoPend?` · ${rs(tt.fiadoDoMes)} di questo mese`:''}</span><span class="seta">›</span></button>`:''}
+      </div>
+      <div class="card"><h2>I trattamenti che ti fanno guadagnare di più</h2>
+        ${top.length?`<p class="nota-caixa" style="margin:0 0 4px">In base ai trattamenti del mese, compresi quelli ancora da incassare.</p>`:''}
+        ${top.length?top.map((p,i)=>`<div class="lista-item"><div class="info"><div class="t">${i+1}º ${esc(p.nome)}</div>
+          <div class="s">fatto ${esc(p.qtd)} ${p.qtd===1?'volta':'volte'}</div></div><b style="color:var(--verde)">${rs(p.guadagno)}</b></div>`).join('')
+        :'<div class="vazio">Nessun trattamento questo mese.</div>'}
+      </div>
+      <div class="card"><h2>Spese del mese</h2>
+        <button class="btn sec" onclick="Despesa.form()">+ Aggiungi spesa</button>
+        ${desp.map(d=>`<div class="lista-item"><div class="info"><div class="t">${esc(d.desc)}</div>
+          <div class="s">${esc(dataBR(d.data))}</div></div>
+          <div class="desp-dir"><b>${rs(d.valor)}</b> <button class="btn mini perigo desp-x" onclick="Despesa.excluir(${idn(d.id)})" aria-label="Elimina la spesa ${escA(d.desc)}">x</button></div></div>`).join('')}
+      </div>
+      <button class="btn sec" onclick="Backup.exportarCSV('${ym}')">Esporta i trattamenti del mese (Excel/CSV)</button>`;
+  },
+  mudaMes(d){ const [a,m]=this.mesRiepilogo.split('-').map(Number);
+    const dt=new Date(a,m-1+d,1); this.mesRiepilogo=dt.toISOString().slice(0,7); this.render(); },
+  telaMais(){
+    const c=D.dados.config;
+    const ub=c.ultimoBackup?new Date(c.ultimoBackup).toLocaleDateString('it-IT'):'mai';
+    return `<div class="card"><h2>backup</h2>
+        <p style="font-size:14px;line-height:1.55;color:var(--cinza)">L'app tiene tutto <b>su questo telefono</b>.
+        Ogni tanto salva il backup (un foglio di calcolo) e mandalo sul tuo WhatsApp o su Drive.
+        Hai cambiato telefono? Tocca Ripristina e scegli il file. Fatto.</p>
+        <p style="font-size:13px;margin-top:8px;color:var(--cinza)">Ultimo backup: <b>${ub}</b> · trattamenti da allora: <b>${c.vendasDesdeBackup}</b></p>
+        <button class="btn" onclick="Backup.compartilhar()">Fai il backup adesso</button>
+        <button class="btn sec" onclick="document.getElementById('arqRestaura').click()">Ripristina un backup</button>
+        <input type="file" id="arqRestaura" accept=".csv,.json" class="oculto" onchange="if(this.files[0])Backup.restaurar(this.files[0]);this.value=''">
+      </div>
+      <div class="card"><h2>Il tuo studio</h2>
+        <label for="cfgLoja">Nome del tuo studio (compare nel riepilogo per la cliente)</label>
+        <input id="cfgLoja" value="${escA(c.loja)}" onchange="D.dados.config.loja=this.value.trim();D.gravar();Tela.render()">
+      </div>
+      `;
+  }
+};
+
+
+
+
+/* ===== O CONTROLE SO TRAVA COM PROVA DE QUE ELA NAO COMPROU (09/11/2026) =====
+   "Magazzino prodotti" e "Agenda e clienti" sao bumps: quem ativou o e-mail e o e-mail
+   trouxe produtos, mas nenhum e o Controle do Studio (nem a pasta do link libera), ve a
+   vitrine do Controle. Sem e-mail ativo (legado, provisorio sem rede) nada trava: quem
+   pagou nunca fica trancado por falha de rede. */
+const TRAVADA_FRONT=(function(){
+  try{
+    const L=window.Liberado, A=window.Ativacao;
+    if(!L || !A || A.estado!=='ativo' || !Array.isArray(A.produtos) || !A.produtos.length) return false;
+    if(L.tem('controle')) return false;
+    return L.travar('controle');
+  }catch(e){ return false; }
+})();
+
+/* ============ INICIALIZAÇÃO ============ */
+D.carregar();
+Extra.migrar();
+document.querySelectorAll('#navBar button').forEach(b=>b.addEventListener('click',()=>Tela.ir(b.dataset.tela)));
+Tela.render();
+if(!D.dados.config.wizardOk && !TRAVADA_FRONT) Wizard.passo1();
+/* ===== HORARIO DA AGENDA VIRA ATENDIMENTO (09/11/2026) =====
+   O "registrar trattamento" da Agenda e clienti deixa {servicoId, nome, clienteId, em} em
+   lucrostudioit_atender e abre o Controle. Aqui o trattamento ja abre com o servico e o
+   Nome della cliente; ela confere e escolhe como pagou. Vale por 10 minutos e e lido uma
+   vez so. A agenda reconhece o horario como feito pelo trattamento do dia com o nome dela. */
+(function(){
+  const p=Extra.ler(Extra.K_ATENDER);
+  if(!p) return;
+  try{ localStorage.removeItem(Extra.K_ATENDER); }catch(e){}
+  if(TRAVADA_FRONT || typeof p!=='object' || !(Date.now()-(Number(p.em)||0) < 10*60*1000) || !D.dados.config.wizardOk) return;
+  if(!D.dados.produtos.length) return;
+  Venda.iniciar();
+  const sid=Number(p.servicoId);
+  if(Number.isInteger(sid) && D.dados.produtos.some(x=>x.id===sid)) Venda.escolheu(sid);
+  const nome=String(p.nome||'').trim().slice(0,80);
+  if(nome && Venda.carrinho){ Venda.carrinho.cliente=nome;
+    const cid=Number(p.clienteId); Venda.carrinho.clienteId=Number.isInteger(cid)?cid:null; }
+})();
+
+/* ===== LEMBRETE DE BACKUP (26/10/2026) =====
+   A faixa do topo (Backup.precisa) e facil de ignorar, e quem perde o celular sem
+   backup perde tudo. Este modal e o lembrete mais forte, com regra pra nao chatear
+   (decisao do dono): aparece ao ABRIR o Controle, nunca no meio de uma venda,
+     - com 15 vendas sem backup, ou
+     - com 15 dias desde o ultimo backup e pelo menos 1 venda nova;
+     - sem venda nova, nunca (nao ha o que perder);
+     - "Agora nao" (ou o proprio botao de backup) adia 3 dias.
+   Nao aparece no primeiro uso (assistente), com outro modal aberto, nem por cima
+   da tela de ativacao. O adiamento fica no aparelho, fora do backup. */
+const Lembrete = {
+  chave:'lucrostudioit_lembrete_backup', VENDAS:15, DIAS:15, ADIA_DIAS:3,
+  diasDesde(){ const c=D.dados.config; const base=new Date(c.ultimoBackup||c.criadoEm||Date.now());
+    return Math.floor((Date.now()-base)/864e5); },
+  devido(){ const c=D.dados.config, n=c.vendasDesdeBackup||0;
+    if(!c.wizardOk || n<1) return false;
+    let ate=0; try{ ate=parseInt(localStorage.getItem(this.chave)||'0',10)||0; }catch(e){}
+    if(Date.now()<ate) return false;
+    return n>=this.VENDAS || this.diasDesde()>=this.DIAS; },
+  adiar(){ try{ localStorage.setItem(this.chave, String(Date.now()+this.ADIA_DIAS*864e5)); }catch(e){} },
+  mostrar(){ const c=D.dados.config, n=c.vendasDesdeBackup||0, d=this.diasDesde();
+    const quanto = n>=this.VENDAS ? `Hai <b>${n}</b> ${n===1?'trattamento registrato':'trattamenti registrati'} dall'ultimo backup.` : (c.ultimoBackup ? `Il tuo ultimo backup è di <b>${d}</b> ${d===1?'giorno fa':'giorni fa'}.` : `Non hai ancora fatto nessun backup dei tuoi trattamenti.`);
+    Modal.abrir(`<div class="lembrete-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8zM3.3 8.3L12 13l8.7-4.7M12 13v8"/></svg></div>
+      <h3 style="text-align:center">È ora di fare il backup</h3>
+      <p class="sub" style="text-align:center">${quanto} I tuoi trattamenti restano salvati solo su questo telefono. Se si rompe, lo perdi o cambi telefono, è il backup che ti riporta tutto.</p>
+      <p class="sub" style="text-align:center;margin-top:-4px">Tocca qui sotto e mandati il file su WhatsApp. Ci vogliono circa 5 secondi.</p>
+      <button class="btn" onclick="Lembrete.agora()">Fai il backup adesso</button>
+      <button class="btn discreto" onclick="Lembrete.depois()">Non ora</button>`); },
+  /* a tela de compartilhar do celular so abre dentro do toque: fecha e chama no mesmo clique */
+  agora(){ this.adiar(); Modal.fechar(); Backup.compartilhar(); },
+  depois(){ this.adiar(); Modal.fechar(); },
+  talvez(){ setTimeout(()=>{
+      if(!this.devido()) return;
+      if(document.getElementById('modalFundo').classList.contains('aberto')) return;
+      if(document.getElementById('ativ') || document.documentElement.classList.contains('ativ-trava')) return;
+      this.mostrar(); }, 1500); }
+};
+if(!TRAVADA_FRONT) Lembrete.talvez();
+
+/* ============ AJUSTES (engrenagem): cor + instalar ============ */
+const Config = {
+  abrir(){ this.pintar(); document.getElementById('cfgFundo').classList.add('aberto'); },
+  fechar(){ document.getElementById('cfgFundo').classList.remove('aberto'); },
+  pintar(){
+    const atual = localStorage.getItem('lucrostudioit_tema')||'grafite';
+    document.getElementById('cfgCores').innerHTML = Object.keys(TEMAS).map(k=>
+      `<button class="${k===atual?'on':''}" style="background:${TEMAS[k].a}" aria-label="${TEMAS[k].nome}"
+        onclick="aplicarTema('${k}');Config.pintar();if(typeof Tela!=='undefined'&&Tela.render)Tela.render();"></button>`).join('');
+    const inst = Installa.instalado();
+    document.getElementById('cfgInstallaBloco').style.display = inst ? 'none' : '';
+  },
+  instalar(){ Installa.instalar(); }
+};
+
+/* ====== ANIMACAO DO CAMINHO NO IPHONE ======
+   Roteiro fiel ao fluxo real do iOS 26, conferido em video do aparelho (27/08/2026).
+   Cada toque sao DUAS cenas ("dedo no alvo" e depois "tela ja aberta"), pra transicao
+   CSS terminar antes do dedo andar: senao a legenda manda tocar num item que ainda
+   esta subindo. Um so relogio percorre a lista, entao ciclo antigo nao atropela o novo. */
+const Anim = {
+  ciclo:null, passo:0, ligada:false,
+  el(id){ return document.getElementById(id); },
+
+  CENAS: [
+    /* 1. tres pontinhos na barra */
+    { ms:900,  n:2, leg:'Tocca i <b>tre puntini</b>',            dedo:'dPontos'  },
+    { ms:700,  n:2, leg:'Tocca i <b>tre puntini</b>',            dedo:'dPontos', bate:1 },
+    /* 2. menu aberto: Compartilhar */
+    { ms:900,  n:3, leg:'Tocca <b>Condividi</b>',               dedo:'dPontos',    menu:1 },
+    { ms:800,  n:3, leg:'Tocca <b>Condividi</b>',               dedo:'dMenuShare', menu:1, on:'dMenuShare' },
+    { ms:650,  n:3, leg:'Tocca <b>Condividi</b>',               dedo:'dMenuShare', menu:1, on:'dMenuShare', bate:1 },
+    /* 3. folha aberta: o "Ver mais" e o botao redondo da direita */
+    { ms:1100, n:4, leg:'Tocca <b>Mostra altro</b>',                   folha:1 },
+    { ms:800,  n:4, leg:'Tocca <b>Mostra altro</b>',                   folha:1, dedo:'dVerMais' },
+    { ms:650,  n:4, leg:'Tocca <b>Mostra altro</b>',                   folha:1, dedo:'dVerMais', on:'dVerMais', bate:1 },
+    /* 4. a lista abre, e o item aparece no fim dela */
+    { ms:1000, n:5, leg:'Tocca <b>Aggiungi alla schermata Home</b>', folha:1, lista:1, menos:1, dedo:'dVerMais' },
+    { ms:850,  n:5, leg:'Tocca <b>Aggiungi alla schermata Home</b>', folha:1, lista:1, menos:1, dedo:'dAdd', on:'dAdd' },
+    { ms:650,  n:5, leg:'Tocca <b>Aggiungi alla schermata Home</b>', folha:1, lista:1, menos:1, dedo:'dAdd', on:'dAdd', bate:1 },
+    /* 5. a tela final, com o botao Adicionar em azul */
+    { ms:1000, n:6, leg:'Tocca <b>Aggiungi</b>',                  final:1 },
+    { ms:800,  n:6, leg:'Tocca <b>Aggiungi</b>',                  final:1, dedo:'dAddBtn', pisca:1 },
+    { ms:650,  n:6, leg:'Tocca <b>Aggiungi</b>',                  final:1, dedo:'dAddBtn', pisca:1, bate:1 },
+    /* 6. pronto */
+    { ms:2400, n:6, leg:'Fatto! L\'icona è sulla schermata Home',           final:1 }
+  ],
+
+  pintar(c){
+    const menu = this.el('dMenu'), folha = this.el('dFolha');
+    menu.style.opacity    = c.menu ? '1' : '0';
+    menu.style.transform  = c.menu ? 'translateY(0)' : 'translateY(10px)';
+    folha.style.opacity   = c.folha ? '1' : '0';
+    folha.style.transform = c.folha ? 'translateY(0)' : 'translateY(100%)';
+    this.el('dLista').classList.toggle('aberta', !!c.lista);
+    this.el('dFinal').classList.toggle('on', !!c.final);
+    this.el('dMenuShare').classList.toggle('on', c.on === 'dMenuShare');
+    this.el('dVerMais').classList.toggle('on',   c.on === 'dVerMais');
+    this.el('dAdd').classList.toggle('on',       c.on === 'dAdd');
+    this.el('dAddBtn').classList.toggle('pisca', !!c.pisca);
+    /* depois de abrir, "Ver mais" vira "Mostra meno" e a seta inverte, como no iOS */
+    this.el('dVerMaisTxt').textContent = c.menos ? 'Mostra meno' : 'Mostra altro';
+    this.el('dSeta').innerHTML = c.menos ? '<path d="M6 9l6 6 6-6"/>' : '<path d="M6 15l6-6 6 6"/>';
+    this.el('dPasso').textContent = 'passo ' + c.n;
+    this.el('dLeg').innerHTML = c.leg;
+
+    const dedo = this.el('dDedo');
+    if(!c.dedo){ dedo.style.opacity = '0'; return; }
+    const alvo = this.el(c.dedo), base = dedo.parentElement.getBoundingClientRect();
+    const r = alvo.getBoundingClientRect();
+    dedo.style.left = (r.left - base.left + r.width/2) + 'px';
+    dedo.style.top  = (r.top  - base.top  + r.height/2) + 'px';
+    dedo.style.opacity = '1';
+    if(c.bate){ dedo.classList.remove('bate'); void dedo.offsetWidth; dedo.classList.add('bate'); }
+  },
+
+  proxima(){
+    if(!this.ligada) return;
+    const c = this.CENAS[this.passo];
+    this.pintar(c);
+    this.passo = (this.passo + 1) % this.CENAS.length;
+    this.ciclo = setTimeout(() => this.proxima(), c.ms);
+  },
+  ligar(){ if(this.ligada || !this.el('dDedo')) return; this.ligada = true; this.passo = 0; this.proxima(); },
+  desligar(){ this.ligada = false; clearTimeout(this.ciclo); }
+};
+
+/* ============ INSTALACAO (PWA) ============
+   O prompt nativo do Chrome ("Installa l'app", 1 toque) SO e disparado se houver
+   service worker ativo COM handler de fetch. Ate 27/08/2026 este arquivo desregistrava o
+   SW quando a pagina abria no navegador comum, que e exatamente onde a compradora esta
+   ANTES de instalar: o `beforeinstallprompt` nunca chegava e o botao caia sempre no passo
+   a passo. Agora o SW e registrado sempre (ele ja e rede-primeiro, entao nao serve versao
+   velha) e o prompt de 1 toque volta a funcionar no Android. */
+const Installa = {
+  prompt:null,
+  init(){
+    if('serviceWorker' in navigator) navigator.serviceWorker.register(
+      /* O sw.js mora SEMPRE em /app/, nunca dentro da pasta de acesso. Com
+         'sw.js' relativo, uma pagina em /app/tudo/ buscava /app/tudo/sw.js e
+         tomava 503: o service worker nao ativava e o app nao abria offline.
+         Achado no console em 31/08/2026, ja com a estrutura de pastas no ar. */
+      location.pathname.replace(/\/app\/.*$/, '/app/') + 'sw.js',
+      {scope: location.pathname.replace(/\/app\/.*$/, '/app/')}).catch(()=>{});
+    window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); this.prompt=e; this.pintarFaixa(); });
+    window.addEventListener('appinstalled', ()=>{ this.prompt=null; this.pintarFaixa();
+      if(typeof Config!=='undefined') Config.pintar(); });
+    this.pintarFaixa();
+  },
+  instalado(){ return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true; },
+  iOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); },
+  /* a faixa some quando ja esta instalado, ou quando a pessoa dispensou */
+  pintarFaixa(){
+    const f = document.getElementById('faixaInstalla');
+    if(!f) return;
+    const esconder = this.instalado() || localStorage.getItem('lucrostudioit_instalar_dispensado')==='1';
+    f.style.display = esconder ? 'none' : '';
+  },
+  dispensarFaixa(){ localStorage.setItem('lucrostudioit_instalar_dispensado','1'); this.pintarFaixa(); },
+  async instalar(){
+    /* caminho bom: prompt nativo, 1 toque, sem passo a passo nenhum */
+    if(this.prompt){
+      this.prompt.prompt();
+      const r = await this.prompt.userChoice;
+      if(r.outcome==='accepted'){ this.prompt=null; this.pintarFaixa();
+        if(typeof Config!=='undefined') Config.pintar(); }
+      return;
+    }
+    /* iPhone nao tem API de instalacao: o passo a passo ilustrado e o teto */
+    this.abrirPassos();
+  },
+  abrirPassos(){
+    const seta = '<svg viewBox="0 0 24 24" class="ps-ico"><path d="M12 16V3M12 3L8 7M12 3l4 4"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>';
+    const pontos = '<svg viewBox="0 0 24 24" class="ps-ico"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>';
+    /* iPhone: caminho conferido no aparelho do dono em 27/08/2026. No Safari novo o
+       Compartilhar NAO fica solto na barra de baixo, fica dentro do menu de tres
+       pontinhos, e o "Adicionar a Tela de Inicio" so aparece depois de tocar em
+       "Ver mais". Sao 5 passos, e e o passo do "Ver mais" que trava a compradora:
+       ela chega na folha de compartilhar, nao acha o item e desiste. */
+    const passos = this.iOS()
+      ? ['Apri questo link <b>in Safari</b>',
+         `Tocca i ${pontos} <b>tre puntini</b>, nell'angolo del browser`,
+         `Tocca ${seta} <b>Condividi</b>`,
+         'Tocca <b>Mostra altro</b>',
+         'Tocca <b>Aggiungi alla schermata Home</b>',
+         'Tocca <b>Aggiungi</b>, in alto']
+      : [`Tocca il pulsante ${pontos} del <b>menu</b>, in alto nel browser`,
+         'Tocca <b>Installa l\'app</b> (o <b>Aggiungi l\'app alla schermata Home</b>)',
+         'Conferma su <b>Installa</b>'];
+    document.getElementById('psSub').innerHTML =
+      'Da quel momento l\'app si apre dall\'icona, come le altre, e funziona anche senza internet.';
+    document.getElementById('psLista').innerHTML = passos.map(p=>`<li>${p}</li>`).join('');
+    /* o desenho do caminho so faz sentido no iPhone: no Android o prompt nativo
+       instala em 1 toque e nao ha passo a passo pra ensinar */
+    const demo = document.querySelector('.demo');
+    if(demo) demo.style.display = this.iOS() ? '' : 'none';
+    document.getElementById('psFundo').classList.add('aberto');
+    if(this.iOS() && typeof Anim !== 'undefined') Anim.ligar();
+  },
+  fecharPassos(){
+    document.getElementById('psFundo').classList.remove('aberto');
+    if(typeof Anim !== 'undefined') Anim.desligar();   /* nao roda escondido */
+  }
+};
+Installa.init();
+(function(){ const b = document.getElementById('dBtn');
+  if(b) b.onclick = () => { Anim.desligar(); Anim.ligar(); }; })();
+
+</script>
+
+<div class="cfg-fundo" id="cfgFundo" onclick="if(event.target===this)Config.fechar()">
+  <div class="cfg-box" role="dialog" aria-modal="true" aria-label="Impostazioni">
+    <h3>Impostazioni</h3>
+    <div class="cfg-sub">Personalizza l'app.</div>
+    <h4>Colore dell'app</h4>
+    <div class="cfg-cores" id="cfgCores"></div>
+    <div id="cfgInstallaBloco">
+      <h4>L'app sul telefono</h4>
+      <p style="font-size:14px;line-height:1.5;color:var(--cinza)">Ha la sua icona, si apre senza browser e funziona anche senza internet.</p>
+      <button class="cfg-btn" onclick="Config.instalar()">Aggiungi l'app alla schermata Home</button>
+    </div>
+    <button class="cfg-btn sec" onclick="Config.fechar()">Chiudi</button>
+  </div>
+</div>
+
+
+<div class="ps-fundo" id="psFundo" onclick="if(event.target===this)Installa.fecharPassos()">
+  <div class="ps-box" role="dialog" aria-modal="true" aria-label="Come si fa">
+    <h3>Aggiungi l'app alla schermata Home</h3>
+    <div class="ps-sub" id="psSub"></div>
+    <div class="demo">
+      <div class="demo-topo">
+        <span class="demo-rot">Come si fa</span>
+        <span class="demo-passo" id="dPasso">Passo 2</span>
+      </div>
+      <div class="fone" aria-hidden="true">
+        <div class="fone-tela">
+          <div class="pag">
+            <div class="pag-top"><b>Guadagno in Mano</b><i>Le tue app: paghi una volta, niente abbonamento</i></div>
+            <div class="pag-card"><b>Guadagno in Mano</b><i>I tuoi trattamenti in ordine, dal telefono</i><div class="pag-btn"></div></div>
+            <div class="pag-card"><b>Agenda e clienti</b><i>Le tue clienti e i tuoi appuntamenti</i></div>
+          </div>
+
+          <div class="menu" id="dMenu">
+            <div id="dMenuShare"><svg class="mi" viewBox="0 0 24 24"><path d="M12 16V3M12 3L8 7M12 3l4 4"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>Condividi</div>
+            <div><svg class="mi" viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Aggiungi ai Preferiti</div>
+            <div><svg class="mi" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nuova scheda</div>
+          </div>
+
+          <div class="folha" id="dFolha">
+            <div class="f-cab">
+              <div class="f-ico">L</div>
+              <div><b>Le mie app · Guadagno in Mano</b><i>lucronamao.github.io</i></div>
+            </div>
+            <div class="f-acoes">
+              <div><div class="c"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg></div><span>Copia</span></div>
+              <div><div class="c"><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></svg></div><span>Preferiti</span></div>
+              <div><div class="c"><svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg></div><span>Elenco lettura</span></div>
+              <div id="dVerMais"><div class="c"><svg id="dSeta" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></div><span id="dVerMaisTxt">Mostra altro</span></div>
+            </div>
+            <div class="f-lista" id="dLista">
+              <div><svg class="li" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/></svg>Aggiungi segnalibro a...</div>
+              <div><svg class="li" viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.4l6-.8z"/></svg>Aggiungi ai Preferiti</div>
+              <div><svg class="li" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>Aggiungi a Nota rapida</div>
+              <div><svg class="li" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Cerca nella pagina</div>
+              <div id="dAdd"><svg class="li" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Aggiungi alla schermata Home</div>
+            </div>
+          </div>
+
+          <div class="final" id="dFinal">
+            <div class="final-cab">
+              <span class="x">&times;</span>
+              <b>Aggiungi alla schermata Home</b>
+              <span class="add" id="dAddBtn">Aggiungi</span>
+            </div>
+            <div class="final-nome">
+              <div class="fi"></div>
+              <div><b>Guadagno in Mano</b><i>lucronamao.github.io/studio/hu...</i></div>
+            </div>
+          </div>
+
+          <div class="barra">
+            <i></i><div class="b-url"></div>
+            <span class="b-pontos" id="dPontos"><span></span><span></span><span></span></span>
+          </div>
+
+          <div class="dedo" id="dDedo"></div>
+        </div>
+      </div>
+      <div class="demo-leg" id="dLeg"></div>
+      <div class="demo-ctrl"><button type="button" id="dBtn">repetir</button></div>
+    </div>
+    <ol id="psLista"></ol>
+    <button class="ps-btn" onclick="Installa.fecharPassos()">Ho capito</button>
+  </div>
+</div>
+
+<script>
+/* O botao de voltar tem que levar ao MENU DA COMPRADORA, nao ao hub pelado.
+   O hub manda `#de=<chave>` no link; aqui isso vira a pasta <chave>/ IRMA desta
+   pagina. Sem a marca (alguem abriu o app direto), fica o hub.html de sempre.
+   Achado pelo dono em 30/08/2026: voltar caia no menu travado. */
+(function(){
+  try{
+    /* chaves LONGAS primeiro: alternancia em JS casa da esquerda pra direita,
+       entao (c|cd) casaria "c" dentro de "cd" e a compradora do bump voltaria
+       pro menu do front, sem o Divulga. O $ ancora o fim, pra nao casar prefixo. */
+    var m = (location.hash || '').match(/de=(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)$/);
+    if(!m) return;
+
+    /* O #de= NAO grava mais o nivel (03/11/2026, achado de seguranca): qualquer um
+       abria `divulga.html#de=tudo` e ganhava tudo pra sempre. A memoria so nasce do
+       CAMINHO da pasta (hub.html), como antes de 31/08. Quem ja tinha a memoria
+       gravada por aqui continua com ela: nada e apagado. O hash serve so pro voltar. */
+
+    var a = document.getElementById('voltarMenu');
+    if(!a) return;
+    /* O destino sai da PASTA DESTA PAGINA, nunca de '../'.
+       BUG REAL, 31/08/2026 (dono, no app instalado): os apps moram em
+       /app/index.html, entao '../tudo/' subia um nivel A MAIS e caia em
+       lucronamao.github.io/tudo/, fora de /app/. Da 404 no Pages e 401 quando
+       o SW nao consegue servir, e a compradora era obrigada a fechar e reabrir
+       o app. Mesma classe de erro do fallback do service worker: caminho
+       relativo montado sem o prefixo da aplicacao. */
+    /* O menu da compradora e o index.html DA PASTA da chave.
+       Se esta pagina JA esta dentro da pasta certa (/app/tudo/index.html), o menu
+       e o proprio './': nao montar /app/tudo/tudo/, que nao existe.
+       Se esta na copia da raiz (/app/index.html, link antigo), sobe pra pasta. */
+    var aqui = location.pathname.replace(/[^\/]*$/, '');
+    var jaNaPasta = new RegExp('/' + m[1] + '/$').test(aqui);
+    a.setAttribute('href', jaNaPasta ? aqui : aqui + m[1] + '/');
+  }catch(e){}
+})();
+</script>
+
+
+
+
+<script>
+/* ===== A PAGINA DA RAIZ APONTA PRO MANIFEST DA PASTA (31/08/2026) =====
+
+   PROVADO NO APARELHO, nao suposto. O dono abriu /app/tudo/diagnostico.html,
+   adicionou a tela de inicio, e o icone salvou a pasta /app/tudo/: ou seja o iOS
+   ignorou a URL da aba e usou a `start_url` do manifest. A start_url VENCE.
+
+   Consequencia pro caso da compradora: as paginas da RAIZ linkam
+   /app/manifest.webmanifest, cuja start_url e `/app/hub.html`, SEM chave. Salvando
+   de qualquer pagina da raiz (link antigo, historico do Safari, ou o icone velho
+   que ela reabriu), o icone nasce travado. Reescrever a URL da aba NAO resolve,
+   porque o iOS nao olha a URL: olha o manifest.
+
+   Conserto: se esta pagina sabe a chave, ela troca o <link rel=manifest> pelo
+   manifest DA PASTA: que e um arquivo http(s) real, nao blob (blob nao e
+   confiavel no iOS, e o manifest precisa ser same-origin da start_url).
+
+   A chave vem, em ordem: do caminho, do #de= que o menu manda, do ?libera=
+   antigo, e por fim do nivel que o service worker guarda (Cache Storage, que
+   atravessa o isolamento entre Safari e app instalado). */
+(function(){
+  var MAPA_K = {c:1,d:1,p:1,cd:1,cp:1,u:1,tudo:1};
+
+  function aplicar(chave){
+    if(!chave || !MAPA_K[chave]) return;
+    var base = location.pathname.replace(/\/app\/.*$/, '/app/');
+    if(base.indexOf('/app/') < 0) base = '/app/';
+    var href = base + chave + '/manifest.webmanifest';
+    var el = document.querySelector('link[rel="manifest"]');
+    if(!el){ el = document.createElement('link'); el.rel = 'manifest'; document.head.appendChild(el); }
+    if(el.getAttribute('href') !== href) el.setAttribute('href', href);
+  }
+
+  try{
+    /* 1. caminho */
+    var m = location.pathname.match(/\/(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)(?:\/|$)/);
+    if(m){ aplicar(m[1]); return; }   /* ja esta na pasta: o manifest local ja serve */
+
+    /* 2. #de= que o menu manda ao abrir o app */
+    var h = (location.hash||'').match(/de=(tudo|cpkd|cpk|cpd|ckd|pkd|cd|cp|ck|pk|pd|kd|c|d|p|k|u)$/);
+    if(h){ aplicar(h[1]); return; }
+
+    /* 3. ?libera= dos links antigos */
+    var q = (new URLSearchParams(location.search).get('libera')||'').replace(/^so-/,'');
+    if(MAPA_K[q]){ aplicar(q); return; }
+
+    /* 4. o nivel que o service worker guarda: atravessa Safari -> app instalado */
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.ready.then(function(reg){
+        if(!reg.active) return;
+        navigator.serviceWorker.addEventListener('message', function(ev){
+          var d = ev.data || {};
+          if(d.tipo !== 'nivel' || !Array.isArray(d.itens) || !d.itens.length) return;
+          var i = d.itens, c = i.indexOf('controle')>=0, dv = i.indexOf('divulga')>=0, p = i.indexOf('preco')>=0;
+          aplicar((c&&dv&&p) ? 'tudo' : (c&&dv) ? 'cd' : (c&&p) ? 'cp' : c ? 'c' : dv ? 'd' : p ? 'p' : null);
+        });
+        reg.active.postMessage({tipo:'ler-nivel'});
+      }).catch(function(){});
+    }
+  }catch(e){}
+})();
+</script>
+<script>
+/* Esc fecha as folhas de ajustes e de instalacao (acessibilidade, 26/10/2026) */
+document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return;
+  const ps=document.getElementById('psFundo'), cf=document.getElementById('cfgFundo');
+  if(ps&&ps.classList.contains('aberto')&&typeof Installa!=='undefined'&&Installa.fecharPassos) Installa.fecharPassos();
+  else if(cf&&cf.classList.contains('aberto')&&typeof Config!=='undefined') Config.fechar(); });
+</script>
+</body>
+</html>

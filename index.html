@@ -8,9 +8,9 @@
 <meta name="theme-color" content="#18161B">
 <meta name="robots" content="noindex">
 <link rel="preload" href="font/outfit-700-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" as="image" href="img/foto-hero-800.webp" imagesrcset="img/foto-hero-800.webp 800w, img/foto-hero-1600.webp 1600w" imagesizes="100vw" fetchpriority="high">
+<link rel="preload" as="image" type="image/avif" href="img/foto-hero-800.avif" imagesrcset="img/foto-hero-480.avif 480w, img/foto-hero-800.avif 800w, img/foto-hero-1440.avif 1440w" imagesizes="100vw" fetchpriority="high">
 <!-- LP v2 · 20/11/2026 · Designer de LP. Copy: studio-it/copy-lp-v2.md (SHA-256 cacb906a…). Briefing: lp-v2/briefing-redesign.md (9554bc14…).
-     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 12: 3º bump Agenda e clienti. Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
+     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 13: prints Il mio studio e LCP (hero AVIF/WebP responsivo, lazy abaixo da dobra). Rodada 12: 3º bump Agenda e clienti. Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
 <style>
 [hidden]{display:none!important}
 @font-face{font-family:'Outfit';font-weight:700;font-style:normal;font-display:swap;src:url(font/outfit-700-latin.woff2) format('woff2')}
@@ -36,7 +36,7 @@ section{padding:32px 0}
 /* HERO */
 .hero{position:relative;color:#fff;background:var(--profundo);overflow:hidden;padding:16px 0 28px}
 .hero-bg{position:absolute;inset:0;z-index:0}
-.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+.hero-bg picture{display:block;width:100%;height:100%}.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
 .hero-bg{height:min(100%,980px)}.hero-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,22,27,.42) 0%,rgba(24,22,27,.55) 32%,rgba(24,22,27,.78) 68%,#18161B 100%)}
 .hero .w{position:relative;z-index:1;display:grid;gap:0}
 .marca-riga{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.marca{height:28px;width:auto}.descr{font:600 13px/1.2 var(--sans);color:rgba(255,255,255,.85)}
@@ -281,10 +281,13 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
 
 <!-- B1 · HERO -->
 <header class="hero">
-  <div class="hero-bg"><img src="img/foto-hero-800.webp" srcset="img/foto-hero-800.webp 800w, img/foto-hero-1600.webp 1600w" sizes="100vw" width="800" height="874" alt="A sinistra una manicure con la lampada UV, a destra un trattamento viso in cabina." fetchpriority="high"></div>
+  <div class="hero-bg"><picture>
+<source type="image/avif" srcset="img/foto-hero-480.avif 480w, img/foto-hero-800.avif 800w, img/foto-hero-1440.avif 1440w" sizes="100vw">
+<img src="img/foto-hero-800.webp" srcset="img/foto-hero-480.webp 480w, img/foto-hero-800.webp 800w, img/foto-hero-1440.webp 1440w" sizes="100vw" width="800" height="874" alt="A sinistra una manicure con la lampada UV, a destra un trattamento viso in cabina." fetchpriority="high">
+</picture></div>
   <div class="w">
     <div class="testo">
-      <div class="marca-riga"><img class="marca" src="img/gim-logo-branca.png" alt="Guadagno in Mano" height="28"><span class="descr">per estetiste e onicotecniche</span></div>
+      <div class="marca-riga"><img class="marca" src="img/gim-logo-branca.png" alt="Guadagno in Mano" height="28" width="111" decoding="async"><span class="descr">per estetiste e onicotecniche</span></div>
       <!-- [COPY v2 §0 headline] -->
       <h1>Lavori tutto il giorno e a fine mese <span class="serif">non ti rimane niente?</span></h1>
       <!-- [COPY v2 §0 sub, cortado] -->
@@ -296,8 +299,8 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
         <span class="chip"><svg class="ic"><use href="#i-check"/></svg>Paghi una volta</span>
       </div>
       <div class="hero-duo" aria-hidden="true">
-        <img src="img/foto-hero-unha-800.webp" srcset="img/foto-hero-unha-800.webp 800w, img/foto-hero-unha-1200.webp 1200w" sizes="(min-width:960px) 230px, 46vw" width="800" height="500" alt="" decoding="async">
-        <img src="img/foto-hero-viso-800.webp" srcset="img/foto-hero-viso-800.webp 800w, img/foto-hero-viso-1200.webp 1200w" sizes="(min-width:960px) 230px, 46vw" width="800" height="500" alt="" decoding="async">
+        <img src="img/foto-hero-unha-400.webp" srcset="img/foto-hero-unha-400.webp 400w, img/foto-hero-unha-800.webp 800w, img/foto-hero-unha-1200.webp 1200w" sizes="(min-width:960px) 230px, 46vw" width="800" height="500" alt="" decoding="async" fetchpriority="low">
+        <img src="img/foto-hero-viso-400.webp" srcset="img/foto-hero-viso-400.webp 400w, img/foto-hero-viso-800.webp 800w, img/foto-hero-viso-1200.webp 1200w" sizes="(min-width:960px) 230px, 46vw" width="800" height="500" alt="" decoding="async" fetchpriority="low">
       </div>
     </div>
 
@@ -308,10 +311,10 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
           <div class="st-palco">
             <div class="st-trilha">
             <!-- legendas: COPY v2 §3 + copy-pendentes A2 -->
-            <div class="st-parte on" data-rot="Finita la cliente, la registri in pochi tocchi"><div class="tela" data-slot="t-registra-pagamento"><img data-print="img/app/t-registra-pagamento.webp" alt="Schermata dell'app: si sceglie come ha pagato la cliente." decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-registra-pagamento.webp</small></span></div></div>
-            <div class="st-parte" data-rot="Il guadagno lo vedi subito"><div class="tela" data-slot="t-registrato"><img data-print="img/app/t-registrato.webp" alt="Schermata dell'app dopo la registrazione: il guadagno del trattamento." decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-registrato.webp</small></span></div></div>
-            <div class="st-parte" data-rot="Aggiungi i tuoi trattamenti"><div class="tela" data-slot="t-trattamenti"><img data-print="img/app/t-trattamenti.webp" alt="Schermata Trattamenti: prezzo, materiale e guadagno di ognuno." decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-trattamenti.webp</small></span></div></div>
-            <div class="st-parte" data-rot="A fine mese, il riepilogo"><div class="tela" data-slot="t-riepilogo"><img data-print="img/app/t-riepilogo.webp" alt="Schermata Riepilogo del mese." decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-riepilogo.webp</small></span></div></div>
+            <div class="st-parte on" data-rot="Finita la cliente, la registri in pochi tocchi"><div class="tela" data-slot="t-registra-pagamento"><img data-print="img/app/t-registra-pagamento.webp" alt="Schermata dell'app: si sceglie come ha pagato la cliente." decoding="async" fetchpriority="low"><span class="slot">PENDENTE CONSTRUTOR<small>t-registra-pagamento.webp</small></span></div></div>
+            <div class="st-parte" data-rot="Il guadagno lo vedi subito"><div class="tela" data-slot="t-registrato"><img data-print="img/app/t-registrato.webp" alt="Schermata dell'app dopo la registrazione: il guadagno del trattamento." loading="lazy" decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-registrato.webp</small></span></div></div>
+            <div class="st-parte" data-rot="Aggiungi i tuoi trattamenti"><div class="tela" data-slot="t-trattamenti"><img data-print="img/app/t-trattamenti.webp" alt="Schermata Trattamenti: prezzo, materiale e guadagno di ognuno." loading="lazy" decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-trattamenti.webp</small></span></div></div>
+            <div class="st-parte" data-rot="A fine mese, il riepilogo"><div class="tela" data-slot="t-riepilogo"><img data-print="img/app/t-riepilogo.webp" alt="Schermata Riepilogo del mese." loading="lazy" decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-riepilogo.webp</small></span></div></div>
             </div>
             <button class="st-btn" type="button" aria-label="Scorri le schermate"></button>
           </div>
@@ -356,7 +359,7 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
       </div>
     </div>
     <div class="foto-r rivela">
-      <img src="img/foto-materiale-700.webp" srcset="img/foto-materiale-700.webp 700w, img/foto-materiale-1200.webp 1200w" sizes="(min-width:960px) 540px, 100vw" loading="lazy" width="700" height="640" alt="Mani dell'onicotecnica che lavorano sulle unghie della cliente, con i flaconi sul banco.">
+      <img src="img/foto-materiale-700.webp" srcset="img/foto-materiale-700.webp 700w, img/foto-materiale-1200.webp 1200w" sizes="(min-width:960px) 540px, 100vw" loading="lazy" decoding="async" width="700" height="640" alt="Mani dell'onicotecnica che lavorano sulle unghie della cliente, con i flaconi sul banco.">
       <!-- valores dentro das faixas do publico.md 9.2; rótulos copy-pendentes A4 -->
       <div class="ricevuta">
         <div class="t">Semipermanente mani</div>
@@ -373,17 +376,17 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
   <div class="w">
     <h2 class="rivela">Come <span class="serif">funziona</span></h2>
     <div class="trilho" data-trilho tabindex="0" role="region" aria-roledescription="carrossel" aria-label="Le schermate di Guadagno in Mano">
-      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-registra-pagamento"><img data-print="img/app/t-registra-pagamento.webp" loading="lazy" alt="Registrare un trattamento: come ha pagato la cliente."><span class="slot">PENDENTE CONSTRUTOR<small>t-registra-pagamento.webp</small></span></div></div></div>
+      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-registra-pagamento"><img data-print="img/app/t-registra-pagamento.webp" loading="lazy" decoding="async" alt="Registrare un trattamento: come ha pagato la cliente."><span class="slot">PENDENTE CONSTRUTOR<small>t-registra-pagamento.webp</small></span></div></div></div>
         <figcaption><b><span class="num">1</span>Registri in pochi tocchi</b>Il trattamento, come ti ha pagato e, se serve, il nome.</figcaption></figure>
-      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-registrato"><img data-print="img/app/t-registrato.webp" loading="lazy" alt="Il guadagno del trattamento appena registrato."><span class="slot">PENDENTE CONSTRUTOR<small>t-registrato.webp</small></span></div></div></div>
+      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-registrato"><img data-print="img/app/t-registrato.webp" loading="lazy" decoding="async" alt="Il guadagno del trattamento appena registrato."><span class="slot">PENDENTE CONSTRUTOR<small>t-registrato.webp</small></span></div></div></div>
         <figcaption><b><span class="num">2</span>Il guadagno, subito</b>Quanto guadagni su ogni trattamento, tolto il materiale.</figcaption></figure>
-      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-trattamenti"><img data-print="img/app/t-trattamenti.webp" loading="lazy" alt="Lista Trattamenti con prezzo e materiale."><span class="slot">PENDENTE CONSTRUTOR<small>t-trattamenti.webp</small></span></div></div></div>
+      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-trattamenti"><img data-print="img/app/t-trattamenti.webp" loading="lazy" decoding="async" alt="Lista Trattamenti con prezzo e materiale."><span class="slot">PENDENTE CONSTRUTOR<small>t-trattamenti.webp</small></span></div></div></div>
         <figcaption><b><span class="num">3</span>I tuoi trattamenti</b>Se il prezzo non copre il materiale, l'app te lo dice.</figcaption></figure>
-      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-da-incassare"><img data-print="img/app/t-da-incassare.webp" loading="lazy" alt="Importi da incassare, anche a rate."><span class="slot">PENDENTE CONSTRUTOR<small>t-da-incassare.webp</small></span></div></div></div>
+      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-da-incassare"><img data-print="img/app/t-da-incassare.webp" loading="lazy" decoding="async" alt="Importi da incassare, anche a rate."><span class="slot">PENDENTE CONSTRUTOR<small>t-da-incassare.webp</small></span></div></div></div>
         <figcaption><b><span class="num">4</span>Da incassare</b>Chi ti deve ancora pagare e quanto, anche a rate.</figcaption></figure>
-      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-spese"><img data-print="img/app/t-spese.webp" loading="lazy" alt="Le spese del mese."><span class="slot">PENDENTE CONSTRUTOR<small>t-spese.webp</small></span></div></div></div>
+      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-spese"><img data-print="img/app/t-spese.webp" loading="lazy" decoding="async" alt="Le spese del mese."><span class="slot">PENDENTE CONSTRUTOR<small>t-spese.webp</small></span></div></div></div>
         <figcaption><b><span class="num">5</span>Le spese del mese</b>Affitto, luce, POS, INPS: le segni quando le paghi.</figcaption></figure>
-      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-riepilogo"><img data-print="img/app/t-riepilogo.webp" loading="lazy" alt="Riepilogo del mese."><span class="slot">PENDENTE CONSTRUTOR<small>t-riepilogo.webp</small></span></div></div></div>
+      <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-riepilogo"><img data-print="img/app/t-riepilogo.webp" loading="lazy" decoding="async" alt="Riepilogo del mese."><span class="slot">PENDENTE CONSTRUTOR<small>t-riepilogo.webp</small></span></div></div></div>
         <figcaption><b><span class="num">6</span>A fine mese, il riepilogo</b>Incassato, spese e quanto ti rimane davvero.</figcaption></figure>
     </div>
     <div class="pontos" data-pontos></div>
@@ -397,7 +400,7 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
 
 <!-- B5 · DA SOLA [COPY v2 §4b] -->
 <section class="dasola">
-  <img src="img/foto-da-sola-800.webp" srcset="img/foto-da-sola-800.webp 800w, img/foto-da-sola-1400.webp 1400w" sizes="100vw" loading="lazy" width="800" height="510" alt="Un'estetista da sola nella sua cabina, durante un trattamento viso.">
+  <img src="img/foto-da-sola-800.webp" srcset="img/foto-da-sola-800.webp 800w, img/foto-da-sola-1400.webp 1400w" sizes="100vw" loading="lazy" decoding="async" width="800" height="510" alt="Un'estetista da sola nella sua cabina, durante un trattamento viso.">
   <div class="w">
     <h2 class="rivela">Pensata per chi <span class="serif">lavora da sola</span></h2>
     <p>Apri l'app dal telefono, registri la cliente e torni al lavoro.</p>
@@ -410,15 +413,15 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
     <h2 class="rivela">Se vuoi, <span class="serif">aggiungi</span> al tuo ordine</h2>
     <div class="bumps">
       <div class="bump rivela">
-        <div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="bump-magazzino"><img data-print="img/app/bump-magazzino.webp" loading="lazy" alt="Schermata Magazzino prodotti."><span class="slot">PENDENTE CONSTRUTOR<small>bump-magazzino.webp</small></span></div></div></div>
+        <div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="bump-magazzino"><img data-print="img/app/bump-magazzino.webp" loading="lazy" decoding="async" alt="Schermata Magazzino prodotti."><span class="slot">PENDENTE CONSTRUTOR<small>bump-magazzino.webp</small></span></div></div></div>
         <div><div class="bump-meta"><span class="tag">Facoltativo</span><span class="bump-prezzo" data-prezzo-bump="magazzino"></span></div><h3>Magazzino prodotti</h3><p>Sai quali prodotti stanno finendo prima di restare senza.</p></div>
       </div>
       <div class="bump rivela">
-        <div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="bump-listino"><img data-print="img/app/bump-listino.webp" loading="lazy" alt="Listino prezzi pronto da mandare."><span class="slot">PENDENTE CONSTRUTOR<small>bump-listino.webp</small></span></div></div></div>
+        <div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="bump-listino"><img data-print="img/app/bump-listino.webp" loading="lazy" decoding="async" alt="Listino prezzi pronto da mandare."><span class="slot">PENDENTE CONSTRUTOR<small>bump-listino.webp</small></span></div></div></div>
         <div><div class="bump-meta"><span class="tag">Facoltativo</span><span class="bump-prezzo" data-prezzo-bump="listino"></span></div><h3>Listino prezzi</h3><p>Il tuo listino, con i tuoi prezzi, pronto da mandare alle clienti.</p></div>
       </div>
       <div class="bump rivela">
-        <div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="bump-agenda"><img data-print="img/app/agenda.webp" loading="lazy" alt="Schermata Agenda e clienti: gli appuntamenti della settimana."><span class="slot">PENDENTE CONSTRUTOR<small>agenda.webp</small></span></div></div></div>
+        <div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="bump-agenda"><img data-print="img/app/agenda.webp" loading="lazy" decoding="async" alt="Schermata Agenda e clienti: gli appuntamenti della settimana."><span class="slot">PENDENTE CONSTRUTOR<small>agenda.webp</small></span></div></div></div>
         <div><div class="bump-meta"><span class="tag">Facoltativo</span><span class="bump-prezzo" data-prezzo-bump="agenda"></span></div><h3>Agenda e clienti</h3><p>Gli appuntamenti della settimana e il promemoria pronto su WhatsApp.</p></div>
       </div>
     </div>
@@ -493,7 +496,7 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
 
 <!-- B11 · CTA FINAL [COPY v2 §11] -->
 <section class="fine">
-  <img src="img/foto-fine-800.webp" srcset="img/foto-fine-800.webp 800w, img/foto-fine-1067.webp 1067w" sizes="100vw" loading="lazy" width="800" height="660" alt="Manicure su un tavolo di casa, con luce naturale.">
+  <img src="img/foto-fine-800.webp" srcset="img/foto-fine-800.webp 800w, img/foto-fine-1067.webp 1067w" sizes="100vw" loading="lazy" decoding="async" width="800" height="660" alt="Manicure su un tavolo di casa, con luce naturale.">
   <div class="w">
     <h2 class="rivela">Dalla prossima cliente, sai quanto guadagni <span class="serif">davvero.</span></h2>
     <p class="prezzo"><span data-riga-prezzo><b data-prezzo></b> una volta sola · </span><span data-riga-garanzia><span data-g></span> soddisfatti o rimborsati</span></p>
@@ -596,9 +599,41 @@ var PAINEL_K = '87e31ddf7f36a3098e38fde1d7ba4b5e'; /* Chave k= da Guadagno, libe
 var PRINTS_OK = true;
 (function(){
   var q = new URLSearchParams(location.search), ver = PRINTS_OK || (q.get('dev') === '1' && q.get('prints') === '1');
-  document.querySelectorAll('img[data-print]').forEach(function(i){
-    if (ver) i.src = i.getAttribute('data-print');
-    else { var t = i.closest('.tela'); if (t) t.classList.add('vuoto'); i.style.display = 'none'; }
+  var prints = [].slice.call(document.querySelectorAll('img[data-print]'));
+  function assignPrint(i){
+    var src = i.getAttribute('data-print');
+    if (!src || i.getAttribute('src') === src) return;
+    i.src = src;
+  }
+  function makeIo(root, margin){
+    if (!('IntersectionObserver' in window)) return null;
+    return new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (!en.isIntersecting) return;
+        assignPrint(en.target);
+        en.target._gimIo && en.target._gimIo.unobserve(en.target);
+      });
+    }, { root: root || null, rootMargin: margin || '120px 0px' });
+  }
+  var ioPrints = makeIo(null, '120px 0px');
+  var ioStory = {};
+  window.gimObservePrint = function(img){
+    if (!img || !ver) return;
+    img.decoding = 'async';
+    var first = img.closest('.st-parte.on');
+    if (first && !first.previousElementSibling) { assignPrint(img); return; }
+    var palco = img.closest('.st-palco');
+    if (palco) {
+      if (!ioStory.current || ioStory.root !== palco) { ioStory.current = makeIo(palco, '0px 40px'); ioStory.root = palco; }
+      img._gimIo = ioStory.current;
+      if (ioStory.current) { ioStory.current.observe(img); return; }
+    }
+    if (ioPrints) { img._gimIo = ioPrints; ioPrints.observe(img); }
+    else { img.loading = 'lazy'; assignPrint(img); }
+  };
+  prints.forEach(function(i){
+    if (!ver) { var t = i.closest('.tela'); if (t) t.classList.add('vuoto'); i.style.display = 'none'; return; }
+    window.gimObservePrint(i);
   });
 })();
 
@@ -663,6 +698,9 @@ document.querySelectorAll('.tela').forEach(function(t){
     var partes = [].slice.call(trilha.querySelectorAll('.st-parte'));
     var n = partes.length; if (!n) return;
     partes.forEach(function(p){ trilha.appendChild(p.cloneNode(true)); });
+    trilha.querySelectorAll('img[data-print]').forEach(function(img){
+      if (window.gimObservePrint) window.gimObservePrint(img);
+    });
     if (pts) {
       for (var i = 0; i < n; i++) { var d = document.createElement('i'); d.setAttribute('aria-hidden','true'); pts.appendChild(d); }
     }
@@ -718,6 +756,9 @@ document.querySelectorAll('.tela').forEach(function(t){
       pts.appendChild(d);
     }
     cards.forEach(function(c){ t.appendChild(c.cloneNode(true)); });
+    t.querySelectorAll('img[data-print]').forEach(function(img){
+      if (window.gimObservePrint) window.gimObservePrint(img);
+    });
     api = esteiraScroll(t, pts, n);
     var x0 = 0, s0 = 0, mov = false;
     t.addEventListener('pointerdown', function(e){

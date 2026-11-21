@@ -397,11 +397,7 @@ const comChave = (url) => {
   return naPasta + '#de=' + m[1];
 };
 
-/* checkout dos degraus. Links lidos da API da Cakto em 19/08/2026 (a Cakto e a fonte da
-   verdade, nao este arquivo). Conferidos no "Riepilogo do pedido" do checkout real: 27,00 e 67,00
-   (o upsell passou de 97 para 67 em 01/09/2026, teste de preco).
-   Se mudar produto ou oferta na Cakto, reconfira com GET /public_api/offers/ (o campo `id` da
-   oferta E o short_id do link). */
+/* checkout dos degraus: os links moram em Lib.CHECKOUT (liberado.js). */
 const CHECKOUT = Lib.CHECKOUT;   /* links e precos no liberado.js (03/11/2026) */
 
 /* ===== PAGINA DE OFERTA (21/09/2026) =====
@@ -413,7 +409,7 @@ const CHECKOUT = Lib.CHECKOUT;   /* links e precos no liberado.js (03/11/2026) *
 
    Quem nao tem pagina de oferta continua indo direto pro checkout, sem mudanca. */
 const OFERTA = {
-  preco: 'https://pay.cakto.com.br/stud2no'
+  preco: 'https://pay.hotmart.com/T108598088V?checkoutMode=10'
 };
 
 /* ===== ORIGEM DA COMPRA (06/10/2026) =====

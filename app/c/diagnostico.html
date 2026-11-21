@@ -74,7 +74,7 @@ async function rodar(){
     const ks = await caches.keys();
     ver = ks.length ? ks.join(', ') : '(nessuna)';
   } catch(e){ ver = '(non riesco a leggerlo)'; }
-  $('ver').innerHTML = /lucrostudioit-v15/.test(ver)
+  $('ver').innerHTML = /lucrostudioit-v16/.test(ver)
     ? '<span class="ok">' + ver + ' (aggiornata)</span>'
     : '<span class="ruim">' + ver + ' (VECCHIA, è il problema)</span>';
 

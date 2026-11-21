@@ -7,13 +7,13 @@
    v3 (09/11/2026): escada nova. index.html = Controle do Studio (front enxuto),
    divulga.html = Agenda e clienti, precificacao.html = Magazzino prodotti. */
 /* v3: logo Guadagno in Mano + nome do produto. */
-const CACHE = 'lucrostudioit-v15';
+const CACHE = 'lucrostudioit-v16';
 const ARQS = [
   'hub.html', 'index.html', 'precificacao.html', 'listino.html', 'divulga.html', 'diagnostico.html', 'ativacao.js',
   /* 08/11/2026: a regra unica do que esta liberado (menu, Controle, Agenda e clienti, Magazzino prodotti) */
   'liberado.js',
   'manifest.webmanifest', 'icone-192.png', 'icone-512.png', 'icone-maskable-512.png',
-  'favicon-32.png', 'favicon-96.png', 'favicon-180.png', 'logo-branca.png', 'catalogo-faixa.jpg',
+  'favicon-32.png', 'favicon-96.png', 'favicon-180.png', 'logo-branca.png',
   /* Cada pasta serve o menu E os apps: é isso que mantém a chave no caminho de
      toda página, pro ícone nascer liberado no Compartilhar do Safari. */
   'c/', 'd/', 'p/', 'k/', 'cd/', 'cp/', 'ck/', 'pk/', 'pd/', 'kd/', 'cpk/', 'cpd/', 'ckd/', 'pkd/', 'cpkd/', 'u/', 'tudo/'

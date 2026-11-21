@@ -44,7 +44,7 @@
     prefixo: 'lucrostudioit_',
     cache: 'lucrostudioit-ativacao',
     painel: 'k=87e31ddf7f36a3098e38fde1d7ba4b5e',
-    comprar: 'https://pay.cakto.com.br/stud2no',
+    comprar: 'https://pay.hotmart.com/T108598088V?checkoutMode=10',
     marca: 'Guadagno in Mano',
     suporte: 'canarimtech@gmail.com'
   };
@@ -148,7 +148,7 @@
   }
   /* devolve 'ok' | 'reembolsado' | 'nao_achei' | 'erro' (rede, painel fora, timeout).
      No 'ok', os produtos do e-mail ficam em `ultimoP`. `novo`: acabou de comprar,
-     o painel olha a Cakto na hora */
+     o painel olha a compra na hora */
   var ultimoP = null;
   function conferir(h, novo) {
     if (navigator.onLine === false) return Promise.resolve('erro');
@@ -230,7 +230,7 @@
       '<h1 id="avTit">' + T.encerradoTit + '</h1>' +
       '<p class="av-sub">' + T.encerrado(esc(email || '')) + '</p>' +
       '<div class="av-info">' + ICO_X + '<div><p>' + T.encerradoInfo + '</p></div></div>' +
-      '<a class="av-btn" href="' + OFERTA.comprar + '?utm_source=app&utm_medium=reembolsado">' + T.voltar + '</a>' +
+      '<a class="av-btn" href="' + OFERTA.comprar + (OFERTA.comprar.indexOf('?') >= 0 ? '&' : '?') + 'utm_source=app&utm_medium=reembolsado">' + T.voltar + '</a>' +
       '<button class="av-btn sec" id="avOutro" type="button">' + T.outro + '</button>' +
     '</div>';
   }

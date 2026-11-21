@@ -115,17 +115,17 @@
   function tem(x) { return itens().indexOf(x) >= 0; }
 
   /* ===== CHECKOUT E A VITRINE DE CADA PARTE =====
-     Os links sao da Cakto (a fonte da verdade e a Cakto, conferir com
-     GET /public_api/offers/). O texto do card e o mesmo no menu e na tela travada.
-     `checkout` comecando com '#' e PROVISORIO: o produto ainda nao existe na Cakto,
-     e o card esconde o botao de compra (fica so o "Ja comprei"). */
+     Links de checkout da Hotmart (front + 3 bumps, 21/11/2026). O texto do card
+     e o mesmo no menu e na tela travada. `checkout` comecando com '#' e
+     PROVISORIO: o produto ainda nao tem link, e o card esconde o botao de
+     compra (fica so o "Ja comprei"). */
   /* VERSAO STUDIO: checkouts do Studio criados em 09/11/2026. Os da Lucro na Mao NAO
      podem ficar aqui (venderiam o produto errado). */
   var CHECKOUT = {
-    controle: 'https://pay.cakto.com.br/stud2no',
-    preco:    'https://pay.cakto.com.br/378fjp4',
-    listino:  'https://pay.cakto.com.br/q7zwf5p',
-    divulga:  'https://pay.cakto.com.br/jk6nxi8'
+    controle: 'https://pay.hotmart.com/T108598088V?checkoutMode=10',
+    preco:    'https://pay.hotmart.com/G108598102G?off=389xc3k7',
+    listino:  'https://pay.hotmart.com/U108598110N?off=lvn3j11u',
+    divulga:  'https://pay.hotmart.com/S108598116N?off=44f0ycjo'
   };
   function checkoutPronto(id) { return !!CHECKOUT[id] && CHECKOUT[id].charAt(0) !== '#'; }
 

@@ -2,8 +2,8 @@ if (window.gimFillAfterHero) window.gimFillAfterHero();
 /* ?dev=1 mostra pendências escondidas */
 if (/[?&]dev=1/.test(location.search)) document.documentElement.classList.add('dev');
 
-/* Preço num lugar só: troque aqui quando o Vini fechar o valor (câmbio Cakto). Vale para topo, oferta, CTA final e barra. */
-var PREZZO = '24,90 €'; /* Cakto IT (Boss 20/11 21:17, checkout relido). Sem dólar e sem riscado. Conferir de novo antes de publicar. */
+/* Preço num lugar só: troque aqui quando o Vini fechar o valor. Vale para topo, oferta, CTA final e barra. */
+var PREZZO = '24,90 €'; /* Boss 20/11 21:17, checkout relido. Sem dólar e sem riscado. Conferir de novo antes de publicar. */
 var PREZZO_MAGAZZINO = '9,90 €';
 var PREZZO_LISTINO = '14,90 €';
   var PREZZO_AGENDA = '9,90 €';
@@ -18,11 +18,17 @@ var PREZZO_LISTINO = '14,90 €';
   });
 })();
 
-/* Botão de compra (componente §1 da lp-designer): repassa UTMs e ids de clique. PENDENTE CHECKOUT: link Cakto. Repassa a query inteira da página */
-var CHECKOUT_URL = 'https://pay.cakto.com.br/stud2no'; /* Cakto stud2no, só localhost até o OK do Vini */
-/* GARANZIA (dias) e SUPPORTO (e-mail): confirmado pelo Vini 20/11 20:47 (14 dias).
+/* Botão de compra (componente §1 da lp-designer): CTAs da LP vão ao checkout front da Hotmart.
+   destino() junta a query da visita (gim_qs / location.search) à query do link (checkoutMode, off),
+   sem duplicar '?', sem perder checkoutMode/off e sem sobrescrever esses dois.
+   Bumps, se algum botão tiver data-checkout:
+   Magazzino https://pay.hotmart.com/G108598102G?off=389xc3k7
+   Listino   https://pay.hotmart.com/U108598110N?off=lvn3j11u
+   Agenda    https://pay.hotmart.com/S108598116N?off=44f0ycjo */
+var CHECKOUT_URL = 'https://pay.hotmart.com/T108598088V?checkoutMode=10';
+/* GARANZIA (dias) e SUPPORTO (e-mail): 15 dias (Hotmart).
    Vazio = os trechos somem para o comprador; com ?dev=1 aparecem [GARANZIA] / [SUPPORTO]. */
-var GARANZIA = '14';
+var GARANZIA = '15';
 var SUPPORTO = 'canarimtech@gmail.com';
 (function(){
   var dev = document.documentElement.classList.contains('dev');
@@ -51,7 +57,7 @@ var SUPPORTO = 'canarimtech@gmail.com';
   guardar();
   function destino(base){
     var u = new URL(base, location.href);
-    misturar(u); /* query da página + sessionStorage (Cakto descarta UTM/fbclid no redirect) */
+    misturar(u); /* query da página + sessionStorage; não sobrescreve checkoutMode/off do link */
     return u.toString();
   }
   document.querySelectorAll('a[data-cta]').forEach(function(a){

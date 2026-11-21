@@ -88,8 +88,9 @@ var PRINTS_OK = true;
   window.gimObservePrint = function(img){
     if (!img || !ver) return;
     img.decoding = 'async';
-    var first = img.closest('.st-parte.on');
-    if (first && !first.previousElementSibling) {
+    var parte = img.closest('.st-parte');
+    if (parte && !parte.classList.contains('on')) return; /* o story carrega o atual e o próximo */
+    if (parte && parte.classList.contains('on')) {
       if (window.gimHeroReady) assignPrint(img);
       else document.addEventListener('gim-hero-ready', function(){ assignPrint(img); }, { once: true });
       return;
@@ -117,9 +118,9 @@ document.querySelectorAll('.tela').forEach(function(t){
   if (img.complete && img.getAttribute('src') && img.naturalWidth === 0) vazio();
 });
 
-/* Story e trilho: esteira contínua em loop (regra fixa, Vini 21:05).
-   Anda sozinha, devagar, sem pulo. Sem setas; só bolinhas. Pausa no hover/toque.
-   Respeita prefers-reduced-motion. Swipe manual continua. */
+/* Story do topo: troca no lugar (exceção, Vini 01:54/01:55), igual à Lucro na Mão.
+   Come funziona / [data-trilho]: esteira contínua em loop (regra fixa, Vini 21:05 e 01:55).
+   Sem setas; só bolinhas. Pausa no hover/toque. Respeita prefers-reduced-motion. */
 (function(){
   var reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var SPEED = 42; /* px/s, esteira lenta */
@@ -162,58 +163,101 @@ document.querySelectorAll('.tela').forEach(function(t){
     return { ir: ir, medida: medida };
   }
 
-  /* Story do hero: filmstrip contínuo dentro do mockup, bolinhas fora */
+  /* Story do hero: troca de tela no lugar, igual à Lucro na Mão
+     (lucronamao.online: intervalo data-dur 3000 ms nas fotos;
+      transition opacity .5s ease, transform .55s cubic-bezier(.2,.7,.2,1)).
+     Um print inteiro por vez, loop infinito, só bolinhas. Sem esteira lateral. */
   (function(){
     var s = document.querySelector('[data-story]'); if (!s) return;
-    var trilha = s.querySelector('.st-trilha'), rot = s.querySelector('.st-rot'), pts = s.querySelector('[data-st-pontos]');
-    if (!trilha) return;
-    var partes = [].slice.call(trilha.querySelectorAll('.st-parte'));
+    var partes = [].slice.call(s.querySelectorAll('.st-parte'));
+    var rot = s.querySelector('.st-rot'), pts = s.querySelector('[data-st-pontos]');
+    var tela = s.querySelector('.st-btn') || s.querySelector('.st-palco');
     var n = partes.length; if (!n) return;
-    partes.forEach(function(p){ trilha.appendChild(p.cloneNode(true)); });
-    trilha.querySelectorAll('img[data-print]').forEach(function(img){
-      if (window.gimObservePrint) window.gimObservePrint(img);
-    });
     if (pts) {
-      for (var i = 0; i < n; i++) { var d = document.createElement('i'); d.setAttribute('aria-hidden','true'); pts.appendChild(d); }
+      for (var i = 0; i < n; i++) {
+        var d = document.createElement('i'); d.setAttribute('aria-hidden','true');
+        (function(j){ d.addEventListener('click', function(){ mostrar(j); }); })(i);
+        pts.appendChild(d);
+      }
     }
-    var pos = 0, setW = 0, hover = false, drag = false, vis = true, last = performance.now(), x0 = 0, p0 = 0;
-    function w(){ return s.querySelector('.st-palco').clientWidth || 0; }
-    function medida(){ setW = w() * n; }
-    function wrap(){ if (setW <= 0) return; if (pos >= setW) pos -= setW; if (pos < 0) pos += setW; }
-    function aplica(){ trilha.style.transform = 'translateX(' + (-pos) + 'px)'; }
-    function indice(){ var L = w(); return L ? ((Math.round(pos / L) % n) + n) % n : 0; }
-    function marca(){
-      var k = indice();
-      if (rot) rot.textContent = partes[k].dataset.rot || '';
-      if (pts) [].forEach.call(pts.querySelectorAll('i'), function(p, j){ p.classList.toggle('on', j === k); });
+    function carregar(p, depois){
+      if (!p) return;
+      var img = p.querySelector('img[data-print]');
+      if (!img) return;
+      var src = img.getAttribute('data-print');
+      function ready(){ if (depois) depois(); }
+      if (!src) return ready();
+      if (img.getAttribute('src') === src) {
+        if (img.complete) ready();
+        else img.addEventListener('load', ready, { once: true });
+        return;
+      }
+      function go(){
+        if (img.getAttribute('src') === src) return ready();
+        img.addEventListener('load', ready, { once: true });
+        img.src = src;
+      }
+      if (window.gimHeroReady) go();
+      else document.addEventListener('gim-hero-ready', go, { once: true });
     }
-    function ir(j){ medida(); pos = j * w(); wrap(); aplica(); marca(); }
-    if (pts) [].forEach.call(pts.querySelectorAll('i'), function(p, j){ p.addEventListener('click', function(){ ir(j); }); });
-    var btn = s.querySelector('.st-btn');
-    function alvo(){ return btn || s; }
-    alvo().addEventListener('pointerdown', function(e){
-      drag = true; hover = true; x0 = e.clientX; p0 = pos;
-      try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
-    });
-    alvo().addEventListener('pointermove', function(e){
-      if (!drag) return;
-      pos = p0 - (e.clientX - x0); wrap(); aplica(); marca();
-    });
-    function solta(){ if (!drag) return; drag = false; hover = false; wrap(); aplica(); }
-    alvo().addEventListener('pointerup', solta);
-    alvo().addEventListener('pointercancel', solta);
-    s.addEventListener('pointerenter', function(){ hover = true; });
-    s.addEventListener('pointerleave', function(){ if (!drag) hover = false; });
-    if ('IntersectionObserver' in window) new IntersectionObserver(function(e){ vis = e[0].isIntersecting; }).observe(s);
-    addEventListener('resize', function(){ var k = indice(); medida(); ir(k); });
-    function tick(now){
-      var dt = Math.min(0.05, (now - last) / 1000); last = now;
-      if (!reduz && !hover && !drag && vis && setW > 0) { pos += SPEED * dt; wrap(); aplica(); marca(); }
-      if (!reduz) requestAnimationFrame(tick);
+    var atual = 0, gasto = 0, ultimo = 0, segurando = false, fora = false, escondida = false;
+    if (reduz) {
+      s.classList.add('parado');
+      partes.forEach(function(p, k){ p.classList.toggle('on', k === 0); p.classList.remove('foi'); });
+      carregar(partes[0]);
+      if (rot) rot.textContent = partes[0].dataset.rot || '';
+      if (pts) [].forEach.call(pts.querySelectorAll('i'), function(p, j){ p.classList.toggle('on', j === 0); });
+      return;
     }
-    medida(); aplica(); marca();
-    if (reduz) s.classList.add('parado');
-    else requestAnimationFrame(tick);
+    function mostrar(i){
+      var antes = atual;
+      i = ((i % n) + n) % n;
+      partes.forEach(function(p, k){
+        p.classList.toggle('on', k === i);
+        p.classList.toggle('foi', k === antes && k !== i);
+      });
+      atual = i; gasto = 0;
+      if (rot) rot.textContent = partes[i].dataset.rot || '';
+      if (pts) [].forEach.call(pts.querySelectorAll('i'), function(p, j){ p.classList.toggle('on', j === i); });
+      carregar(partes[i], function(){ carregar(partes[(i + 1) % n]); });
+    }
+    function proximo(){ mostrar(atual + 1); }
+    function anterior(){ mostrar(atual - 1); }
+    function parado(){ return segurando || fora || escondida; }
+    function quadro(t){
+      requestAnimationFrame(quadro);
+      var dt = ultimo ? Math.min(t - ultimo, 100) : 0; ultimo = t;
+      if (parado()) return;
+      gasto += dt;
+      var fr = gasto / (+partes[atual].dataset.dur || 3200);
+      if (fr >= 1) { proximo(); }
+    }
+    var timer = 0, apertou = false;
+    if (tela) {
+      tela.addEventListener('pointerdown', function(e){
+        if (e.button > 0) return; apertou = true;
+        timer = setTimeout(function(){ segurando = true; }, 200);
+      });
+      function soltar(avanca){
+        clearTimeout(timer);
+        if (!apertou) return; apertou = false;
+        if (segurando) { segurando = false; }
+        else if (avanca) proximo();
+      }
+      tela.addEventListener('pointerup', function(){ soltar(true); });
+      tela.addEventListener('pointercancel', function(){ soltar(false); });
+      tela.addEventListener('pointerleave', function(){ soltar(false); });
+      tela.addEventListener('keydown', function(e){
+        if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); proximo(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); anterior(); }
+      });
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(es){ fora = !es[0].isIntersecting; }, { threshold: 0.2 }).observe(s);
+    }
+    document.addEventListener('visibilitychange', function(){ escondida = document.hidden; });
+    mostrar(0);
+    requestAnimationFrame(quadro);
   })();
 
   /* Trilho das funcionalidades: clones + scroll contínuo, só bolinhas */

@@ -10,7 +10,7 @@
 <link rel="preload" href="font/outfit-700-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" type="image/avif" href="img/foto-hero-600.avif" imagesrcset="img/foto-hero-480.avif 480w, img/foto-hero-600.avif 600w, img/foto-hero-1440.avif 1440w" imagesizes="(max-width: 959px) 300px, 100vw" fetchpriority="high">
 <!-- LP v2 · 20/11/2026 · Designer de LP. Copy: studio-it/copy-lp-v2.md (SHA-256 cacb906a…). Briefing: lp-v2/briefing-redesign.md (9554bc14…).
-     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 14: LCP (hero AVIF 600w, CSS abaixo da dobra, JS defer, duo/story depois do hero). Rodada 13: prints Il mio studio e LCP (hero AVIF/WebP responsivo, lazy abaixo da dobra). Rodada 12: 3º bump Agenda e clienti. Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
+     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 15: mockup troca de tela no lugar (intervalo e transição da Lucro na Mão). Rodada 14: LCP (hero AVIF 600w, CSS abaixo da dobra, JS defer, duo/story depois do hero). Rodada 13: prints Il mio studio e LCP (hero AVIF/WebP responsivo, lazy abaixo da dobra). Rodada 12: 3º bump Agenda e clienti. Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
 <style>
 
 [hidden]{display:none!important}
@@ -83,20 +83,23 @@ section{padding:32px 0}
 
 /* STORY do hero */
 .story{width:min(336px,86vw);position:relative}
-.st-parte{position:relative;flex:0 0 100%;width:100%;height:100%;opacity:1;transform:none;transition:none}
-.st-parte.on,.st-parte.foi{opacity:1;transform:none}
 .st-palco{position:relative;aspect-ratio:390/844;overflow:hidden}
-.st-trilha{display:flex;height:100%;will-change:transform}
+.st-trilha{position:absolute;inset:0}
+/* troca de tela no lugar, igual à Lucro na Mão (lucronamao.online): */
+.st-parte{position:absolute;inset:0;opacity:0;transform:translateX(7%);pointer-events:none;
+  transition:opacity .5s ease,transform .55s cubic-bezier(.2,.7,.2,1)}
+.st-parte.on{opacity:1;transform:none;z-index:1}
+.st-parte.foi{transform:translateX(-7%)}
 .st-pontos{display:flex;justify-content:center;align-items:center;gap:6px;margin:8px auto 0}
 .st-pontos i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);transition:.2s;cursor:pointer}
 .st-pontos i.on{width:22px;border-radius:4px;background:#fff}
 .st-barras{display:none!important}
-.st-barras i{flex:1;height:4px;border-radius:9px;background:rgba(255,255,255,.3);overflow:hidden}
-.st-barras b{display:block;height:100%;width:0;background:var(--verde)}
-.st-rot{display:table;margin:8px auto 0;white-space:nowrap;font:800 14px/1.2 var(--sans);color:#fff;background:rgba(24,22,27,.9);padding:8px 16px;border-radius:99px;box-shadow:0 6px 18px -8px rgba(0,0,0,.6)}
-.story.parado .st-barras{display:none}
+.st-rot{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:6;white-space:nowrap;
+  font:800 13px/1.2 var(--sans);color:#fff;background:rgba(24,22,27,.9);padding:8px 16px;border-radius:99px;
+  box-shadow:0 6px 18px -8px rgba(0,0,0,.6);pointer-events:none}
 .st-btn{position:absolute;inset:0;z-index:7;background:none;border:0;cursor:pointer}
 .st-btn:focus-visible{outline:3px solid #8fd4af;outline-offset:4px;border-radius:40px}
+@media (prefers-reduced-motion:reduce){.st-parte{transition:none}}
 
 /* barra fixa */
 .barra{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--linha);padding:10px 14px calc(10px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .3s}
@@ -234,15 +237,15 @@ var PAINEL_K = '87e31ddf7f36a3098e38fde1d7ba4b5e'; /* Chave k= da Guadagno, libe
           <div class="st-palco">
             <div class="st-trilha">
             <!-- legendas: COPY v2 §3 + copy-pendentes A2 -->
-            <div class="st-parte on" data-rot="Finita la cliente, la registri in pochi tocchi"><div class="tela" data-slot="t-registra-pagamento"><img data-print="img/app/t-registra-pagamento.webp" alt="Schermata dell'app: si sceglie come ha pagato la cliente." decoding="async" fetchpriority="low"><span class="slot">PENDENTE CONSTRUTOR<small>t-registra-pagamento.webp</small></span></div></div>
-            <div class="st-parte" data-rot="Il guadagno lo vedi subito"><div class="tela" data-slot="t-registrato"><img data-print="img/app/t-registrato.webp" alt="Schermata dell'app dopo la registrazione: il guadagno del trattamento." loading="lazy" decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-registrato.webp</small></span></div></div>
-            <div class="st-parte" data-rot="Aggiungi i tuoi trattamenti"><div class="tela" data-slot="t-trattamenti"><img data-print="img/app/t-trattamenti.webp" alt="Schermata Trattamenti: prezzo, materiale e guadagno di ognuno." loading="lazy" decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-trattamenti.webp</small></span></div></div>
-            <div class="st-parte" data-rot="A fine mese, il riepilogo"><div class="tela" data-slot="t-riepilogo"><img data-print="img/app/t-riepilogo.webp" alt="Schermata Riepilogo del mese." loading="lazy" decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-riepilogo.webp</small></span></div></div>
+            <div class="st-parte on" data-dur="3000" data-rot="Finita la cliente, la registri in pochi tocchi"><div class="tela" data-slot="t-registra-pagamento"><img data-print="img/app/t-registra-pagamento.webp" alt="Schermata dell'app: si sceglie come ha pagato la cliente." decoding="async" fetchpriority="low"><span class="slot">PENDENTE CONSTRUTOR<small>t-registra-pagamento.webp</small></span></div></div>
+            <div class="st-parte" data-dur="3000" data-rot="Il guadagno lo vedi subito"><div class="tela" data-slot="t-registrato"><img data-print="img/app/t-registrato.webp" alt="Schermata dell'app dopo la registrazione: il guadagno del trattamento." loading="lazy" decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-registrato.webp</small></span></div></div>
+            <div class="st-parte" data-dur="3000" data-rot="Aggiungi i tuoi trattamenti"><div class="tela" data-slot="t-trattamenti"><img data-print="img/app/t-trattamenti.webp" alt="Schermata Trattamenti: prezzo, materiale e guadagno di ognuno." loading="lazy" decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-trattamenti.webp</small></span></div></div>
+            <div class="st-parte" data-dur="3000" data-rot="A fine mese, il riepilogo"><div class="tela" data-slot="t-riepilogo"><img data-print="img/app/t-riepilogo.webp" alt="Schermata Riepilogo del mese." loading="lazy" decoding="async"><span class="slot">PENDENTE CONSTRUTOR<small>t-riepilogo.webp</small></span></div></div>
             </div>
+            <span class="st-rot" aria-live="polite">Finita la cliente, la registri in pochi tocchi</span>
             <button class="st-btn" type="button" aria-label="Scorri le schermate"></button>
           </div>
         </div></div>
-        <span class="st-rot" aria-live="polite">Finita la cliente, la registri in pochi tocchi</span>
         <div class="st-pontos" data-st-pontos aria-hidden="true"></div>
       </div>
     </div>

@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Grazie! · Guadagno in Mano</title>
+<meta name="theme-color" content="#18161B">
+<meta name="robots" content="noindex">
+<link rel="preload" href="../font/outfit-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- Grazie · site-v2 r4 · 20/11/2026 · Designer de LP.
+     Copy: obbligado-upsell-v1.md + acesso-app-it.md (SHA 9767d26358bf5ba13c7864b8d0bc4907b578b46cc7db989ea7269f4d23c52957).
+     Botão «Apri la tua app»: DOMINIO + /app/c/ ou, com ?agenda=1, /app/cd/. DOMINIO = https://guadagnoinmano.com. Sem /app/tudo/ como padrão.
+     4 frases revisadas pelo Copywriter (grazie-revisao-r4.md). Revisão nativa ainda pendente. Sem promessa de e-mail com link. Sem Purchase no navegador. Sem carrossel. -->
+<style>
+[hidden]{display:none!important}
+@font-face{font-family:'Outfit';font-weight:700;font-display:swap;src:url(../font/outfit-700-latin.woff2) format('woff2')}
+:root{--grafite:#3F3A45;--profundo:#18161B;--suave:#ECE9EF;--verde:#1E7D4F;--verde-esc:#17653F;--verde-bg:#E8F3ED;--tinta:#18161B;--cinza:#5E5866;--linha:rgba(63,58,69,.12);--sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--tit:'Outfit',var(--sans);--serif:Georgia,serif;--r:14px;--r-md:20px;--r-lg:28px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:16px/1.5 var(--sans);color:var(--tinta);background:#fff;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column}
+img{max-width:100%;display:block}
+h1,h2{font-family:var(--tit);font-weight:700;letter-spacing:-.02em;line-height:1.12}
+.serif{font-family:var(--serif);font-style:italic;font-weight:400}
+.ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.hero{position:relative;color:#fff;background:var(--profundo);overflow:hidden;text-align:center;padding:22px 20px 30px}
+.hero img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,22,27,.35),rgba(24,22,27,.85))}
+.hero>*{position:relative;z-index:1}
+.marca{height:28px;width:auto;margin:0 auto 4px}
+.descr{font:600 13px/1.2 var(--sans);color:rgba(255,255,255,.85);margin-bottom:28px}
+.ok{width:76px;height:76px;border-radius:50%;background:var(--verde);color:#fff;display:grid;place-items:center;margin:0 auto 18px;box-shadow:0 16px 30px -12px rgba(30,125,79,.9)}
+.ok .ic{width:38px;height:38px;stroke-width:2.4}
+h1{font-size:clamp(30px,7vw,44px)}
+main{flex:1;padding:28px 0 44px}
+.w{max-width:600px;margin:0 auto;padding:0 20px}
+.card{background:#fff;border:1px solid var(--linha);border-radius:var(--r-md);padding:16px 18px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 10px 24px -20px rgba(24,22,27,.4);margin-bottom:12px}
+.card .bolla{width:44px;height:44px;border-radius:12px;background:var(--verde-bg);color:var(--verde);display:grid;place-items:center;flex:0 0 44px}
+.card h2{font-size:17px;margin-bottom:4px}
+.card p{font-size:15px;color:var(--cinza)}
+a[data-mail]{color:var(--verde-esc);font-weight:700;word-break:break-all}
+.gar{background:var(--verde-bg);border:0}
+.gar .bolla{background:#fff}
+.subt{text-align:center;color:var(--cinza);font-size:17px;margin:0 0 18px}
+.passi{list-style:none;display:grid;gap:10px;margin:0 0 18px}
+.passo{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--linha);border-radius:var(--r-md);padding:14px 16px;box-shadow:0 10px 24px -20px rgba(24,22,27,.4)}
+.passo .num{width:30px;height:30px;border-radius:50%;background:var(--verde);color:#fff;font:800 14px var(--sans);display:grid;place-items:center;flex:0 0 30px}
+.passo p{font-size:15.5px;line-height:1.4}
+.cta{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;background:var(--verde);color:#fff;text-decoration:none;font-size:17px;font-weight:800;border-radius:var(--r);padding:16px 22px;box-shadow:0 16px 30px -16px rgba(30,125,79,.9);max-width:440px;margin:0 auto 22px}
+.cta .ic{width:20px;height:20px}
+.add{text-align:center;font-size:14.5px;color:var(--cinza);margin:0 0 16px}
+.accede{background:var(--suave);border-radius:var(--r-lg);padding:20px 18px;margin:0 0 16px}
+.accede h2{font-size:20px;margin:0 0 12px}
+.accede p,.accede li{font-size:15px;line-height:1.45;color:var(--tinta)}
+.accede p{margin:0 0 10px}
+.accede .cit{color:var(--cinza)}
+.accede ul,.accede ol{margin:0 0 12px 1.15em}
+.accede li{margin:0 0 6px}
+.accede h3{font:700 14px/1.3 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--grafite);margin:14px 0 8px}
+.pc-lead{font-weight:700;margin-bottom:10px}
+
+footer{background:var(--profundo);color:#a9a2b0;font-size:13px;text-align:center;padding:24px 20px 30px}
+footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;padding:13px 0;min-height:44px}
+[data-dev]{display:none!important}
+.dev [data-dev]{display:block!important;outline:2px dashed #e0a800;margin:14px 0;padding:10px;font-size:14px}
+.dev [data-dev]:before{content:"DEV · " attr(data-dev);display:block;background:#ffd84d;color:#000;font:700 11px var(--sans);padding:3px 8px;margin-bottom:6px}
+@media (min-width:960px){.hero{padding:44px 20px 64px}main{padding:44px 0 64px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+ <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></symbol>
+ <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+ <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+</svg>
+<header class="hero">
+  <img class="bg" src="../img/foto-hero-unha-800.webp" srcset="../img/foto-hero-unha-800.webp 800w, ../img/foto-hero-unha-1200.webp 1200w" sizes="100vw" width="800" height="500" alt="" fetchpriority="high">
+  <img class="marca" src="../img/gim-logo-branca.png" alt="Guadagno in Mano" height="28">
+  <p class="descr">per estetiste e onicotecniche</p>
+  <div class="ok" aria-hidden="true"><svg class="ic"><use href="#i-check"/></svg></div>
+  <h1>Grazie! Ora apri <span class="serif">Guadagno in Mano</span></h1>
+</header>
+<main><div class="w">
+  <p class="subt">Tre passi, e lo fai una volta sola su questo telefono.</p>
+  <ol class="passi">
+    <li class="passo"><span class="num">1</span><div><p>Apri il link dell'app sul telefono. Su iPhone, aprilo con Safari.</p></div></li>
+    <li class="passo"><span class="num">2</span><div><p>Aggiungi l'icona alla schermata Home: l'app ti mostra come si fa.</p></div></li>
+    <li class="passo"><span class="num">3</span><div><p>Attiva l'app con la stessa email che hai scritto quando hai pagato.</p></div></li>
+  </ol>
+  <a class="cta" id="apri" hidden>Apri la tua app <svg class="ic"><use href="#i-arrow"/></svg></a>
+  <p class="dev-only" data-dev="DOMINIO = https://guadagnoinmano.com. Botão visível. Sem /app/tudo/ como padrão." id="dev-link"></p>
+
+  <!-- [COME SI ACCEDE] acesso-app-it.md seção (b). 4 frases revisadas pelo Copywriter (grazie-revisao-r4.md, SHA d688b700…). Revisão nativa ainda pendente. -->
+  <section class="accede" id="come-si-accede">
+    <h2>Come si accede</h2>
+    <p id="accede-btn-txt" hidden><!-- Revisado pelo Copywriter (grazie-revisao-r4.md, SHA d688b700…). Revisão nativa ainda pendente. -->Apri l'app con il pulsante «Apri la tua app», qui in questa pagina. Non serve aspettare un'email.</p>
+    <p>Nella prima apertura su questo telefono, l'app mostra la schermata di attivazione:</p>
+    <ul>
+      <li>«Attiva la tua app»</li>
+      <li>«Scrivi l'email che hai usato per l'acquisto. Lo fai una volta sola su questo telefono.»</li>
+      <li>«I tuoi trattamenti restano salvati solo su questo telefono. Niente va nel cloud e nessun altro vede i tuoi numeri.»</li>
+      <li>«Cambi telefono? Fai il backup nell'app (arriva sul tuo WhatsApp) e ripristinalo sul telefono nuovo.»</li>
+      <li>«Usa la stessa email che hai scritto quando hai pagato.»</li>
+      <li>Campo: «La tua email di acquisto»</li>
+      <li>Pulsante: «Attiva l'app»</li>
+      <li>«Non ricordi quale email hai usato? È quella che hai scritto quando hai pagato.»</li>
+    </ul>
+    <p><!-- Revisado pelo Copywriter (grazie-revisao-r4.md, SHA d688b700…). Revisão nativa ainda pendente. -->Scrivi la stessa email che hai usato per pagare e tocca «Attiva l'app». Se è quella giusta, vedi «App attivata. Buon lavoro!».</p>
+    <p>Se il menu si apre e l'hai già acquistato, l'hub dice:</p>
+    <p class="cit">«Se l'hai già acquistato, attivalo con la stessa email che hai usato per pagare.»</p>
+    <p>Se un modulo (Magazzino, Listino o Agenda) appare bloccato, la card ha il pulsante «L'ho già acquistato: sblocca con la mia email». Questa schermata usa:</p>
+    <ul>
+      <li>«Sblocca quello che hai acquistato»</li>
+      <li>«Scrivi l'email che hai usato per l'acquisto. Quello che hai acquistato si sblocca subito.»</li>
+      <li>Pulsante «Sblocca»</li>
+      <li>«Non ora»</li>
+    </ul>
+  </section>
+
+  <!-- [COME SI ACCEDE DAL TELEFONO] acesso-app-it.md seção (c). -->
+  <section class="accede" id="dal-telefono">
+    <h2>Come si accede dal telefono</h2>
+    <p class="pc-lead">Hai pagato dal computer?</p>
+    <p><!-- Revisado pelo Copywriter (grazie-revisao-r4.md, SHA d688b700…). Revisão nativa ainda pendente. -->Apri il link dell'app nel browser del telefono e aggiungi l'app alla schermata Home. Così si apre dall'icona, senza browser, e funziona anche senza internet.</p>
+    <p class="cit">«Da quel momento l'app si apre dall'icona, come le altre, e funziona anche senza internet.»</p>
+    <h3>iPhone (Safari)</h3>
+    <ol>
+      <li>«Apri questo link <strong>in Safari</strong>»</li>
+      <li>«Tocca i <strong>tre puntini</strong>, nell'angolo del browser»</li>
+      <li>«Tocca <strong>Condividi</strong>»</li>
+      <li>«Tocca <strong>Mostra altro</strong>»</li>
+      <li>«Tocca <strong>Aggiungi alla schermata Home</strong>»</li>
+      <li>«Tocca <strong>Aggiungi</strong>, in alto»</li>
+    </ol>
+    <h3>Android (Chrome)</h3>
+    <p>Se Chrome ti propone di installarla, la installi in un tocco.</p>
+    <p><!-- Revisado pelo Copywriter (grazie-revisao-r4.md, SHA d688b700…). Revisão nativa ainda pendente. -->Se la finestra per installarla non compare, segui la guida dell'app:</p>
+    <ol>
+      <li>«Tocca il pulsante del <strong>menu</strong>, in alto nel browser»</li>
+      <li>«Tocca <strong>Installa l'app</strong> (o <strong>Aggiungi l'app alla schermata Home</strong>)»</li>
+      <li>«Conferma su <strong>Installa</strong>»</li>
+    </ol>
+    <p>Nelle Impostazioni dell'app, lo stesso percorso appare come «L'app sul telefono»: «Ha la sua icona, si apre senza browser e funziona anche senza internet.» Pulsante: «Aggiungi l'app alla schermata Home».</p>
+  </section>
+
+  <p class="add">Quello che hai aggiunto all'ordine lo trovi dentro la stessa app.</p>
+  <div class="card gar"><span class="bolla"><svg class="ic"><use href="#i-shield"/></svg></span><div><p>Hai <span data-gn></span> giorni dall'acquisto: scrivi a <a data-mail></a> e ti rimborsiamo tutto.</p></div></div>
+  <div class="card"><span class="bolla"><svg class="ic"><use href="#i-mail"/></svg></span><div><p>Problemi? Scrivi a <a data-mail></a></p></div></div>
+</div></main>
+<footer>
+  <a href="../#termini">Termini e condizioni</a>·<a href="../#privacy">Informativa sulla privacy</a>·<a href="../#note">Note legali</a>
+  <p>Guadagno in Mano · <a data-mail style="padding:0;min-height:0;margin:0"></a></p>
+</footer>
+<script>
+if (/[?&]dev=1/.test(location.search)) document.documentElement.classList.add('dev');
+var GARANZIA = '14', SUPPORTO = 'canarimtech@gmail.com';
+var DOMINIO = 'https://guadagnoinmano.com'; /* App no mesmo site, em /app/. Sem barra no fim. Nunca usar /app/tudo/ como padrão. */
+var PIXEL_ID = '1183172951038807';    /* Meta Pixel Guadagno (só PageView). Purchase só pela CAPI. */
+var PAINEL_K = '87e31ddf7f36a3098e38fde1d7ba4b5e'; /* script de visitas do painel, logo depois do pixel. */
+
+var ATTR_KEY = 'gim_attr';
+var ATTR_OK = /^(utm_[a-z0-9_]+|fbclid)$/i;
+function attrLer(){
+  function parseObj(s){ try { return s ? JSON.parse(s) : null; } catch(e){ return null; } }
+  function fromQs(s){
+    var out = {};
+    if (!s) return out;
+    try {
+      new URLSearchParams(String(s).replace(/^\?/, '')).forEach(function(v, k){ if (ATTR_OK.test(k) && v) out[k] = v; });
+    } catch(e){}
+    return out;
+  }
+  try {
+    var qs = fromQs(sessionStorage.getItem('gim_qs'));
+    if (Object.keys(qs).length) return qs;
+  } catch(e){}
+  var a = parseObj(localStorage.getItem(ATTR_KEY)) || parseObj(sessionStorage.getItem(ATTR_KEY)) || {};
+  return a && typeof a === 'object' ? a : {};
+}
+function attrAtual(){
+  var q = new URLSearchParams(location.search), fromQ = {}, has = false;
+  q.forEach(function(v, k){ if (ATTR_OK.test(k) && v) { fromQ[k] = v; has = true; } });
+  var stored = attrLer(), out = {};
+  if (!has) {
+    Object.keys(stored).forEach(function(k){ if (ATTR_OK.test(k) && stored[k]) out[k] = String(stored[k]); });
+  } else {
+    Object.keys(stored).forEach(function(k){ if (ATTR_OK.test(k) && stored[k]) out[k] = String(stored[k]); });
+    Object.keys(fromQ).forEach(function(k){ out[k] = fromQ[k]; });
+  }
+  out.ts = Date.now();
+  try { var json = JSON.stringify(out); sessionStorage.setItem(ATTR_KEY, json); localStorage.setItem(ATTR_KEY, json); } catch(e){}
+  return out;
+}
+function attrQuery(){
+  var a = attrAtual(), sp = new URLSearchParams();
+  Object.keys(a).forEach(function(k){ if (ATTR_OK.test(k) && a[k]) sp.set(k, a[k]); });
+  return sp;
+}
+function attrAplicar(url){
+  var u = new URL(url, location.origin);
+  attrQuery().forEach(function(v, k){ if (!u.searchParams.has(k)) u.searchParams.set(k, v); });
+  return u.toString();
+}
+/* Recoloca UTM/fbclid na URL com replaceState, sem recarregar, para o script de visitas futuro. Não grava nem apaga agenda=1. */
+function attrNaBarra(){
+  var u = new URL(location.href), a = attrAtual(), changed = false;
+  Object.keys(a).forEach(function(k){
+    if (!ATTR_OK.test(k) || !a[k]) return;
+    if (u.searchParams.get(k) !== String(a[k])) { u.searchParams.set(k, a[k]); changed = true; }
+  });
+  if (changed) history.replaceState(null, '', u.pathname + u.search + u.hash);
+}
+/* DOMINIO + /app/c/ ; com ?agenda=1 → /app/cd/. argumento opcional só para teste; o valor gravado na página é DOMINIO. */
+function appUrl(dominio){
+  var d = (dominio !== undefined && dominio !== null) ? dominio : DOMINIO;
+  if (!d) return '';
+  var agenda = new URLSearchParams(location.search).get('agenda') === '1';
+  return String(d).replace(/\/$/, '') + (agenda ? '/app/cd/' : '/app/c/');
+}
+
+(function(){
+  attrNaBarra();
+  if (PIXEL_ID) { !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); fbq('init', PIXEL_ID); fbq('track','PageView'); }
+  if (PAINEL_K) { var sc = document.createElement('script'); sc.src = 'https://painel.labofertas.com/api/lp/script?k=' + encodeURIComponent(PAINEL_K); sc.async = true; document.head.appendChild(sc); }
+  document.querySelectorAll('[data-gn]').forEach(function(e){ e.textContent = GARANZIA; });
+  document.querySelectorAll('a[data-mail]').forEach(function(a){ a.textContent = SUPPORTO; a.href = 'mailto:' + SUPPORTO; });
+  var url = appUrl();
+  var btn = document.getElementById('apri');
+  var intro = document.getElementById('accede-btn-txt');
+  if (url) { btn.href = attrAplicar(url); btn.hidden = false; if (intro) intro.hidden = false; }
+  else { btn.removeAttribute('href'); btn.hidden = true; if (intro) intro.hidden = true; }
+  var dev = document.getElementById('dev-link');
+  if (dev) {
+    var agenda = new URLSearchParams(location.search).get('agenda') === '1';
+    dev.textContent = (DOMINIO || '[DOMINIO]') + (agenda ? '/app/cd/' : '/app/c/') + ' · botão ' + (url ? 'visível' : 'escondido');
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+# Secrets and keys
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+id_rsa*
+id_ed25519*
+
+# Dependencies and OS junk
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.temp
+*.swp
+*~
+*.bak
+*.orig
+*.log
+*.zip
+
+# Playwright / QA
+playwright-report/
+test-results/
+.playwright/
+prints/
+prints-qa/
+
+# Internal markdown (keep photo credits)
+*.md
+!fontes-fotos.md
+
+# Construtor's app — later commit
+/app/
+
+# Held / unused assets
+**/_nao-usar/

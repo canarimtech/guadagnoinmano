@@ -32,7 +32,6 @@ prints-qa/
 
 # Internal markdown (keep photo credits)
 *.md
-!fontes-fotos.md
 
 # Construtor's app — later commit
 /app/

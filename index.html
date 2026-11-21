@@ -10,7 +10,7 @@
 <link rel="preload" href="font/outfit-700-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="img/foto-hero-800.webp" imagesrcset="img/foto-hero-800.webp 800w, img/foto-hero-1600.webp 1600w" imagesizes="100vw" fetchpriority="high">
 <!-- LP v2 · 20/11/2026 · Designer de LP. Copy: studio-it/copy-lp-v2.md (SHA-256 cacb906a…). Briefing: lp-v2/briefing-redesign.md (9554bc14…).
-     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
+     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 12: 3º bump Agenda e clienti. Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
 <style>
 [hidden]{display:none!important}
 @font-face{font-family:'Outfit';font-weight:700;font-style:normal;font-display:swap;src:url(font/outfit-700-latin.woff2) format('woff2')}
@@ -152,6 +152,7 @@ section{padding:32px 0}
 .bump h3{font-size:19px;margin-bottom:4px}
 .bump p{font-size:14.5px;color:var(--cinza);line-height:1.4}
 .bump-testo{grid-template-columns:1fr}
+@media (max-width:959px){section:has(.bumps){padding:10px 0}.bumps{gap:8px;margin-top:4px}.bump{padding:10px;grid-template-columns:76px 1fr;gap:12px}}
 .nota{font-size:14px;color:var(--cinza);margin-top:14px;display:flex;gap:8px;align-items:center}
 .nota .ic{width:18px;height:18px;color:var(--verde)}
 
@@ -226,8 +227,9 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}.rivela{opacity:1;transform:none}}
 
 /* DESKTOP */
-@media (min-width:600px){.cards{grid-template-columns:1fr 1fr}.sigilli{grid-template-columns:repeat(3,auto);justify-content:center;gap:28px}.bumps{grid-template-columns:1fr 1fr}.slide{flex-basis:42%}}
+@media (min-width:600px){.cards{grid-template-columns:1fr 1fr}.sigilli{grid-template-columns:repeat(3,auto);justify-content:center;gap:28px}.slide{flex-basis:42%}}
 @media (min-width:960px){
+  .bumps{grid-template-columns:repeat(3,1fr);gap:16px}
   section{padding:88px 0}
   .hero{padding:28px 0 80px}
   .hero .w{grid-template-columns:1.1fr .9fr;column-gap:56px;align-items:center}
@@ -415,6 +417,10 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
         <div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="bump-listino"><img data-print="img/app/bump-listino.webp" loading="lazy" alt="Listino prezzi pronto da mandare."><span class="slot">PENDENTE CONSTRUTOR<small>bump-listino.webp</small></span></div></div></div>
         <div><div class="bump-meta"><span class="tag">Facoltativo</span><span class="bump-prezzo" data-prezzo-bump="listino"></span></div><h3>Listino prezzi</h3><p>Il tuo listino, con i tuoi prezzi, pronto da mandare alle clienti.</p></div>
       </div>
+      <div class="bump rivela">
+        <div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="bump-agenda"><img data-print="img/app/agenda.webp" loading="lazy" alt="Schermata Agenda e clienti: gli appuntamenti della settimana."><span class="slot">PENDENTE CONSTRUTOR<small>agenda.webp</small></span></div></div></div>
+        <div><div class="bump-meta"><span class="tag">Facoltativo</span><span class="bump-prezzo" data-prezzo-bump="agenda"></span></div><h3>Agenda e clienti</h3><p>Gli appuntamenti della settimana e il promemoria pronto su WhatsApp.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -513,11 +519,12 @@ if (/[?&]dev=1/.test(location.search)) document.documentElement.classList.add('d
 var PREZZO = '24,90 €'; /* Cakto IT (Boss 20/11 21:17, checkout relido). Sem dólar e sem riscado. Conferir de novo antes de publicar. */
 var PREZZO_MAGAZZINO = '9,90 €';
 var PREZZO_LISTINO = '14,90 €';
+  var PREZZO_AGENDA = '9,90 €';
 (function(){
   var dev = document.documentElement.classList.contains('dev'), v = PREZZO || (dev ? '[PREZZO]' : '');
   document.querySelectorAll('[data-prezzo]').forEach(function(e){ e.textContent = v; });
   if (!v) document.querySelectorAll('[data-riga-prezzo]').forEach(function(e){ e.hidden = true; });
-  var bumps = { magazzino: PREZZO_MAGAZZINO, listino: PREZZO_LISTINO };
+  var bumps = { magazzino: PREZZO_MAGAZZINO, listino: PREZZO_LISTINO, agenda: PREZZO_AGENDA };
   document.querySelectorAll('[data-prezzo-bump]').forEach(function(e){
     var k = e.getAttribute('data-prezzo-bump'), val = bumps[k] || (dev ? '['+k+']' : '');
     e.textContent = val; if (!val) e.hidden = true;

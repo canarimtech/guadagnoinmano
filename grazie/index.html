@@ -7,9 +7,9 @@
 <meta name="theme-color" content="#18161B">
 <meta name="robots" content="noindex">
 <link rel="preload" href="../font/outfit-700-latin.woff2" as="font" type="font/woff2" crossorigin>
-<!-- Grazie · site-v2 r4 · 20/11/2026 · Designer de LP.
+<!-- Grazie · site-v2 r8 · 21/11/2026 · Designer de LP.
      Copy: obbligado-upsell-v1.md + acesso-app-it.md (SHA 9767d26358bf5ba13c7864b8d0bc4907b578b46cc7db989ea7269f4d23c52957).
-     Botão «Apri la tua app»: DOMINIO + /app/c/ ou, com ?agenda=1, /app/cd/. DOMINIO = https://guadagnoinmano.com. Sem /app/tudo/ como padrão.
+     Botão «Apri la tua app»: DOMINIO + APP_PATH (/app/c/, confirmado pelo Construtor). Um único modo.
      4 frases revisadas pelo Copywriter (grazie-revisao-r4.md). Revisão nativa ainda pendente. Sem promessa de e-mail com link. Sem Purchase no navegador. Sem carrossel. -->
 <style>
 [hidden]{display:none!important}
@@ -87,7 +87,7 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
     <li class="passo"><span class="num">3</span><div><p>Attiva l'app con la stessa email che hai scritto quando hai pagato.</p></div></li>
   </ol>
   <a class="cta" id="apri" hidden>Apri la tua app <svg class="ic"><use href="#i-arrow"/></svg></a>
-  <p class="dev-only" data-dev="DOMINIO = https://guadagnoinmano.com. Botão visível. Sem /app/tudo/ como padrão." id="dev-link"></p>
+  <p class="dev-only" data-dev="DOMINIO + APP_PATH = https://guadagnoinmano.com/app/c/. Botão visível." id="dev-link"></p>
 
   <!-- [COME SI ACCEDE] acesso-app-it.md seção (b). 4 frases revisadas pelo Copywriter (grazie-revisao-r4.md, SHA d688b700…). Revisão nativa ainda pendente. -->
   <section class="accede" id="come-si-accede">
@@ -153,7 +153,8 @@ footer a{color:#d9d4de;text-decoration:none;margin:0 8px;display:inline-block;pa
 <script>
 if (/[?&]dev=1/.test(location.search)) document.documentElement.classList.add('dev');
 var GARANZIA = '14', SUPPORTO = 'canarimtech@gmail.com';
-var DOMINIO = 'https://guadagnoinmano.com'; /* App no mesmo site, em /app/. Sem barra no fim. Nunca usar /app/tudo/ como padrão. */
+var DOMINIO = 'https://guadagnoinmano.com'; /* App no mesmo site, em /app/. Sem barra no fim. */
+var APP_PATH = '/app/c/'; /* Confirmado pelo Construtor: único destino do botão «Apri la tua app». Quem comprou bumps ativa com o e-mail da compra. */
 var PIXEL_ID = '1183172951038807';    /* Meta Pixel Guadagno (só PageView). Purchase só pela CAPI. */
 var PAINEL_K = '87e31ddf7f36a3098e38fde1d7ba4b5e'; /* script de visitas do painel, logo depois do pixel. */
 
@@ -200,7 +201,7 @@ function attrAplicar(url){
   attrQuery().forEach(function(v, k){ if (!u.searchParams.has(k)) u.searchParams.set(k, v); });
   return u.toString();
 }
-/* Recoloca UTM/fbclid na URL com replaceState, sem recarregar, para o script de visitas futuro. Não grava nem apaga agenda=1. */
+/* Recoloca UTM/fbclid na URL com replaceState, sem recarregar, para o script de visitas futuro. */
 function attrNaBarra(){
   var u = new URL(location.href), a = attrAtual(), changed = false;
   Object.keys(a).forEach(function(k){
@@ -209,12 +210,11 @@ function attrNaBarra(){
   });
   if (changed) history.replaceState(null, '', u.pathname + u.search + u.hash);
 }
-/* DOMINIO + /app/c/ ; com ?agenda=1 → /app/cd/. argumento opcional só para teste; o valor gravado na página é DOMINIO. */
+/* DOMINIO + APP_PATH. argumento opcional só para teste; o valor gravado na página é DOMINIO + APP_PATH. */
 function appUrl(dominio){
   var d = (dominio !== undefined && dominio !== null) ? dominio : DOMINIO;
-  if (!d) return '';
-  var agenda = new URLSearchParams(location.search).get('agenda') === '1';
-  return String(d).replace(/\/$/, '') + (agenda ? '/app/cd/' : '/app/c/');
+  if (!d || !APP_PATH) return '';
+  return String(d).replace(/\/$/, '') + APP_PATH;
 }
 
 (function(){
@@ -230,8 +230,7 @@ function appUrl(dominio){
   else { btn.removeAttribute('href'); btn.hidden = true; if (intro) intro.hidden = true; }
   var dev = document.getElementById('dev-link');
   if (dev) {
-    var agenda = new URLSearchParams(location.search).get('agenda') === '1';
-    dev.textContent = (DOMINIO || '[DOMINIO]') + (agenda ? '/app/cd/' : '/app/c/') + ' · botão ' + (url ? 'visível' : 'escondido');
+    dev.textContent = (DOMINIO || '[DOMINIO]') + APP_PATH + ' · botão ' + (url ? 'visível' : 'escondido');
   }
 })();
 </script>

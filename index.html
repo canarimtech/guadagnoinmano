@@ -10,7 +10,7 @@
 <link rel="preload" href="font/outfit-700-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" type="image/avif" href="img/foto-hero-600.avif" imagesrcset="img/foto-hero-480.avif 480w, img/foto-hero-600.avif 600w, img/foto-hero-1440.avif 1440w" imagesizes="(max-width: 959px) 300px, 100vw" fetchpriority="high">
 <!-- LP v2 · 20/11/2026 · Designer de LP. Copy: studio-it/copy-lp-v2.md (SHA-256 cacb906a…). Briefing: lp-v2/briefing-redesign.md (9554bc14…).
-     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 15: mockup troca de tela no lugar (intervalo e transição da Lucro na Mão). Rodada 14: LCP (hero AVIF 600w, CSS abaixo da dobra, JS defer, duo/story depois do hero). Rodada 13: prints Il mio studio e LCP (hero AVIF/WebP responsivo, lazy abaixo da dobra). Rodada 12: 3º bump Agenda e clienti. Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
+     Rodada 2 (20/11): Parte A de copy-pendentes.md (6af270e9…). Rodada 16: esteira Come funziona remede após o CSS; aria carosello. Rodada 15: mockup troca de tela no lugar (intervalo e transição da Lucro na Mão). Rodada 14: LCP (hero AVIF 600w, CSS abaixo da dobra, JS defer, duo/story depois do hero). Rodada 13: prints Il mio studio e LCP (hero AVIF/WebP responsivo, lazy abaixo da dobra). Rodada 12: 3º bump Agenda e clienti. Rodada 10: «Niente abbonamento» no card da oferta. Rodada 9: PIXEL_ID e PAINEL_K da Guadagno ligados no localhost. Rodada 8: PREZZO 24,90 €; bumps 9,90 / 14,90 €; faixa de status no mockup; UTM no sessionStorage. Rodada 7: esteira contínua sem setas; PRINTS_OK=true (8 webp, listino refeito). Rodada 6c: resposta fatture/tasse travada (faq-fatture-v1, 44165ce7). Rodada 6b: FAQ — internet fora (OK Copywriter); fatture+tasse juntadas. Rodada 6: hero-duo unha+estética, overlay mais claro, FAQ 8, seção 9 compacta. Rodada 5: copy-lp-v3f (5657fca5…), GARANZIA=14 / SUPPORTO. Rodada 4: copy-lp-v3d (e684f3d7…) + validacao-cortes-v2 (86bd68c9…); GARANZIA vazia; selos Carta/PayPal. Rodada 3b: copy-lp-v3b (c4671a7f…), PREZZO vazio = sem preço visível. Rodada 3: skill lp-designer modelo 01; sem etiquetas de exemplo; bumps sem preço; PREZZO e CHECKOUT_URL num lugar só. Pendências escondidas aparecem só com ?dev=1. -->
 <style>
 
 [hidden]{display:none!important}
@@ -232,7 +232,7 @@ var PAINEL_K = '87e31ddf7f36a3098e38fde1d7ba4b5e'; /* Chave k= da Guadagno, libe
 
     <div class="palco">
       <!-- Momento assinatura: story no celular (padrão Revendedora). Slots: img/app/*.webp do Construtor -->
-      <div class="story" data-story role="region" aria-roledescription="carrossel" aria-label="Guadagno in Mano in 4 schermate">
+      <div class="story" data-story role="region" aria-roledescription="carosello" aria-label="Guadagno in Mano in 4 schermate">
                 <div class="cel"><div class="vetro"><span class="isola"></span>
           <div class="st-palco">
             <div class="st-trilha">
@@ -301,7 +301,7 @@ var PAINEL_K = '87e31ddf7f36a3098e38fde1d7ba4b5e'; /* Chave k= da Guadagno, libe
 <section class="alt" id="come-funziona">
   <div class="w">
     <h2 class="rivela">Come <span class="serif">funziona</span></h2>
-    <div class="trilho" data-trilho tabindex="0" role="region" aria-roledescription="carrossel" aria-label="Le schermate di Guadagno in Mano">
+    <div class="trilho" data-trilho tabindex="0" role="region" aria-roledescription="carosello" aria-label="Le schermate di Guadagno in Mano">
       <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-registra-pagamento"><img data-print="img/app/t-registra-pagamento.webp" loading="lazy" decoding="async" alt="Registrare un trattamento: come ha pagato la cliente."><span class="slot">PENDENTE CONSTRUTOR<small>t-registra-pagamento.webp</small></span></div></div></div>
         <figcaption><b><span class="num">1</span>Registri in pochi tocchi</b>Il trattamento, come ti ha pagato e, se serve, il nome.</figcaption></figure>
       <figure class="slide"><div class="cel"><div class="vetro"><span class="isola"></span><div class="tela" data-slot="t-registrato"><img data-print="img/app/t-registrato.webp" loading="lazy" decoding="async" alt="Il guadagno del trattamento appena registrato."><span class="slot">PENDENTE CONSTRUTOR<small>t-registrato.webp</small></span></div></div></div>

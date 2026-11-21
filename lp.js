@@ -141,8 +141,10 @@ document.querySelectorAll('.tela').forEach(function(t){
       var p = passo(), cur = t.scrollLeft, base = cur >= setW ? setW : 0;
       t.scrollTo({ left: base + j * p, behavior: reduz ? 'auto' : 'smooth' });
     }
+    function recmedir(){ medida(); wrap(); marca(); }
     function tick(now){
       var dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (setW <= 0) medida();
       if (!paused && !hover && !drag && vis && setW > 0) { t.scrollLeft += SPEED * dt; wrap(); }
       marca();
       if (!reduz) requestAnimationFrame(tick);
@@ -156,8 +158,29 @@ document.querySelectorAll('.tela').forEach(function(t){
       if (e.key === 'ArrowRight') { e.preventDefault(); ir((indice() + 1) % nOrig); }
       if (e.key === 'ArrowLeft') { e.preventDefault(); ir((indice() + nOrig - 1) % nOrig); }
     });
-    addEventListener('resize', function(){ medida(); wrap(); marca(); });
+    addEventListener('resize', recmedir);
     if ('IntersectionObserver' in window) new IntersectionObserver(function(e){ vis = e[0].isIntersecting; }).observe(t);
+    if (typeof ResizeObserver === 'function') new ResizeObserver(function(){ recmedir(); }).observe(t);
+    t.querySelectorAll('img').forEach(function(img){
+      if (!img.complete) img.addEventListener('load', recmedir);
+    });
+    function cssPronto(link){
+      if (!link) return true;
+      if (link.media === 'print') return false;
+      try { return !!(link.sheet && link.sheet.cssRules); } catch (e) { return true; }
+    }
+    (function esperarCss(){
+      var links = [].filter.call(document.querySelectorAll('link[rel="stylesheet"]'), function(l){
+        return (l.getAttribute('href') || '').indexOf('lp-below') !== -1;
+      });
+      var link = links[0];
+      if (cssPronto(link)) { recmedir(); return; }
+      if (link) link.addEventListener('load', function(){ recmedir(); }, { once: true });
+      var n = 0, id = setInterval(function(){
+        if (cssPronto(link) || ++n > 40) { clearInterval(id); recmedir(); }
+      }, 50);
+    })();
+    addEventListener('load', recmedir);
     medida(); marca();
     if (!reduz) requestAnimationFrame(tick);
     return { ir: ir, medida: medida };
